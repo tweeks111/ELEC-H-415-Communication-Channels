@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file alias="rect_icon">resources/rect_icon.png</file>
+        <file alias="RX_icon">resources/RX_icon.png</file>
+        <file alias="TX_icon">resources/TX_icon.png</file>
+    </qresource>
+</RCC>

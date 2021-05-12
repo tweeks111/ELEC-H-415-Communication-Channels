@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>wall.png</file>
+        <file>neutral_icon.png</file>
+        <file>RX_icon.png</file>
+        <file>TX_icon.png</file>
+    </qresource>
+</RCC>

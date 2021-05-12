@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>802</width>
+    <height>622</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QWidget" name="widget" native="true">
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="0" column="0">
+          <widget class="DrawingView" name="graphicsView"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>802</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+   </widget>
+   <addaction name="menuFile"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <property name="floatable">
+    <bool>false</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="addBS"/>
+   <addaction name="addRX"/>
+   <addaction name="addWall"/>
+  </widget>
+  <action name="addBS">
+   <property name="icon">
+    <iconset>
+     <normaloff>:/icons/TX_icon</normaloff>:/icons/TX_icon</iconset>
+   </property>
+   <property name="text">
+    <string>Add base station</string>
+   </property>
+   <property name="toolTip">
+    <string>Add base station</string>
+   </property>
+  </action>
+  <action name="addRX">
+   <property name="icon">
+    <iconset>
+     <normaloff>:/icons/RX_icon</normaloff>:/icons/RX_icon</iconset>
+   </property>
+   <property name="text">
+    <string>Add receiver</string>
+   </property>
+   <property name="toolTip">
+    <string>Add receiver</string>
+   </property>
+  </action>
+  <action name="addWall">
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/icons/wall.png</normaloff>:/icons/wall.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add wall</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DrawingView</class>
+   <extends>QGraphicsView</extends>
+   <header>drawingview.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="resources/res.qrc"/>
+ </resources>
+ <connections/>
+</ui>
