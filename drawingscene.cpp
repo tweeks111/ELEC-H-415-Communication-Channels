@@ -22,6 +22,7 @@ DrawingScene::DrawingScene(QObject *parent)
 
     this->scene_state = SceneState::Disabled;
     this->temp_wall = nullptr;
+    this->rx_item = nullptr;
 }
 
 DrawingScene::~DrawingScene()
@@ -34,6 +35,19 @@ void DrawingScene::setSceneState(SceneState::SceneState state)
     this->scene_state=state;
 }
 
+void DrawingScene::createRX(){
+    this->removeItem(this->rx_item);
+    this->rx_item = new Point("RX");
+    this->addItem(this->rx_item);
+}
+
+void DrawingScene::addBS()
+{
+    this->tx_item = new Point("TX");
+    this->addItem(tx_item);
+    this->TX_items.append(tx_item);
+}
+
 void DrawingScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if(this->scene_state == SceneState::Wall){
@@ -44,6 +58,16 @@ void DrawingScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         this->temp_wall = new Wall(temp_wall_line);
         this->addItem(temp_wall);
         this->scene_state = SceneState::Wall;
+    }
+    else if(this->scene_state == SceneState::RX){
+        this->scene_state = SceneState::Disabled;
+        this->rx_item->setPos(QPointF(qRound(2*event->scenePos().x()/(this->grid_spacing_m*this->px_per_m))*(this->grid_spacing_m*this->px_per_m/2),
+                                      qRound(2*event->scenePos().y()/(this->grid_spacing_m*this->px_per_m))*(this->grid_spacing_m*this->px_per_m/2)));
+    }
+    else if(this->scene_state == SceneState::TX){
+        this->scene_state = SceneState::Disabled;
+        this->tx_item->setPos(QPointF(qRound(2*event->scenePos().x()/(this->grid_spacing_m*this->px_per_m))*(this->grid_spacing_m*this->px_per_m/2),
+                                      qRound(2*event->scenePos().y()/(this->grid_spacing_m*this->px_per_m))*(this->grid_spacing_m*this->px_per_m/2)));
     }
 }
 
@@ -74,6 +98,14 @@ void DrawingScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
                               event->scenePos().x(),
                               event->scenePos().y());
         this->temp_wall->setLine(temp_wall_line);
+    }
+    else if(this->scene_state == SceneState::RX){
+        this->rx_item->setPos(QPointF(qRound(2*event->scenePos().x()/(this->grid_spacing_m*this->px_per_m))*(this->grid_spacing_m*this->px_per_m/2),
+                                      qRound(2*event->scenePos().y()/(this->grid_spacing_m*this->px_per_m))*(this->grid_spacing_m*this->px_per_m/2)));
+    }
+    else if(this->scene_state == SceneState::TX){
+        this->tx_item->setPos(QPointF(qRound(2*event->scenePos().x()/(this->grid_spacing_m*this->px_per_m))*(this->grid_spacing_m*this->px_per_m/2),
+                                      qRound(2*event->scenePos().y()/(this->grid_spacing_m*this->px_per_m))*(this->grid_spacing_m*this->px_per_m/2)));
     }
 }
 

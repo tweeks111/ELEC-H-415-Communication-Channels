@@ -50,12 +50,14 @@ void MainWindow::showEvent(QShowEvent *event)
 
 void MainWindow::placeBS()
 {
-
+    this->drawing_scene->setSceneState(SceneState::TX);
+    this->drawing_scene->addBS();
 }
 
 void MainWindow::placeRX()
 {
-
+    this->drawing_scene->setSceneState(SceneState::RX);
+    this->drawing_scene->createRX();
 }
 
 void MainWindow::placeWall()

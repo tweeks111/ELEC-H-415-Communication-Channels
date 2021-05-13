@@ -13,12 +13,14 @@ SOURCES += \
     drawingview.cpp \
     main.cpp \
     mainwindow.cpp \
+    point.cpp \
     wall.cpp
 
 HEADERS += \
     drawingscene.h \
     drawingview.h \
     mainwindow.h \
+    point.h \
     wall.h
 
 FORMS += \

@@ -1,0 +1,10 @@
+debug/drawingscene.o
+debug/drawingview.o
+debug/main.o
+debug/mainwindow.o
+debug/point.o
+debug/wall.o
+debug/qrc_res.o
+debug/moc_drawingscene.o
+debug/moc_drawingview.o
+debug/moc_mainwindow.o

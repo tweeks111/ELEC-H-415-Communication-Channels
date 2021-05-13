@@ -3,7 +3,7 @@
 
 #include <QGraphicsScene>
 #include "wall.h"
-
+#include "point.h"
 
 namespace SceneState {
 enum SceneState {
@@ -24,6 +24,8 @@ public:
     ~DrawingScene();
 
     void setSceneState(SceneState::SceneState state);
+    void createRX();
+    void addBS();
 
 public slots:
 
@@ -43,7 +45,10 @@ private:
     int grid_spacing_m;
 
     QList<Wall*> wall_list;
+    QList<QGraphicsEllipseItem*> TX_items;
     Wall *temp_wall;
+    Point* rx_item;
+    Point* tx_item;
     SceneState::SceneState scene_state;
 };
 

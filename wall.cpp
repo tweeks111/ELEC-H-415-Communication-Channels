@@ -11,6 +11,7 @@ Wall::Wall(const QLineF wall_line, QGraphicsItem *parent)
     this->px_per_m          = 2;
     this->grid_spacing_m    = 5;
     this->wall_label = new QGraphicsSimpleTextItem();
+    setAcceptHoverEvents(true);
 }
 
 Wall::~Wall()
@@ -26,5 +27,8 @@ void Wall::setLine(QLineF line)
     float y = (line.y2()+line.y1())/2;
     this->wall_label->setPos(x, y);
 }
+
+
+
 
 
