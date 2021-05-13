@@ -22,6 +22,7 @@ DrawingScene::DrawingScene(QObject *parent)
 
     this->scene_state = SceneState::Disabled;
     this->temp_wall = nullptr;
+    this->temp_building = nullptr;
     this->rx_item = nullptr;
 }
 
@@ -59,6 +60,15 @@ void DrawingScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         this->addItem(temp_wall);
         this->scene_state = SceneState::Wall;
     }
+    else if(this->scene_state == SceneState::Building){
+        QRectF temp_building_rect(qRound(event->scenePos().x()/(this->grid_spacing_m*this->px_per_m))*(this->grid_spacing_m*this->px_per_m),
+                             qRound(event->scenePos().y()/(this->grid_spacing_m*this->px_per_m))*(this->grid_spacing_m*this->px_per_m),
+                             0,
+                             0);
+        this->temp_building = new Building(temp_building_rect);
+        this->addItem(temp_building);
+        this->scene_state = SceneState::Building;
+    }
     else if(this->scene_state == SceneState::RX){
         this->scene_state = SceneState::Disabled;
         this->rx_item->setPos(QPointF(qRound(2*event->scenePos().x()/(this->grid_spacing_m*this->px_per_m))*(this->grid_spacing_m*this->px_per_m/2),
@@ -88,6 +98,21 @@ void DrawingScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         this->temp_wall = nullptr;
         qDebug() << this->wall_list.size();
     }
+    else if(this->scene_state == SceneState::Building){
+        int x1 = this->temp_building->rect().topLeft().x();
+        int y1 = this->temp_building->rect().topLeft().y();
+        int x2 = qRound(event->scenePos().x()/(this->grid_spacing_m*this->px_per_m))*(this->grid_spacing_m*this->px_per_m);
+        int y2 = qRound(event->scenePos().y()/(this->grid_spacing_m*this->px_per_m))*(this->grid_spacing_m*this->px_per_m);
+        if(x1 != x2 || y1 != y2){
+            QRectF temp_building_rect(x1,y1,(x2-x1),(y2-y1));
+            Building *new_building = new Building(temp_building_rect);
+            this->building_list.append(new_building);
+            this->addItem(new_building);
+        }
+        this->removeItem(this->temp_building);
+        this->temp_building = nullptr;
+        qDebug() << this->building_list.size();
+    }
 }
 
 void DrawingScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -98,6 +123,13 @@ void DrawingScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
                               event->scenePos().x(),
                               event->scenePos().y());
         this->temp_wall->setLine(temp_wall_line);
+    }
+    else if(this->scene_state == SceneState::Building && this->temp_building){
+        QRectF temp_building_rect(this->temp_building->rect().topLeft().x(),
+                              this->temp_building->rect().topLeft().y(),
+                              (event->scenePos().x()-this->temp_building->rect().topLeft().x()),
+                              (event->scenePos().y()-this->temp_building->rect().topLeft().y()));
+        this->temp_building->setRect(temp_building_rect);
     }
     else if(this->scene_state == SceneState::RX){
         this->rx_item->setPos(QPointF(qRound(2*event->scenePos().x()/(this->grid_spacing_m*this->px_per_m))*(this->grid_spacing_m*this->px_per_m/2),

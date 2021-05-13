@@ -4,11 +4,13 @@
 #include <QGraphicsScene>
 #include "wall.h"
 #include "point.h"
+#include "building.h"
 
 namespace SceneState {
 enum SceneState {
     Disabled,
     Wall,
+    Building,
     TX,
     RX
 };
@@ -45,8 +47,10 @@ private:
     int grid_spacing_m;
 
     QList<Wall*> wall_list;
+    QList<Building*> building_list;
     QList<QGraphicsEllipseItem*> TX_items;
     Wall *temp_wall;
+    Building* temp_building;
     Point* rx_item;
     Point* tx_item;
     SceneState::SceneState scene_state;

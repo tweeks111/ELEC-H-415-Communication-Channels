@@ -26,6 +26,7 @@ private slots:
     void placeBS();
     void placeRX();
     void placeWall();
+    void placeBuilding();
 private:
     Ui::MainWindow *ui;
     DrawingScene *drawing_scene;

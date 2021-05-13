@@ -65,6 +65,7 @@
    <addaction name="addBS"/>
    <addaction name="addRX"/>
    <addaction name="addWall"/>
+   <addaction name="addBuilding"/>
   </widget>
   <action name="addBS">
    <property name="icon">
@@ -100,6 +101,21 @@
    </property>
    <property name="text">
     <string>Add wall</string>
+   </property>
+  </action>
+  <action name="addBuilding">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>resources/rect_icon.png</normaloff>resources/rect_icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add Building</string>
+   </property>
+   <property name="toolTip">
+    <string>Add Building</string>
    </property>
   </action>
  </widget>
