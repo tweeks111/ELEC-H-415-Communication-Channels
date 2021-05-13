@@ -12,12 +12,14 @@ SOURCES += \
     drawingscene.cpp \
     drawingview.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    wall.cpp
 
 HEADERS += \
     drawingscene.h \
     drawingview.h \
-    mainwindow.h
+    mainwindow.h \
+    wall.h
 
 FORMS += \
     mainwindow.ui

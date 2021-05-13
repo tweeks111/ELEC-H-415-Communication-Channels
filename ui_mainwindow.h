@@ -56,6 +56,7 @@ public:
         addRX->setIcon(icon1);
         addWall = new QAction(MainWindow);
         addWall->setObjectName(QString::fromUtf8("addWall"));
+        addWall->setCheckable(true);
         QIcon icon2;
         icon2.addFile(QString::fromUtf8(":/icons/wall.png"), QSize(), QIcon::Normal, QIcon::Off);
         addWall->setIcon(icon2);

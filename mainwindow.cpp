@@ -26,8 +26,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->graphicsView->show();
 
     connect(ui->addBS, SIGNAL(triggered(bool)), this, SLOT(placeBS()));
-    connect(ui->addWall, SIGNAL(toggled(bool)), this, SLOT(placeBS()));
-    connect(ui->addBS, SIGNAL(triggered(bool)), this, SLOT(placeBS()));
+    connect(ui->addWall, SIGNAL(toggled(bool)), this, SLOT(placeWall()));
+    connect(ui->addRX, SIGNAL(triggered(bool)), this, SLOT(placeRX()));
 
 }
 
@@ -60,5 +60,5 @@ void MainWindow::placeRX()
 
 void MainWindow::placeWall()
 {
-
+    this->drawing_scene->setSceneState(SceneState::Wall);
 }

@@ -91,6 +91,9 @@
    </property>
   </action>
   <action name="addWall">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources/res.qrc">
      <normaloff>:/icons/wall.png</normaloff>:/icons/wall.png</iconset>
