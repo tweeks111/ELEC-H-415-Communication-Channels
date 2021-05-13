@@ -32,3 +32,4 @@ void Wall::setLine(QLineF line)
 
 
 
+

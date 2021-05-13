@@ -29,22 +29,30 @@ void Building::setRect(QRectF rect)
 
 }
 
-QList<QPointF> Building::getCorners()
+QList<QPointF*> Building::getCorners()
 {
-    return this->corners;
+    QList<QPointF*> cornersPointers;
+    for(QPointF corner:this->corners){
+        cornersPointers.push_back(&corner);
+    }
+    return cornersPointers;
 }
 
-QList<QLineF> Building::getWalls()
+QList<QLineF*> Building::getWalls()
 {
-    return this->walls;
+    QList<QLineF*> wallsPointers;
+    for(QLineF wall:this->walls){
+        wallsPointers.push_back(&wall);
+    }
+    return wallsPointers;
 }
 
-bool Building::isBlockingPath(QLineF line)
+bool Building::isBlockingPath(QLineF* line)
 {
     for(QLineF wall:this->walls)
     {
         QPointF intersectionPoint;
-        if(line.intersects(wall,&intersectionPoint)==QLineF::BoundedIntersection && !this->corners.contains(intersectionPoint))
+        if(line->intersects(wall,&intersectionPoint)==QLineF::BoundedIntersection && !this->corners.contains(intersectionPoint))
         {
             return true;
         }

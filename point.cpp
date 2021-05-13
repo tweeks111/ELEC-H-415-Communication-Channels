@@ -40,6 +40,18 @@ Point::~Point()
 
 }
 
+QPointF* Point::getCenter()
+{
+    return &(this->center);
+}
+
+void Point::setCenter(QPointF center)
+{
+    setPos(center);
+    this->center = center;
+    this->isSet = true;
+}
+
 void Point::hoverEnterEvent(QGraphicsSceneHoverEvent *event){
     QPen pen(Qt::green);
     pen.setWidth(2);

@@ -5,6 +5,7 @@
 #include "wall.h"
 #include "point.h"
 #include "building.h"
+#include "raytracing.h"
 
 namespace SceneState {
 enum SceneState {
@@ -54,6 +55,9 @@ private:
     Point* rx_item;
     Point* tx_item;
     SceneState::SceneState scene_state;
+    RayTracing* rayTracing;
+
+    void draw();
 };
 
 #endif // DRAWINGSCENE_H

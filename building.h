@@ -9,9 +9,9 @@ public:
     Building(const QRectF building_rect, QGraphicsItem *parent=nullptr);
     ~Building();
     void setRect(QRectF);
-    QList<QPointF> getCorners();
-    QList<QLineF> getWalls();
-    bool isBlockingPath(QLineF line);
+    QList<QPointF*> getCorners();
+    QList<QLineF*> getWalls();
+    bool isBlockingPath(QLineF* line);
 
 private:
     QGraphicsSimpleTextItem* building_label;

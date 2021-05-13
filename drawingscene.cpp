@@ -24,6 +24,8 @@ DrawingScene::DrawingScene(QObject *parent)
     this->temp_wall = nullptr;
     this->temp_building = nullptr;
     this->rx_item = nullptr;
+    this->tx_item = nullptr;
+    this->rayTracing = new RayTracing(&(this->building_list));
 }
 
 DrawingScene::~DrawingScene()
@@ -71,14 +73,15 @@ void DrawingScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     }
     else if(this->scene_state == SceneState::RX){
         this->scene_state = SceneState::Disabled;
-        this->rx_item->setPos(QPointF(qRound(2*event->scenePos().x()/(this->grid_spacing_m*this->px_per_m))*(this->grid_spacing_m*this->px_per_m/2),
+        this->rx_item->setCenter(QPointF(qRound(2*event->scenePos().x()/(this->grid_spacing_m*this->px_per_m))*(this->grid_spacing_m*this->px_per_m/2),
                                       qRound(2*event->scenePos().y()/(this->grid_spacing_m*this->px_per_m))*(this->grid_spacing_m*this->px_per_m/2)));
     }
     else if(this->scene_state == SceneState::TX){
         this->scene_state = SceneState::Disabled;
-        this->tx_item->setPos(QPointF(qRound(2*event->scenePos().x()/(this->grid_spacing_m*this->px_per_m))*(this->grid_spacing_m*this->px_per_m/2),
+        this->tx_item->setCenter(QPointF(qRound(2*event->scenePos().x()/(this->grid_spacing_m*this->px_per_m))*(this->grid_spacing_m*this->px_per_m/2),
                                       qRound(2*event->scenePos().y()/(this->grid_spacing_m*this->px_per_m))*(this->grid_spacing_m*this->px_per_m/2)));
     }
+    draw();
 }
 
 void DrawingScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
@@ -113,6 +116,7 @@ void DrawingScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         this->temp_building = nullptr;
         qDebug() << this->building_list.size();
     }
+    draw();
 }
 
 void DrawingScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -132,12 +136,24 @@ void DrawingScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         this->temp_building->setRect(temp_building_rect);
     }
     else if(this->scene_state == SceneState::RX){
-        this->rx_item->setPos(QPointF(qRound(2*event->scenePos().x()/(this->grid_spacing_m*this->px_per_m))*(this->grid_spacing_m*this->px_per_m/2),
+        this->rx_item->setCenter(QPointF(qRound(2*event->scenePos().x()/(this->grid_spacing_m*this->px_per_m))*(this->grid_spacing_m*this->px_per_m/2),
                                       qRound(2*event->scenePos().y()/(this->grid_spacing_m*this->px_per_m))*(this->grid_spacing_m*this->px_per_m/2)));
     }
     else if(this->scene_state == SceneState::TX){
-        this->tx_item->setPos(QPointF(qRound(2*event->scenePos().x()/(this->grid_spacing_m*this->px_per_m))*(this->grid_spacing_m*this->px_per_m/2),
+        this->tx_item->setCenter(QPointF(qRound(2*event->scenePos().x()/(this->grid_spacing_m*this->px_per_m))*(this->grid_spacing_m*this->px_per_m/2),
                                       qRound(2*event->scenePos().y()/(this->grid_spacing_m*this->px_per_m))*(this->grid_spacing_m*this->px_per_m/2)));
+    }
+    draw();
+}
+
+void DrawingScene::draw(){
+    if(rayTracing->raysGroup){
+        removeItem(rayTracing->raysGroup);
+        destroyItemGroup(rayTracing->raysGroup);
+    }
+    if(this->rx_item && this->tx_item && this->rx_item->isSet && this->tx_item->isSet){
+        rayTracing->drawRays(this->tx_item->getCenter(),this->rx_item->getCenter());//Do point as QPointF Child !
+        addItem(rayTracing->raysGroup);
     }
 }
 

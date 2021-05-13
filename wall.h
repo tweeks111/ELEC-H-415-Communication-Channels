@@ -3,12 +3,15 @@
 
 #include <QGraphicsLineItem>
 #include <QLabel>
+#include "complex"
+
 class Wall : public QGraphicsLineItem
 {
 public:
     Wall(const QLineF wall_line, QGraphicsItem *parent=nullptr);
     ~Wall();
     void setLine(QLineF);
+
 protected:
     //void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
 private:
