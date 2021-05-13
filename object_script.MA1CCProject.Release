@@ -1,8 +1,10 @@
+release/building.o
 release/drawingscene.o
 release/drawingview.o
 release/main.o
 release/mainwindow.o
 release/point.o
+release/ray.o
 release/wall.o
 release/qrc_res.o
 release/moc_drawingscene.o

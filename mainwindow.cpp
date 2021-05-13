@@ -26,9 +26,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->graphicsView->show();
 
     connect(ui->addBS, SIGNAL(triggered(bool)), this, SLOT(placeBS()));
-    connect(ui->addWall, SIGNAL(toggled(bool)), this, SLOT(placeWall()));
+    connect(ui->addWall, SIGNAL(toggled(bool)), this, SLOT(placeWall(bool)));
     connect(ui->addRX, SIGNAL(triggered(bool)), this, SLOT(placeRX()));
-    connect(ui->addBuilding, SIGNAL(triggered(bool)), this, SLOT(placeBuilding()));
+    connect(ui->addBuilding, SIGNAL(toggled(bool)), this, SLOT(placeBuilding(bool)));
 }
 
 MainWindow::~MainWindow()
@@ -60,12 +60,23 @@ void MainWindow::placeRX()
     this->drawing_scene->createRX();
 }
 
-void MainWindow::placeWall()
+void MainWindow::placeWall(bool event)
 {
-    this->drawing_scene->setSceneState(SceneState::Wall);
+    SceneState::SceneState state =SceneState::Disabled;
+    if(event==true){
+        state = SceneState::Wall;
+        ui->addBuilding->setChecked(false);
+    }
+
+    this->drawing_scene->setSceneState(state);
 }
 
-void MainWindow::placeBuilding()
+void MainWindow::placeBuilding(bool event)
 {
-    this->drawing_scene->setSceneState(SceneState::Building);
+    SceneState::SceneState state =SceneState::Disabled;
+    if(event==true){
+        state =SceneState::Building;
+        ui->addWall->setChecked(false);
+    }
+    this->drawing_scene->setSceneState(state);
 }
