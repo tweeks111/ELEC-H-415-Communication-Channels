@@ -16,8 +16,7 @@ SOURCES += \
     mainwindow.cpp \
     point.cpp \
     ray.cpp \
-    raytracing.cpp \
-    wall.cpp
+    raytracing.cpp
 
 HEADERS += \
     building.h \
@@ -26,8 +25,7 @@ HEADERS += \
     mainwindow.h \
     point.h \
     ray.h \
-    raytracing.h \
-    wall.h
+    raytracing.h
 
 FORMS += \
     mainwindow.ui

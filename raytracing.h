@@ -13,19 +13,24 @@ class RayTracing
 
 public:
     RayTracing();
-    RayTracing(QList<Building*>* building_list);
+    RayTracing(QList<Building*>* building_list, int* map_width, int* map_height, int* px_per_m, int* grid_spacing_m);
     void drawRays(QPointF* transmitter,QPointF* receiver);
     qreal power;
-    QGraphicsItemGroup* raysGroup;
     QList<Ray*> raysList;
 private:
     //Attributs
-    int map_width;
-    int map_height;
-    int px_per_m;
-    int grid_spacing_m;
+    int* map_width;
+    int* map_height;
+    int* px_per_m;
+    int* grid_spacing_m;
+    QList<Building*>* building_list;
+    QPointF* transmitter;
+    QPointF* receiver;
 
     int counter;
+    int counterMax;
+    int maxReflection = 3;
+
     float pi = 3.14159;
     int thickness;
     float relPermittivity = 0; //TODO
@@ -35,10 +40,7 @@ private:
     qreal alpham; //TODO
     qreal betam; //TODO
     qreal beta0; //TODO
-    QList<Building*>* building_list;
-    QPointF* transmitter;
-    QPointF* receiver;
-    int maxReflection = 3;
+
     //Methods
     bool lineIsBlocked(QLineF* line);
     std::complex<qreal> computeCoef(Ray* ray,QLineF* wall);
@@ -47,6 +49,8 @@ private:
     void makeWallReflection(QList<QPointF> = QList<QPointF>(), QList<QLineF*> = QList<QLineF*>(), qint16 n_reflection = 1);
     void makeDiffraction();
     bool wallIsValid(QLineF*);
+    bool cornerIsValid(QPointF* corner);
+    bool checkTxRxValidity();
 };
 
 #endif // RAYTRACING_H

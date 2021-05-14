@@ -63,9 +63,10 @@
     <bool>false</bool>
    </attribute>
    <addaction name="addBS"/>
+   <addaction name="clearBS"/>
    <addaction name="addRX"/>
-   <addaction name="addWall"/>
    <addaction name="addBuilding"/>
+   <addaction name="clearBuilding"/>
   </widget>
   <action name="addBS">
    <property name="icon">
@@ -91,18 +92,6 @@
     <string>Add receiver</string>
    </property>
   </action>
-  <action name="addWall">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="resources/res.qrc">
-     <normaloff>:/icons/wall.png</normaloff>:/icons/wall.png</iconset>
-   </property>
-   <property name="text">
-    <string>Add wall</string>
-   </property>
-  </action>
   <action name="addBuilding">
    <property name="checkable">
     <bool>true</bool>
@@ -116,6 +105,30 @@
    </property>
    <property name="toolTip">
     <string>Add Building</string>
+   </property>
+  </action>
+  <action name="clearBS">
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/icons/clearTX_icon.png</normaloff>:/icons/clearTX_icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Clear base station</string>
+   </property>
+   <property name="toolTip">
+    <string>Clear base station</string>
+   </property>
+  </action>
+  <action name="clearBuilding">
+   <property name="icon">
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/icons/clearRect_icon.png</normaloff>:/icons/clearRect_icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Clear building</string>
+   </property>
+   <property name="toolTip">
+    <string>Clear building</string>
    </property>
   </action>
  </widget>

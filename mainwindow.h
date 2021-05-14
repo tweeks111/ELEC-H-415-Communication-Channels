@@ -25,8 +25,9 @@ protected:
 private slots:
     void placeBS();
     void placeRX();
-    void placeWall(bool);
     void placeBuilding(bool);
+    void clearBS();
+    void clearBuilding();
 private:
     Ui::MainWindow *ui;
     DrawingScene *drawing_scene;

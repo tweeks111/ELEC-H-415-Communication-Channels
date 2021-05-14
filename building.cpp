@@ -40,8 +40,6 @@ QList<QLineF> *Building::getWalls()
 }
 
 
-
-
 bool Building::isBlockingPath(QLineF* line)
 {
     for(QLineF wall:this->walls)
@@ -49,7 +47,7 @@ bool Building::isBlockingPath(QLineF* line)
         QPointF intersectionPoint;
         if(line->intersects(wall,&intersectionPoint)==QLineF::BoundedIntersection)
         {
-            if(intersectionPoint != line->p1() && intersectionPoint != line->p2())
+            if((intersectionPoint != line->p1() && intersectionPoint != line->p2()) || this->isContainingPoint(line->center()))
             {
                 return true;
             }
@@ -57,4 +55,16 @@ bool Building::isBlockingPath(QLineF* line)
     }
     return false;
 }
+
+bool Building::isContainingPoint(QPointF point)
+{
+    return this->rect().toRect().contains(point.toPoint(),true);
+}
+
+bool Building::isContainingBuilding(Building *building)
+{
+    return this->rect().toRect().contains(building->rect().toRect());
+}
+
+
 

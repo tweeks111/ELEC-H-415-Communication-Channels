@@ -28,8 +28,9 @@ class Ui_MainWindow
 public:
     QAction *addBS;
     QAction *addRX;
-    QAction *addWall;
+    QAction *clearBS;
     QAction *addBuilding;
+    QAction *clearBuilding;
     QWidget *centralwidget;
     QGridLayout *gridLayout;
     QHBoxLayout *horizontalLayout;
@@ -52,18 +53,18 @@ public:
         icon.addFile(QString::fromUtf8(":/icons/TX_icon"), QSize(), QIcon::Normal, QIcon::Off);
         addBS->setIcon(icon);
 
+        clearBS = new QAction(MainWindow);
+        clearBS->setObjectName(QString::fromUtf8("clearBS"));
+        clearBS->setCheckable(true);
+        QIcon icon1;
+        icon1.addFile(QString::fromUtf8(":/icons/clearTX_icon.png"), QSize(), QIcon::Normal, QIcon::Off);
+        clearBS->setIcon(icon1);
+
         addRX = new QAction(MainWindow);
         addRX->setObjectName(QString::fromUtf8("addRX"));
-        QIcon icon1;
-        icon1.addFile(QString::fromUtf8(":/icons/RX_icon"), QSize(), QIcon::Normal, QIcon::Off);
-        addRX->setIcon(icon1);
-
-        addWall = new QAction(MainWindow);
-        addWall->setObjectName(QString::fromUtf8("addWall"));
-        addWall->setCheckable(true);
         QIcon icon2;
-        icon2.addFile(QString::fromUtf8(":/icons/wall.png"), QSize(), QIcon::Normal, QIcon::Off);
-        addWall->setIcon(icon2);
+        icon2.addFile(QString::fromUtf8(":/icons/RX_icon"), QSize(), QIcon::Normal, QIcon::Off);
+        addRX->setIcon(icon2);
 
         addBuilding = new QAction(MainWindow);
         addBuilding->setObjectName(QString::fromUtf8("addBuilding"));
@@ -71,6 +72,12 @@ public:
         QIcon icon3;
         icon3.addFile(QString::fromUtf8(":/icons/rect_icon.png"), QSize(), QIcon::Normal, QIcon::Off);
         addBuilding->setIcon(icon3);
+
+        clearBuilding = new QAction(MainWindow);
+        clearBuilding->setObjectName(QString::fromUtf8("clear building"));
+        QIcon icon4;
+        icon4.addFile(QString::fromUtf8(":/icons/clearRect_icon.png"), QSize(), QIcon::Normal, QIcon::Off);
+        clearBuilding->setIcon(icon4);
 
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
@@ -90,7 +97,6 @@ public:
 
         horizontalLayout->addWidget(widget);
 
-
         gridLayout->addLayout(horizontalLayout, 0, 0, 1, 1);
 
         MainWindow->setCentralWidget(centralwidget);
@@ -108,9 +114,10 @@ public:
 
         menubar->addAction(menuFile->menuAction());
         toolBar->addAction(addBS);
+        toolBar->addAction(clearBS);
         toolBar->addAction(addRX);
-        toolBar->addAction(addWall);
         toolBar->addAction(addBuilding);
+        toolBar->addAction(clearBuilding);
 
         retranslateUi(MainWindow);
 
@@ -120,16 +127,34 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
+
         addBS->setText(QCoreApplication::translate("MainWindow", "Add base station", nullptr));
 #if QT_CONFIG(tooltip)
         addBS->setToolTip(QCoreApplication::translate("MainWindow", "Add base station", nullptr));
 #endif // QT_CONFIG(tooltip)
+
+        clearBS->setText(QCoreApplication::translate("MainWindow", "Clear base station", nullptr));
+#if QT_CONFIG(tooltip)
+        clearBS->setToolTip(QCoreApplication::translate("MainWindow", "Clear base station", nullptr));
+#endif // QT_CONFIG(tooltip)
+
+
         addRX->setText(QCoreApplication::translate("MainWindow", "Add receiver", nullptr));
 #if QT_CONFIG(tooltip)
         addRX->setToolTip(QCoreApplication::translate("MainWindow", "Add receiver", nullptr));
 #endif // QT_CONFIG(tooltip)
-        addWall->setText(QCoreApplication::translate("MainWindow", "Add wall", nullptr));
+
         addBuilding->setText(QCoreApplication::translate("MainWindow", "Add building", nullptr));
+#if QT_CONFIG(tooltip)
+        addBuilding->setToolTip(QCoreApplication::translate("MainWindow", "Add building", nullptr));
+#endif // QT_CONFIG(tooltip)
+
+        clearBuilding->setText(QCoreApplication::translate("MainWindow", "Clear building", nullptr));
+#if QT_CONFIG(tooltip)
+        clearBuilding->setToolTip(QCoreApplication::translate("MainWindow", "Clear building", nullptr));
+#endif // QT_CONFIG(tooltip)
+
+
         menuFile->setTitle(QCoreApplication::translate("MainWindow", "File", nullptr));
         toolBar->setWindowTitle(QCoreApplication::translate("MainWindow", "toolBar", nullptr));
     } // retranslateUi

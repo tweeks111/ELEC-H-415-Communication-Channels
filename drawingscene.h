@@ -2,7 +2,6 @@
 #define DRAWINGSCENE_H
 
 #include <QGraphicsScene>
-#include "wall.h"
 #include "point.h"
 #include "building.h"
 #include "raytracing.h"
@@ -10,7 +9,6 @@
 namespace SceneState {
 enum SceneState {
     Disabled,
-    Wall,
     Building,
     TX,
     RX
@@ -29,6 +27,9 @@ public:
     void setSceneState(SceneState::SceneState state);
     void createRX();
     void addBS();
+    bool pointIsAvailable(QPointF* point);
+    void clearBS();
+    void clearBuilding();
 
 public slots:
 
@@ -47,16 +48,23 @@ private:
     int px_per_m;
     int grid_spacing_m;
 
-    QList<Wall*> wall_list;
     QList<Building*> building_list;
     QList<QGraphicsEllipseItem*> TX_items;
-    Wall *temp_wall;
     Building* temp_building;
     Point* rx_item;
     Point* tx_item;
+
+    QGraphicsItemGroup* buildingsGroup;
+    QGraphicsItemGroup* rxGroup;
+    QGraphicsItemGroup* txGroup;
+    QGraphicsItemGroup* raysGroup;
+
     SceneState::SceneState scene_state;
     RayTracing* rayTracing;
-    bool checkTxRxValidity();
+    bool checkTxRxAreSet();
+    QPointF snapToGrid(QPointF *event,int precision=1);
+    bool isOnTheGrid(QGraphicsSceneMouseEvent *event);
+    QPointF eventToTheGrid(QGraphicsSceneMouseEvent *event);
     void draw();
 };
 

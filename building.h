@@ -12,7 +12,8 @@ public:
     QList<QPointF>* getCorners();
     QList<QLineF>* getWalls();
     bool isBlockingPath(QLineF* line);
-
+    bool isContainingPoint(QPointF point);
+    bool isContainingBuilding(Building* building);
 private:
     QGraphicsSimpleTextItem* building_label;
     int px_per_m;
