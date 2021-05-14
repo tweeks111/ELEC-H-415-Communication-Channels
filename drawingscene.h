@@ -56,7 +56,7 @@ private:
     Point* tx_item;
     SceneState::SceneState scene_state;
     RayTracing* rayTracing;
-
+    bool checkTxRxValidity();
     void draw();
 };
 

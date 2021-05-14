@@ -146,13 +146,35 @@ void DrawingScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     draw();
 }
 
+
+bool DrawingScene::checkTxRxValidity()
+{
+    if(this->rx_item && this->tx_item && this->rx_item->isSet && this->tx_item->isSet)
+    {
+        for(Building* building:this->building_list)
+        {
+            if(building->rect().contains(this->tx_item->center) || building->rect().contains(this->rx_item->center))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+
+}
+
 void DrawingScene::draw(){
     if(rayTracing->raysGroup){
         removeItem(rayTracing->raysGroup);
         destroyItemGroup(rayTracing->raysGroup);
+        rayTracing->raysGroup = nullptr;
     }
-    if(this->rx_item && this->tx_item && this->rx_item->isSet && this->tx_item->isSet){
-        rayTracing->drawRays(this->tx_item->getCenter(),this->rx_item->getCenter());//Do point as QPointF Child !
+    if(checkTxRxValidity()){
+        rayTracing->drawRays(&(this->tx_item->center),&(this->rx_item->center));
         addItem(rayTracing->raysGroup);
     }
 }

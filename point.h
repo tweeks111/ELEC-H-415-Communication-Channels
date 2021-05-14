@@ -12,14 +12,14 @@ public:
     Point(QPointF point, QColor pointColor, QGraphicsItem *parent=nullptr);
     ~Point();
     bool isSet = false;
-    QPointF* getCenter();
     void setCenter(QPointF);
+    QPointF center;
 protected:
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 private:
     QColor pointColor;
-    QPointF center;
+
 };
 
 #endif // POINT_H

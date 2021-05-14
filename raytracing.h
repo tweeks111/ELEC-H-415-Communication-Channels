@@ -44,6 +44,7 @@ private:
     void makeDirectAndGroundReflection();
     void makeWallReflection(QList<QPointF> = QList<QPointF>(), QList<QLineF*> = QList<QLineF*>(), qint16 n_reflection = 1);
     void makeDiffraction();
+
 };
 
 #endif // RAYTRACING_H

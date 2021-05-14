@@ -9,8 +9,8 @@ public:
     Building(const QRectF building_rect, QGraphicsItem *parent=nullptr);
     ~Building();
     void setRect(QRectF);
-    QList<QPointF*> getCorners();
-    QList<QLineF*> getWalls();
+    QList<QPointF>* getCorners();
+    QList<QLineF>* getWalls();
     bool isBlockingPath(QLineF* line);
 
 private:

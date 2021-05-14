@@ -40,11 +40,6 @@ Point::~Point()
 
 }
 
-QPointF* Point::getCenter()
-{
-    return &(this->center);
-}
-
 void Point::setCenter(QPointF center)
 {
     setPos(center);

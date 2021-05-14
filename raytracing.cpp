@@ -10,6 +10,7 @@ RayTracing::RayTracing(QList<Building*>* building_list)
     this->grid_spacing_m    = 5;
 }
 
+
 QPointF RayTracing::mirrorPointMaker(QLineF* wall, QPointF* initialPoint)
 {
     float a = (wall->p2().y()-wall->p1().y())/wall->length();
@@ -59,13 +60,18 @@ void RayTracing::drawRays(QPointF* transmitter, QPointF* receiver)
     raysGroup = new QGraphicsItemGroup();
     qreal power = 0;
     std::complex<qreal> En=0;
-    qDebug()<<"receiver :" +QString::number(receiver->x());
-    qDebug()<<"transmitter :" +QString::number(transmitter->x());
-    qDebug("Starting ray tracing");
     makeDirectAndGroundReflection();
-    //makeWallReflection();
-    makeDiffraction();
+    if(raysGroup->childItems().isEmpty()) //Add condition for main street and secondary street
+    {
+        makeDiffraction();
+    }
+    else
+    {
+        makeWallReflection();
+    }
 }
+
+
 
 void RayTracing::makeDirectAndGroundReflection()
 {
@@ -86,18 +92,18 @@ void RayTracing::makeDirectAndGroundReflection()
 
 void RayTracing::makeWallReflection(QList<QPointF> mirrorPoints,QList<QLineF*> walls, qint16 n_reflection){
     for(Building* building:*this->building_list){
-        for(QLineF* wall:building->getWalls()){
-            if(walls.isEmpty() || wall!=walls.last()){
+        for(QLineF wall:*(building->getWalls())){
+            if(walls.isEmpty() || &wall!=walls.last()){
                 //Compute the new mirror pt based on the last one (tx pos for the 1st reflection)
                 QList<QLineF*> tempWalls = walls;
-                tempWalls.push_back(wall);
+                tempWalls.push_back(&wall);
                 QList<QPointF> tempMirrorPoints = mirrorPoints;
                 QPointF mirrorPoint;
                 if(tempMirrorPoints.isEmpty()){
-                    mirrorPoint = mirrorPointMaker(wall, transmitter);
+                    mirrorPoint = mirrorPointMaker(&wall, transmitter);
                 }
                 else{
-                    mirrorPoint = mirrorPointMaker(wall, &(tempMirrorPoints.last()));
+                    mirrorPoint = mirrorPointMaker(&wall, &(tempMirrorPoints.last()));
                 }
                 tempMirrorPoints.push_back(mirrorPoint);
 
@@ -115,7 +121,7 @@ void RayTracing::makeWallReflection(QList<QPointF> mirrorPoints,QList<QLineF*> w
                             lineLIPtoIP = QLineF(lastIntersectionPoint,intersectionPoint);
                             if(!lineIsBlocked(&lineLIPtoIP)){//Is there no other wall blocking the ray ?
                                 Ray* ray = new Ray(lineLIPtoIP);
-                                ray->coef*=computeCoef(ray,wall);
+                                ray->coef*=computeCoef(ray,&wall);
                                 //Also do RX coef
                                 rays.push_back(ray);
                                 lastIntersectionPoint = intersectionPoint;
@@ -126,23 +132,20 @@ void RayTracing::makeWallReflection(QList<QPointF> mirrorPoints,QList<QLineF*> w
                         lineLIPtoIP = QLineF(lastIntersectionPoint,*(transmitter));
                         if(!lineIsBlocked(&lineLIPtoIP)){//Is there no other wall blocking the ray ?
                             Ray* ray = new Ray(lineLIPtoIP);
-                            ray->coef*=computeCoef(ray,wall);
+                            ray->coef*=computeCoef(ray,&wall);
                             rays.push_back(ray);
                         }else{break;}
                     }
                 }
                 if(rays.size() == n_reflection +1){//Valide ray path (no rays intersects the walls)
                     QPen rayPen;
-                    if(n_reflection == 1){
+                    if(rays.size() == 2){
                         rayPen = QPen(QColor(224, 221, 27));
                     }
-                    else if(n_reflection == 1){
+                    else if(rays.size() == 3){
                         rayPen = QPen(QColor(224, 152, 27));
                     }
-                    else if(n_reflection == 1){
-                        rayPen = QPen(QColor(224, 27, 27));
-                    }
-                    else{
+                    else if(rays.size() >= 4){
                         rayPen = QPen(QColor(224, 27, 27));
                     }
                     rayPen.setWidth(2);
@@ -167,10 +170,10 @@ void RayTracing::makeDiffraction()
     QPen rayPen(QColor(155, 0, 233)); //print the direct ray "- - -"
     rayPen.setWidth(2);
     for(Building* building:*building_list){
-        for(QPointF* corner:building->getCorners()){
-            QLineF lineTXtoEP(*(transmitter),corner->toPoint());
-            QLineF lineEPtoRX(corner->toPoint(),*(receiver));
-            if(!lineIsBlocked(&lineTXtoEP) && !lineIsBlocked(&lineEPtoRX)){
+        for(QPointF corner:*(building->getCorners())){
+            QLineF lineTXtoEP(*(transmitter),corner);
+            QLineF lineEPtoRX(corner,*(receiver));
+            if(!lineIsBlocked(&lineTXtoEP) && !lineIsBlocked(&lineEPtoRX) && (lineTXtoEP.angleTo(lineEPtoRX)<=90 || lineTXtoEP.angleTo(lineEPtoRX)>=270)){
                 Ray* rayTXtoDP = new Ray(lineTXtoEP);
                 Ray* rayDPtoRX = new Ray(lineEPtoRX);
                 raysGroup->addToGroup(rayTXtoDP);
@@ -181,6 +184,8 @@ void RayTracing::makeDiffraction()
         }
     }
 }
+
+
 
 
 
