@@ -17,6 +17,7 @@ public:
     void drawRays(QPointF* transmitter,QPointF* receiver);
     qreal power;
     QGraphicsItemGroup* raysGroup;
+    QList<Ray*> raysList;
 private:
     //Attributs
     int map_width;
@@ -24,6 +25,7 @@ private:
     int px_per_m;
     int grid_spacing_m;
 
+    int counter;
     float pi = 3.14159;
     int thickness;
     float relPermittivity = 0; //TODO
@@ -44,7 +46,7 @@ private:
     void makeDirectAndGroundReflection();
     void makeWallReflection(QList<QPointF> = QList<QPointF>(), QList<QLineF*> = QList<QLineF*>(), qint16 n_reflection = 1);
     void makeDiffraction();
-
+    bool wallIsValid(QLineF*);
 };
 
 #endif // RAYTRACING_H

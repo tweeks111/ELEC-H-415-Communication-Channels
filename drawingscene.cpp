@@ -143,7 +143,7 @@ void DrawingScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         this->tx_item->setCenter(QPointF(qRound(2*event->scenePos().x()/(this->grid_spacing_m*this->px_per_m))*(this->grid_spacing_m*this->px_per_m/2),
                                       qRound(2*event->scenePos().y()/(this->grid_spacing_m*this->px_per_m))*(this->grid_spacing_m*this->px_per_m/2)));
     }
-    draw();
+    //draw(); //Comment this for easier debugging
 }
 
 
@@ -174,8 +174,9 @@ void DrawingScene::draw(){
         rayTracing->raysGroup = nullptr;
     }
     if(checkTxRxValidity()){
-        rayTracing->drawRays(&(this->tx_item->center),&(this->rx_item->center));
+        rayTracing->raysGroup = new QGraphicsItemGroup();
         addItem(rayTracing->raysGroup);
+        rayTracing->drawRays(&(this->tx_item->center),&(this->rx_item->center));
     }
 }
 

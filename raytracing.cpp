@@ -8,6 +8,7 @@ RayTracing::RayTracing(QList<Building*>* building_list)
     this->map_height        = 300;
     this->px_per_m          = 2;
     this->grid_spacing_m    = 5;
+    this->raysList = QList<Ray*>();
 }
 
 
@@ -55,11 +56,12 @@ std::complex<qreal> RayTracing::computeCoef(Ray *ray, QLineF* wall)
 
 void RayTracing::drawRays(QPointF* transmitter, QPointF* receiver)
 {
+    this->raysList.clear();
     this->transmitter = transmitter;
     this->receiver = receiver;
-    raysGroup = new QGraphicsItemGroup();
     qreal power = 0;
     std::complex<qreal> En=0;
+    this->counter = 0;
     makeDirectAndGroundReflection();
     if(raysGroup->childItems().isEmpty()) //Add condition for main street and secondary street
     {
@@ -69,6 +71,7 @@ void RayTracing::drawRays(QPointF* transmitter, QPointF* receiver)
     {
         makeWallReflection();
     }
+    qDebug() << "Counter" << (this->counter);
 }
 
 
@@ -84,6 +87,7 @@ void RayTracing::makeDirectAndGroundReflection()
         directRay->coef*=1; //TODO !
         directRay->setPen(rayPen);
         raysGroup->addToGroup(directRay);
+        this->raysList.push_back(directRay);
     }
     else{
         //kill directLine
@@ -93,7 +97,8 @@ void RayTracing::makeDirectAndGroundReflection()
 void RayTracing::makeWallReflection(QList<QPointF> mirrorPoints,QList<QLineF*> walls, qint16 n_reflection){
     for(Building* building:*this->building_list){
         for(QLineF wall:*(building->getWalls())){
-            if(walls.isEmpty() || &wall!=walls.last()){
+            if(wallIsValid(&wall) && (walls.isEmpty() || wall!=*(walls.last()))){
+                this->counter ++;
                 //Compute the new mirror pt based on the last one (tx pos for the 1st reflection)
                 QList<QLineF*> tempWalls = walls;
                 tempWalls.push_back(&wall);
@@ -154,6 +159,7 @@ void RayTracing::makeWallReflection(QList<QPointF> mirrorPoints,QList<QLineF*> w
                     for(Ray* ray:rays){
                         ray->setPen(rayPen);
                         raysGroup->addToGroup(ray);
+                        this->raysList.push_back(ray);
                     }
                 }
                 //More reflections iterations
@@ -169,6 +175,7 @@ void RayTracing::makeDiffraction()
 {
     QPen rayPen(QColor(155, 0, 233)); //print the direct ray "- - -"
     rayPen.setWidth(2);
+    bool thereIsDiffraction = false;
     for(Building* building:*building_list){
         for(QPointF corner:*(building->getCorners())){
             QLineF lineTXtoEP(*(transmitter),corner);
@@ -176,13 +183,30 @@ void RayTracing::makeDiffraction()
             if(!lineIsBlocked(&lineTXtoEP) && !lineIsBlocked(&lineEPtoRX) && (lineTXtoEP.angleTo(lineEPtoRX)<=90 || lineTXtoEP.angleTo(lineEPtoRX)>=270)){
                 Ray* rayTXtoDP = new Ray(lineTXtoEP);
                 Ray* rayDPtoRX = new Ray(lineEPtoRX);
-                raysGroup->addToGroup(rayTXtoDP);
-                raysGroup->addToGroup(rayDPtoRX);
                 rayTXtoDP->setPen(rayPen);
                 rayDPtoRX->setPen(rayPen);
+                raysGroup->addToGroup(rayTXtoDP);
+                raysGroup->addToGroup(rayDPtoRX);
+                this->raysList.push_back(rayTXtoDP);
+                this->raysList.push_back(rayDPtoRX);
+                thereIsDiffraction = true;
             }
         }
     }
+    if(thereIsDiffraction)
+    {
+        QPen rayPen(Qt::gray);
+        rayPen.setStyle(Qt::DashLine);
+        Ray* directRay = new Ray(QLineF(*(this->transmitter),*(this->receiver)));
+        directRay->setPen(rayPen);
+        this->raysGroup->addToGroup(directRay);
+    }
+}
+
+bool RayTracing::wallIsValid(QLineF* wall)
+{
+    return !((wall->dx() == 0 && (wall->x1() == 0 || wall->x1() == this->map_width)) || (wall->dy() == 0 && (wall->y1() == 0 || wall->y1() == this->map_height)));
+
 }
 
 
