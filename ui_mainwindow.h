@@ -55,7 +55,6 @@ public:
 
         clearBS = new QAction(MainWindow);
         clearBS->setObjectName(QString::fromUtf8("clearBS"));
-        clearBS->setCheckable(true);
         QIcon icon1;
         icon1.addFile(QString::fromUtf8(":/icons/clearTX_icon.png"), QSize(), QIcon::Normal, QIcon::Off);
         clearBS->setIcon(icon1);
@@ -137,7 +136,6 @@ public:
 #if QT_CONFIG(tooltip)
         clearBS->setToolTip(QCoreApplication::translate("MainWindow", "Clear base station", nullptr));
 #endif // QT_CONFIG(tooltip)
-
 
         addRX->setText(QCoreApplication::translate("MainWindow", "Add receiver", nullptr));
 #if QT_CONFIG(tooltip)

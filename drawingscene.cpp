@@ -16,14 +16,18 @@ DrawingScene::DrawingScene(QObject *parent)
 
     this->scene_state = SceneState::Disabled;
     this->temp_building = nullptr;
+    this->temp_MS = nullptr;
     this->rx_item = nullptr;
     this->tx_item = nullptr;
-    this->rayTracing = new RayTracing(&(this->building_list),&(this->map_width),&(this->map_height),&(this->px_per_m),&(this->grid_spacing_m));
+    this->main_street = nullptr;
+    this->rayTracing = new RayTracing(&(this->map_width),&(this->map_height),&(this->px_per_m),&(this->grid_spacing_m));
 
-    this->txGroup = new QGraphicsItemGroup();this->addItem(this->txGroup);
-    this->rxGroup = new QGraphicsItemGroup();this->addItem(this->rxGroup);
+
     this->buildingsGroup = new QGraphicsItemGroup();this->addItem(this->buildingsGroup);
     this->raysGroup = new QGraphicsItemGroup();this->addItem(this->raysGroup);
+
+    this->startBuildLabel = new QGraphicsSimpleTextItem();this->startBuildLabel->setScale(1.5);
+    this->currentBuildLabel = new QGraphicsSimpleTextItem();this->currentBuildLabel->setScale(1.5);
 
     for (int x=0; x<=this->map_width*this->px_per_m; x+=this->px_per_m*this->grid_spacing_m)
     {
@@ -46,22 +50,6 @@ void DrawingScene::setSceneState(SceneState::SceneState state)
     this->scene_state=state;
 }
 
-void DrawingScene::createRX(){
-    this->removeItem(this->rxGroup);
-    this->rxGroup->removeFromGroup(this->rx_item);
-    this->rx_item = new Point("RX");
-    this->rxGroup->addToGroup(this->rx_item);
-    this->addItem(this->rxGroup);
-}
-
-void DrawingScene::addBS()
-{
-    this->tx_item = new Point("TX");
-    this->txGroup->addToGroup(this->tx_item);
-    this->TX_items.append(tx_item);
-}
-
-
 
 void DrawingScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
@@ -71,6 +59,10 @@ void DrawingScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         this->temp_building = new Building(temp_building_rect);
         this->buildingsGroup->addToGroup(temp_building);
         this->scene_state = SceneState::Building;
+
+        this->startBuildLabel->setText("("+QString::number(qRound(eventPoint.x()/this->px_per_m))+","+QString::number(qRound(eventPoint.y()/this->px_per_m))+")");
+        this->startBuildLabel->setPos(eventPoint+QPointF(-62,-18));
+        this->addItem(this->startBuildLabel);
     }
     else if(this->scene_state == SceneState::RX && pointIsAvailable(&eventPoint)){
         this->scene_state = SceneState::Disabled;
@@ -86,8 +78,6 @@ void DrawingScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void DrawingScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     QPointF eventPoint = eventToTheGrid(event);
-
-    this->removeItem(this->buildingsGroup);
     if(this->scene_state == SceneState::Building && this->temp_building){
         QPointF topleft = this->temp_building->rect().topLeft();
         QPointF bottomRight = snapToGrid(&eventPoint);
@@ -97,11 +87,11 @@ void DrawingScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             this->building_list.append(new_building);
             this->buildingsGroup->addToGroup(new_building);
         }
+        this->removeItem(this->startBuildLabel);
         this->buildingsGroup->removeFromGroup(this->temp_building);
         this->temp_building = nullptr;
     }
-    else
-    {
+    else {
         this->scene_state = SceneState::Disabled;
     }
     this->addItem(this->buildingsGroup);
@@ -112,9 +102,13 @@ void DrawingScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     QPointF eventPoint = eventToTheGrid(event);
 
+    this->removeItem(this->currentBuildLabel);
+    this->currentBuildLabel->setText("("+QString::number(qRound(eventPoint.x()/this->px_per_m))+","+QString::number(qRound(eventPoint.y()/this->px_per_m))+")");
+    this->currentBuildLabel->setPos(eventPoint+QPointF(12,-18));
+    this->addItem(this->currentBuildLabel);
+
     if(this->scene_state == SceneState::Building && this->temp_building){
-        QRectF temp_building_rect(this->temp_building->rect().topLeft(),
-                                  snapToGrid(&eventPoint));
+        QRectF temp_building_rect(this->temp_building->rect().topLeft(),snapToGrid(&eventPoint));
         this->temp_building->setRect(temp_building_rect);
     }
     else if(this->scene_state == SceneState::RX && pointIsAvailable(&eventPoint)){
@@ -123,18 +117,38 @@ void DrawingScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     else if(this->scene_state == SceneState::TX && pointIsAvailable(&eventPoint)){
         this->tx_item->setCenter(snapToGrid(&eventPoint,2));
     }
-    draw(); //Comment this for easier debugging
+    draw(); //Comment this for easier debugging (click for update)
 }
 
 void DrawingScene::draw()
 {
-    //this->removeItem(this->buildingsGroup);this->removeItem(this->txGroup);this->removeItem(this->rxGroup);
+    this->removeItem(this->main_street);
+    this->main_street = nullptr;
     this->removeItem(this->raysGroup);
-    for(QGraphicsItem* rayItem:this->raysGroup->childItems()){this->raysGroup->removeFromGroup(rayItem);}
-    if(checkTxRxAreSet()){rayTracing->drawRays(&(this->tx_item->center),&(this->rx_item->center));}
-    for(Ray* ray:this->rayTracing->raysList){this->raysGroup->addToGroup(ray);}
-    //this->addItem(this->buildingsGroup);this->addItem(this->txGroup);this->addItem(this->rxGroup);
-    this->addItem(this->raysGroup);
+    for(QGraphicsItem* rayItem:this->raysGroup->childItems())
+    {
+        this->raysGroup->removeFromGroup(rayItem);
+    }
+    if(this->tx_item && this->tx_item->isSet)
+    {
+        this->rayTracing->findMainStreetQRectF(&(this->tx_item->center), &(this->building_list));
+        if(this->rayTracing->mainStreet)
+        {
+            this->main_street = new QGraphicsRectItem(this->rayTracing->mainStreet->toRect());
+            this->main_street->setBrush(Qt::blue);
+            this->main_street->setOpacity(0.15);
+            this->addItem(this->main_street);
+        }
+        if(this->rx_item && this->rx_item->isSet)
+        {
+            rayTracing->drawRays(&(this->tx_item->center), &(this->rx_item->center), &(this->building_list));
+            for(Ray* ray:this->rayTracing->raysList)
+            {
+                this->raysGroup->addToGroup(ray);
+            }
+            this->addItem(this->raysGroup);
+        }
+    }
 }
 
 bool DrawingScene::checkTxRxAreSet()
@@ -178,14 +192,26 @@ bool DrawingScene::pointIsAvailable(QPointF *point)
     }
     return true;
 }
+void DrawingScene::createRX()
+{
+    this->removeItem(this->rx_item);
+    this->rx_item = new Point("RX");
+    this->addItem(this->rx_item);
+}
+
+void DrawingScene::addBS()
+{
+    this->removeItem(this->tx_item);
+    this->tx_item = new Point("TX");
+    this->addItem(this->tx_item);
+}
 
 void DrawingScene::clearBS()
 {
-    this->removeItem(this->txGroup);
-    for(QGraphicsItem* pointItem:this->txGroup->childItems()){this->txGroup->removeFromGroup(pointItem);}
-    this->TX_items.clear();
+    this->removeItem(this->tx_item);
+    this->removeItem(this->rx_item);
     this->tx_item = nullptr;
-    this->addItem(this->txGroup);
+    this->rx_item = nullptr;
     draw();
 }
 

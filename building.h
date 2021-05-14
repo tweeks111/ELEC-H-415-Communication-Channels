@@ -7,6 +7,7 @@ class Building : public QGraphicsRectItem
 {
 public:
     Building(const QRectF building_rect, QGraphicsItem *parent=nullptr);
+    Building(const QRectF building_rect,int color, QGraphicsItem *parent=nullptr);
     ~Building();
     void setRect(QRectF);
     QList<QPointF>* getCorners();
@@ -14,12 +15,14 @@ public:
     bool isBlockingPath(QLineF* line);
     bool isContainingPoint(QPointF point);
     bool isContainingBuilding(Building* building);
-private:
     QGraphicsSimpleTextItem* building_label;
+private:
     int px_per_m;
     int grid_spacing_m;
     QList<QPointF> corners;
     QList<QLineF> walls;
+    qreal maxScale = 2;
+    void updateLabel(QRectF rect);
 
 };
 

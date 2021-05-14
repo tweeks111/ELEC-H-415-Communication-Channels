@@ -66,7 +66,6 @@ void MainWindow::placeBuilding(bool event)
     SceneState::SceneState state =SceneState::Disabled;
     if(event==true){
         state =SceneState::Building;
-        ui->addBuilding->setChecked(false);
     }
     this->drawing_scene->setSceneState(state);
 }

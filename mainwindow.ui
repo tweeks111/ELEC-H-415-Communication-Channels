@@ -63,8 +63,8 @@
     <bool>false</bool>
    </attribute>
    <addaction name="addBS"/>
-   <addaction name="clearBS"/>
    <addaction name="addRX"/>
+   <addaction name="clearBS"/>
    <addaction name="addBuilding"/>
    <addaction name="clearBuilding"/>
   </widget>

@@ -13,10 +13,13 @@ class RayTracing
 
 public:
     RayTracing();
-    RayTracing(QList<Building*>* building_list, int* map_width, int* map_height, int* px_per_m, int* grid_spacing_m);
-    void drawRays(QPointF* transmitter,QPointF* receiver);
+    RayTracing(int* map_width, int* map_height, int* px_per_m, int* grid_spacing_m);
+    void drawRays(QPointF* tx, QPointF* rx, QList<Building*>* building_list);
+    void findMainStreetQRectF(QPointF* tx, QList<Building*>* building_list);
     qreal power;
     QList<Ray*> raysList;
+    QRectF* mainStreet;
+
 private:
     //Attributs
     int* map_width;

@@ -1,13 +1,16 @@
 #include "raytracing.h"
 
-RayTracing::RayTracing(QList<Building *> *building_list, int* map_width, int* map_height, int* px_per_m, int* grid_spacing_m)
+RayTracing::RayTracing(int* map_width, int* map_height, int* px_per_m, int* grid_spacing_m)
 {
-    this->building_list = building_list;
     this->map_width         = map_width;
     this->map_height        = map_height;
     this->px_per_m          = px_per_m;
     this->grid_spacing_m    = grid_spacing_m;
     this->raysList = QList<Ray*>();
+    this->mainStreet = nullptr;
+    this->transmitter = nullptr;
+    this->receiver = nullptr;
+    this->building_list = nullptr;
 }
 
 
@@ -42,11 +45,12 @@ std::complex<qreal> RayTracing::computeCoef(Ray *ray, QLineF* wall)
     return Tm;
 }
 
-void RayTracing::drawRays(QPointF* transmitter, QPointF* receiver)
+void RayTracing::drawRays(QPointF* tx, QPointF* rx, QList<Building*>* building_list)
 {
+    this->transmitter = tx;
+    this->receiver = rx;
+    this->building_list = building_list;
     this->raysList.clear();
-    this->transmitter = transmitter; // no need ?
-    this->receiver = receiver; //No need ?
     qreal power = 0;
     std::complex<qreal> En=0;
     if(checkTxRxValidity())
@@ -54,13 +58,17 @@ void RayTracing::drawRays(QPointF* transmitter, QPointF* receiver)
         this->counter = 1;
         this->counterMax = 1;
         makeDirectAndGroundReflection();
-        if(this->raysList.isEmpty()) //Add condition for main street and secondary street
-        {
-            makeDiffraction();
+        if(this->mainStreet->contains(*(this->transmitter))){
+            makeWallReflection();
+            qDebug() << "Main Street Computation";
         }
         else
         {
-            makeWallReflection();
+            if(this->raysList.isEmpty()){
+                makeDiffraction();
+                qDebug() << "Main Street Computation NLOS";
+            }
+            qDebug() << "Second Street Computation LOS";
         }
         qDebug() << "Computations" << (this->counter) << "/" << (this->counterMax);
     }
@@ -167,7 +175,6 @@ void RayTracing::makeDiffraction()
 {
     QPen rayPen(QColor(155, 0, 233)); //print the direct ray "- - -"
     rayPen.setWidth(2);
-    bool thereIsDiffraction = false;
     for(Building* building:*building_list){
         for(QPointF corner:*(building->getCorners())){
             this->counterMax ++;
@@ -183,10 +190,53 @@ void RayTracing::makeDiffraction()
                     rayDPtoRX->setPen(rayPen);
                     this->raysList.push_back(rayTXtoDP);
                     this->raysList.push_back(rayDPtoRX);
-                    thereIsDiffraction = true;
                 }
             }
         }
+    }
+}
+
+void RayTracing::findMainStreetQRectF(QPointF* tx, QList<Building*>* building_list)
+{
+    this->transmitter = tx;
+    this->building_list = building_list;
+    if(this->transmitter)
+    {
+        QPointF v_up = QPointF(this->transmitter->x(),*(this->map_height)**(this->px_per_m));
+        QPointF v_down = QPointF(this->transmitter->x(),0);
+        QPointF h_up = QPointF(*(this->map_width)**(this->px_per_m),this->transmitter->y());
+        QPointF h_down = QPointF(0,this->transmitter->y());
+        QLineF v_line = QLineF(v_up,v_down);
+        QLineF h_line = QLineF(h_up,h_down);
+        for(Building* building:*(this->building_list)){
+            for(QLineF wall:*(building->getWalls())){
+                if(wallIsValid(&wall)){
+                    QPointF intersectionPointh;
+                    if(wall.intersects(h_line,&intersectionPointh)==QLineF::BoundedIntersection){//horizontal
+                        if(intersectionPointh.x() >= this->transmitter->x() && intersectionPointh.x() < h_up.x()){
+                            h_up.setX(intersectionPointh.x());
+                        }
+                        else if(intersectionPointh.x() <= this->transmitter->x() && intersectionPointh.x() > h_down.x()){
+                            h_down.setX(intersectionPointh.x());
+                        }
+                    }
+                    QPointF intersectionPointv;
+                    if(wall.intersects(v_line,&intersectionPointv)==QLineF::BoundedIntersection){//vertical
+                        if(intersectionPointv.y() >= this->transmitter->y() && intersectionPointv.y() < v_up.y()){
+                            v_up.setY(intersectionPointv.y());
+                        }
+                        else if(intersectionPointv.y() <= this->transmitter->y() && intersectionPointv.y() > v_down.y()){
+                            v_down.setY(intersectionPointv.y());
+                        }
+                    }
+                }
+            }
+        }
+        this->mainStreet = new QRectF(QPointF(h_down.x(),v_down.y()),QPointF(h_up.x(),v_up.y()));
+    }
+    else
+    {
+        this->mainStreet = nullptr;
     }
 }
 

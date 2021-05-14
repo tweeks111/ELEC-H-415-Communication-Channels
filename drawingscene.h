@@ -30,7 +30,13 @@ public:
     bool pointIsAvailable(QPointF* point);
     void clearBS();
     void clearBuilding();
-
+    QList<Building*> building_list;
+    Point* rx_item;
+    Point* tx_item;
+    int map_width;
+    int map_height;
+    int px_per_m;
+    int grid_spacing_m;
 public slots:
 
 protected:
@@ -43,21 +49,15 @@ protected:
 
     void keyPressEvent(QKeyEvent *event) override;
 private:
-    int map_width;
-    int map_height;
-    int px_per_m;
-    int grid_spacing_m;
-
-    QList<Building*> building_list;
-    QList<QGraphicsEllipseItem*> TX_items;
     Building* temp_building;
-    Point* rx_item;
-    Point* tx_item;
+    Building* temp_MS;//To remove
 
+    QGraphicsRectItem* main_street;
     QGraphicsItemGroup* buildingsGroup;
-    QGraphicsItemGroup* rxGroup;
-    QGraphicsItemGroup* txGroup;
+    QGraphicsSimpleTextItem* startBuildLabel;
+    QGraphicsSimpleTextItem* currentBuildLabel;
     QGraphicsItemGroup* raysGroup;
+
 
     SceneState::SceneState scene_state;
     RayTracing* rayTracing;
