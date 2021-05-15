@@ -1,4 +1,7 @@
 *.pro
 *.user
-*.o
 debug/*
+*.o
+*.pro.user
+*.Debug
+*.Release

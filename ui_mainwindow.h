@@ -62,7 +62,7 @@ public:
         addBuilding->setObjectName(QString::fromUtf8("addBuilding"));
         addBuilding->setCheckable(true);
         QIcon icon2;
-        icon2.addFile(QString::fromUtf8(":/icons/rect_icon.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon2.addFile(QString::fromUtf8("resources/rect_icon.png"), QSize(), QIcon::Normal, QIcon::Off);
         addBuilding->setIcon(icon2);
         clearBS = new QAction(MainWindow);
         clearBS->setObjectName(QString::fromUtf8("clearBS"));
