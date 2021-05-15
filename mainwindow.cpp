@@ -57,12 +57,14 @@ void MainWindow::showEvent(QShowEvent *event)
 
 void MainWindow::placeBS()
 {
+    ui->addBuilding->setChecked(false);
     this->drawing_scene->setSceneState(SceneState::TX);
     this->drawing_scene->addBS();
 }
 
 void MainWindow::placeRX()
 {
+    ui->addBuilding->setChecked(false);
     this->drawing_scene->setSceneState(SceneState::RX);
     this->drawing_scene->createRX();
 }
@@ -78,13 +80,17 @@ void MainWindow::placeBuilding(bool event)
 
 void MainWindow::clearBS()
 {
+    ui->addBuilding->setChecked(false);
     this->drawing_scene->clearBS();
+    this->drawing_scene->setSceneState(SceneState::Disabled);
 }
 
 
 void MainWindow::clearBuilding()
 {
+    ui->addBuilding->setChecked(false);
     this->drawing_scene->clearBuilding();
+    this->drawing_scene->setSceneState(SceneState::Disabled);
 }
 
 void MainWindow::saveProject() {

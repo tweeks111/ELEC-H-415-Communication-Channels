@@ -11,7 +11,7 @@ Building::Building(const QRectF building_rect, QGraphicsItem *parent)
     this->setPen(pen);
     this->px_per_m          = 2;
     this->grid_spacing_m    = 5;
-    this->updateLabel(building_rect);
+    //this->updateLabel(building_rect);
     this->corners.push_back(this->rect().topLeft());this->corners.push_back(this->rect().topRight());this->corners.push_back(this->rect().bottomLeft());this->corners.push_back(this->rect().bottomRight());
     this->walls.push_back(QLineF(this->rect().topLeft(),this->rect().topRight()));this->walls.push_back(QLineF(this->rect().topRight(),this->rect().bottomRight()));this->walls.push_back(QLineF(this->rect().bottomRight(),this->rect().bottomLeft()));this->walls.push_back(QLineF(this->rect().bottomLeft(),this->rect().topLeft()));
     setFlag(QGraphicsItem::ItemIsSelectable);
@@ -81,7 +81,6 @@ void Building::updateLabel(QRectF rect)
     if(scale > this->maxScale){
       scale = this->maxScale;
     }
-    qDebug() << scale;
     this->building_label = new QGraphicsSimpleTextItem();
     this->building_label->setText("dx : "+QString::number(rect.height()*this->px_per_m)+"\ndy : "+QString::number(rect.width()*this->px_per_m));
     this->building_label->setScale(scale);

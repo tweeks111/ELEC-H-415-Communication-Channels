@@ -69,6 +69,7 @@ private:
     QPointF snapToGrid(QPointF *event,int precision=1);
     bool isOnTheGrid(QGraphicsSceneMouseEvent *event);
     QPointF eventToTheGrid(QGraphicsSceneMouseEvent *event);
+    void draw(bool ray = true);
 };
 
 #endif // DRAWINGSCENE_H
