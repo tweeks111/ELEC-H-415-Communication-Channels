@@ -113,8 +113,8 @@ public:
 
         menubar->addAction(menuFile->menuAction());
         toolBar->addAction(addBS);
-        toolBar->addAction(clearBS);
         toolBar->addAction(addRX);
+        toolBar->addAction(clearBS);
         toolBar->addAction(addBuilding);
         toolBar->addAction(clearBuilding);
 
@@ -132,14 +132,14 @@ public:
         addBS->setToolTip(QCoreApplication::translate("MainWindow", "Add base station", nullptr));
 #endif // QT_CONFIG(tooltip)
 
-        clearBS->setText(QCoreApplication::translate("MainWindow", "Clear base station", nullptr));
-#if QT_CONFIG(tooltip)
-        clearBS->setToolTip(QCoreApplication::translate("MainWindow", "Clear base station", nullptr));
-#endif // QT_CONFIG(tooltip)
-
         addRX->setText(QCoreApplication::translate("MainWindow", "Add receiver", nullptr));
 #if QT_CONFIG(tooltip)
         addRX->setToolTip(QCoreApplication::translate("MainWindow", "Add receiver", nullptr));
+#endif // QT_CONFIG(tooltip)
+
+        clearBS->setText(QCoreApplication::translate("MainWindow", "Clear base station", nullptr));
+#if QT_CONFIG(tooltip)
+        clearBS->setToolTip(QCoreApplication::translate("MainWindow", "Clear base station", nullptr));
 #endif // QT_CONFIG(tooltip)
 
         addBuilding->setText(QCoreApplication::translate("MainWindow", "Add building", nullptr));

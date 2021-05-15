@@ -58,7 +58,7 @@ void RayTracing::drawRays(QPointF* tx, QPointF* rx, QList<Building*>* building_l
         this->counter = 1;
         this->counterMax = 1;
         makeDirectAndGroundReflection();
-        if(this->mainStreet->contains(*(this->transmitter))){
+        if(this->mainStreet->contains(*(this->receiver))){
             makeWallReflection();
             qDebug() << "Main Street Computation";
         }

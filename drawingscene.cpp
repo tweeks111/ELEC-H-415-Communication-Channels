@@ -77,6 +77,7 @@ void DrawingScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void DrawingScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
+    this->removeItem(this->buildingsGroup);
     QPointF eventPoint = eventToTheGrid(event);
     if(this->scene_state == SceneState::Building && this->temp_building){
         QPointF topleft = this->temp_building->rect().topLeft();
@@ -89,6 +90,7 @@ void DrawingScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         }
         this->removeItem(this->startBuildLabel);
         this->buildingsGroup->removeFromGroup(this->temp_building);
+        this->addItem(this->buildingsGroup);
         this->temp_building = nullptr;
     }
     else {
@@ -218,7 +220,7 @@ void DrawingScene::clearBS()
 void DrawingScene::clearBuilding()
 {
     this->removeItem(this->buildingsGroup);
-    for(QGraphicsItem* building:this->buildingsGroup->childItems()){this->buildingsGroup->removeFromGroup(building);}
+    this->buildingsGroup = new QGraphicsItemGroup();
     this->building_list.clear();
     this->addItem(this->buildingsGroup);
     draw();
