@@ -127,7 +127,7 @@ void RayTracing::makeWallReflection(QList<QPointF> mirrorPoints,QList<QLineF*> w
                             QLineF* currentWall = tempWalls.value(tempWalls.size()-(i+1));
                             QLineF lineLIPtoMP(lastIntersectionPoint,tempMirrorPoints.value(n_mirror-(i+1)));
                             QPointF intersectionPoint;
-                            if(currentWall->intersects(lineLIPtoMP,&intersectionPoint)==QLineF::BoundedIntersection){//Is there a intersection on the wall ?
+                            if(currentWall->intersects(lineLIPtoMP,&intersectionPoint)==QLineF::BoundedIntersection && intersectionPoint != lastIntersectionPoint){//Is there a intersection on the wall ?
                                 lineLIPtoIP = QLineF(lastIntersectionPoint,intersectionPoint);
                                 if(!lineIsBlocked(&lineLIPtoIP)){//Is there no other wall blocking the ray ?
                                     Ray* ray = new Ray(lineLIPtoIP);
@@ -277,13 +277,13 @@ void RayTracing::findMainStreetQRectF(QPointF* tx, QList<Building*>* building_li
 
 bool RayTracing::wallIsValid(QLineF* wall)
 {
-    return !((wall->dx() == 0 && (wall->x1() == 0 || wall->x1() == *(this->map_width))) || (wall->dy() == 0 && (wall->y1() == 0 || wall->y1() == *(this->map_height))));
+    return !((wall->dx() == 0 && (wall->x1() == 0 || wall->x1() == *(this->map_width)**(this->px_per_m))) || (wall->dy() == 0 && (wall->y1() == 0 || wall->y1() == *(this->map_height)**(this->px_per_m))));
 
 }
 
 bool RayTracing::cornerIsValid(QPointF* corner)
 {
-    return !((corner->x() == 0 || corner->x() == *(this->map_width)) || (corner->y() == 0 || corner->y() == *(this->map_height)));
+    return !((corner->x() == 0 || corner->x() == *(this->map_width)**(this->px_per_m)) || (corner->y() == 0 || corner->y() == *(this->map_height)**(this->px_per_m)));
 
 }
 
