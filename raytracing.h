@@ -30,8 +30,10 @@ private:
     QPointF* transmitter;
     QPointF* receiver;
 
-    int counter;
-    int counterMax;
+    int counterRefl;
+    int counterDiff;
+    int counterReflMax;
+    int counterDiffMax;
     int maxReflection = 3;
 
     float pi = 3.14159;

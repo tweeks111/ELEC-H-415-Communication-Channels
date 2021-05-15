@@ -73,11 +73,14 @@ void MainWindow::placeBuilding(bool event)
 void MainWindow::clearBS()
 {
     this->drawing_scene->clearBS();
+    this->drawing_scene->setSceneState(SceneState::Disabled);
 }
 
 
 void MainWindow::clearBuilding()
 {
     this->drawing_scene->clearBuilding();
+    this->drawing_scene->setSceneState(SceneState::Disabled);
+    ui->addBuilding->setChecked(false);
 }
 

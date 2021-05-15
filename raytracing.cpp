@@ -55,22 +55,27 @@ void RayTracing::drawRays(QPointF* tx, QPointF* rx, QList<Building*>* building_l
     std::complex<qreal> En=0;
     if(checkTxRxValidity())
     {
-        this->counter = 1;
-        this->counterMax = 1;
+        this->counterRefl = 0;
+        this->counterDiff = 0;
+        this->counterReflMax = 0;
+        this->counterDiffMax = 0;
         makeDirectAndGroundReflection();
         if(this->mainStreet->contains(*(this->receiver))){
             makeWallReflection();
             qDebug() << "Main Street Computation";
+            qDebug() << "Reflexions " << (this->counterRefl) << "/" << (this->counterReflMax);
         }
         else
         {
             if(this->raysList.isEmpty()){
                 makeDiffraction();
-                qDebug() << "Main Street Computation NLOS";
+                qDebug() << "Second Street Computation NLOS";
+                qDebug() << "Diffraction " << (this->counterDiff) << "/" << (this->counterDiffMax);
             }
+            else {
             qDebug() << "Second Street Computation LOS";
-        }
-        qDebug() << "Computations" << (this->counter) << "/" << (this->counterMax);
+            }
+        }     
     }
 }
 
@@ -96,9 +101,9 @@ void RayTracing::makeWallReflection(QList<QPointF> mirrorPoints,QList<QLineF*> w
         for(QLineF wall:*(building->getWalls())){
             if((walls.isEmpty() || wall!=*(walls.last())))
             {
-                this->counterMax ++;
+                this->counterReflMax ++;
                 if(wallIsValid(&wall)){
-                    this->counter ++;
+                    this->counterRefl ++;
                     //Compute the new mirror pt based on the last one (tx pos for the 1st reflection)
                     QList<QLineF*> tempWalls = walls;
                     tempWalls.push_back(&wall);
@@ -177,10 +182,10 @@ void RayTracing::makeDiffraction()
     rayPen.setWidth(2);
     for(Building* building:*building_list){
         for(QPointF corner:*(building->getCorners())){
-            this->counterMax ++;
+            this->counterDiffMax ++;
             if(cornerIsValid(&corner))
             {
-                this->counter ++;
+                this->counterDiff ++;
                 QLineF lineTXtoEP(*(transmitter),corner);
                 QLineF lineEPtoRX(corner,*(receiver));
                 if(!lineIsBlocked(&lineTXtoEP) && !lineIsBlocked(&lineEPtoRX) && (lineTXtoEP.angleTo(lineEPtoRX)<=90 || lineTXtoEP.angleTo(lineEPtoRX)>=270)){
@@ -209,24 +214,54 @@ void RayTracing::findMainStreetQRectF(QPointF* tx, QList<Building*>* building_li
         QLineF v_line = QLineF(v_up,v_down);
         QLineF h_line = QLineF(h_up,h_down);
         for(Building* building:*(this->building_list)){
+            if(building->isContainingPoint(*(this->transmitter))){
+                this->mainStreet = nullptr;
+                return;
+            }
             for(QLineF wall:*(building->getWalls())){
                 if(wallIsValid(&wall)){
                     QPointF intersectionPointh;
                     if(wall.intersects(h_line,&intersectionPointh)==QLineF::BoundedIntersection){//horizontal
-                        if(intersectionPointh.x() >= this->transmitter->x() && intersectionPointh.x() < h_up.x()){
-                            h_up.setX(intersectionPointh.x());
+                        if(intersectionPointh.x() == this->transmitter->x())
+                        {
+                            if(building->isContainingPoint(intersectionPointh+QPointF(2,0)) && intersectionPointh.x() < h_up.x()){
+                                h_up.setX(intersectionPointh.x());
+                            }
+                            if(building->isContainingPoint(intersectionPointh+QPointF(-2,0)) && intersectionPointh.x() > h_down.x()){
+                                h_down.setX(intersectionPointh.x());
+                            }
                         }
-                        else if(intersectionPointh.x() <= this->transmitter->x() && intersectionPointh.x() > h_down.x()){
-                            h_down.setX(intersectionPointh.x());
+                        if(intersectionPointh.x() > this->transmitter->x() && intersectionPointh.x() < h_up.x()){//up inter
+                            if(building->isContainingPoint(intersectionPointh + QPointF(2,0))){
+                                h_up.setX(intersectionPointh.x());
+                            }
+                        }
+                        else if(intersectionPointh.x() < this->transmitter->x() && intersectionPointh.x() > h_down.x()){//down inter
+                            if(building->isContainingPoint(intersectionPointh + QPointF(-2,0))){
+                                h_down.setX(intersectionPointh.x());
+                            }
                         }
                     }
                     QPointF intersectionPointv;
                     if(wall.intersects(v_line,&intersectionPointv)==QLineF::BoundedIntersection){//vertical
-                        if(intersectionPointv.y() >= this->transmitter->y() && intersectionPointv.y() < v_up.y()){
-                            v_up.setY(intersectionPointv.y());
+                        if(intersectionPointv.y() == this->transmitter->y())
+                        {
+                            if(building->isContainingPoint(intersectionPointv+QPointF(0,2)) && intersectionPointv.y() < v_up.y()){
+                                v_up.setY(intersectionPointv.y());
+                            }
+                            if(building->isContainingPoint(intersectionPointv+QPointF(0,-2)) && intersectionPointv.y() > v_down.y()){
+                                v_down.setY(intersectionPointv.y());
+                            }
                         }
-                        else if(intersectionPointv.y() <= this->transmitter->y() && intersectionPointv.y() > v_down.y()){
-                            v_down.setY(intersectionPointv.y());
+                        if(intersectionPointv.y() > this->transmitter->y() && intersectionPointv.y() < v_up.y()){//up inter
+                            if(building->isContainingPoint(intersectionPointv + QPointF(0,2))){
+                                v_up.setY(intersectionPointv.y());
+                            }
+                        }
+                        else if(intersectionPointv.y() < this->transmitter->y() && intersectionPointv.y() > v_down.y()){//down inter
+                            if(building->isContainingPoint(intersectionPointv + QPointF(0,-2))){
+                                v_down.setY(intersectionPointv.y());
+                            }
                         }
                     }
                 }
@@ -258,9 +293,7 @@ bool RayTracing::checkTxRxValidity()
     {
         for(Building* building:*(this->building_list))
         {
-            if(building->isContainingPoint(*(this->transmitter)) || building->isContainingPoint(*(this->transmitter)))
-            {return false;}
-            if(building->isContainingPoint(*(this->transmitter)) || building->isContainingPoint(*(this->transmitter)))
+            if(building->isContainingPoint(*(this->transmitter)) || building->isContainingPoint(*(this->receiver)))
             {return false;}
         }
         return true;

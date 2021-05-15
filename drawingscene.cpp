@@ -60,9 +60,8 @@ void DrawingScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         this->buildingsGroup->addToGroup(temp_building);
         this->scene_state = SceneState::Building;
 
-        this->startBuildLabel->setText("("+QString::number(qRound(eventPoint.x()/this->px_per_m))+","+QString::number(qRound(eventPoint.y()/this->px_per_m))+")");
-        this->startBuildLabel->setPos(eventPoint+QPointF(-62,-18));
-        this->addItem(this->startBuildLabel);
+        this->startBuildLabel->setText("("+QString::number(qRound(snapToGrid(&eventPoint).x()/this->px_per_m))+","+QString::number(qRound(snapToGrid(&eventPoint).y()/this->px_per_m))+")");
+        this->startBuildLabel->setPos(eventPoint+QPointF(12,-20));
     }
     else if(this->scene_state == SceneState::RX && pointIsAvailable(&eventPoint)){
         this->scene_state = SceneState::Disabled;
@@ -102,12 +101,10 @@ void DrawingScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void DrawingScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    QPointF eventPoint = eventToTheGrid(event);
+    QPointF eventPoint = eventToTheGrid(event);  
 
-    this->removeItem(this->currentBuildLabel);
-    this->currentBuildLabel->setText("("+QString::number(qRound(eventPoint.x()/this->px_per_m))+","+QString::number(qRound(eventPoint.y()/this->px_per_m))+")");
-    this->currentBuildLabel->setPos(eventPoint+QPointF(12,-18));
-    this->addItem(this->currentBuildLabel);
+    this->currentBuildLabel->setText("("+QString::number(qRound(snapToGrid(&eventPoint).x()/this->px_per_m))+","+QString::number(qRound(snapToGrid(&eventPoint).y()/this->px_per_m))+")");
+    this->currentBuildLabel->setPos(eventPoint+QPointF(12,-20));
 
     if(this->scene_state == SceneState::Building && this->temp_building){
         QRectF temp_building_rect(this->temp_building->rect().topLeft(),snapToGrid(&eventPoint));
@@ -120,6 +117,8 @@ void DrawingScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         this->tx_item->setCenter(snapToGrid(&eventPoint,2));
     }
     draw(); //Comment this for easier debugging (click for update)
+
+
 }
 
 void DrawingScene::draw()
@@ -130,7 +129,7 @@ void DrawingScene::draw()
     for(QGraphicsItem* rayItem:this->raysGroup->childItems())
     {
         this->raysGroup->removeFromGroup(rayItem);
-    }
+    }    
     if(this->tx_item && this->tx_item->isSet)
     {
         this->rayTracing->findMainStreetQRectF(&(this->tx_item->center), &(this->building_list));
@@ -141,16 +140,33 @@ void DrawingScene::draw()
             this->main_street->setOpacity(0.15);
             this->addItem(this->main_street);
         }
-        if(this->rx_item && this->rx_item->isSet)
-        {
-            rayTracing->drawRays(&(this->tx_item->center), &(this->rx_item->center), &(this->building_list));
-            for(Ray* ray:this->rayTracing->raysList)
-            {
-                this->raysGroup->addToGroup(ray);
-            }
-            this->addItem(this->raysGroup);
-        }
     }
+    this->removeItem(this->buildingsGroup);
+    this->buildingsGroup = new QGraphicsItemGroup();
+    if(this->temp_building)
+    {
+        this->buildingsGroup->addToGroup(this->temp_building);
+    }
+    for(Building* building:this->building_list)
+    {
+        this->buildingsGroup->addToGroup(building);
+    }
+    this->addItem(this->buildingsGroup);
+
+    if(this->tx_item && this->tx_item->isSet && this->rx_item && this->rx_item->isSet)
+    {
+        rayTracing->drawRays(&(this->tx_item->center), &(this->rx_item->center), &(this->building_list));
+        for(Ray* ray:this->rayTracing->raysList)
+        {
+            this->raysGroup->addToGroup(ray);
+        }
+        this->addItem(this->raysGroup);
+    }
+
+    if(this->startBuildLabel){this->removeItem(this->startBuildLabel);}
+    this->addItem(this->startBuildLabel);
+    if(this->currentBuildLabel){this->removeItem(this->currentBuildLabel);}
+    this->addItem(this->currentBuildLabel);
 }
 
 bool DrawingScene::checkTxRxAreSet()
@@ -171,16 +187,12 @@ bool DrawingScene::isOnTheGrid(QGraphicsSceneMouseEvent *event)
 
 QPointF DrawingScene::eventToTheGrid(QGraphicsSceneMouseEvent *event)
 {
-    QPointF eventGridPoint;
-    if(isOnTheGrid(event)){
-        eventGridPoint = QPointF(event->scenePos());
-    }
-    else
+    QPointF eventGridPoint = QPointF(event->scenePos());
     {
-        if(event->scenePos().x() <0){eventGridPoint = QPointF(0,event->scenePos().y());}
-        else if(event->scenePos().x() > this->map_width*this->px_per_m){eventGridPoint = QPointF(this->map_width*this->px_per_m,event->scenePos().y());}
-        if(event->scenePos().y() <0){eventGridPoint = QPointF(event->scenePos().x(),0);}
-        else if(event->scenePos().y() > this->map_height*this->px_per_m){eventGridPoint = QPointF(event->scenePos().x(),this->map_height*this->px_per_m);}
+        if(event->scenePos().x() <0){eventGridPoint.setX(0);}
+        else if(event->scenePos().x() > this->map_width*this->px_per_m){eventGridPoint.setX(this->map_width*this->px_per_m);}
+        if(event->scenePos().y() <0){eventGridPoint.setY(0);;}
+        else if(event->scenePos().y() > this->map_height*this->px_per_m){eventGridPoint.setY(this->map_height*this->px_per_m);}
     }
     return eventGridPoint;
 }
