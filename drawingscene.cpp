@@ -226,6 +226,28 @@ void DrawingScene::clearBuilding()
     draw();
 }
 
+Point DrawingScene::getSceneTX()
+{
+    return this->tx_item;
+}
+
+Point DrawingScene::getSceneRX()
+{
+    return this->rx_item;
+}
+
+QList<int> DrawingScene::getMapDim()
+{
+    return QList<int>(this->map_width, this->map_height);
+}
+
+QList<Building *> DrawingScene::getSceneBuildingList()
+{
+    return this->building_list;
+}
+
+
+
 void DrawingScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event);

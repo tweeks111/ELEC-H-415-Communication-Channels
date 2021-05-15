@@ -28,9 +28,11 @@ class Ui_MainWindow
 public:
     QAction *addBS;
     QAction *addRX;
-    QAction *clearBS;
     QAction *addBuilding;
+    QAction *clearBS;
     QAction *clearBuilding;
+    QAction *open;
+    QAction *save;
     QWidget *centralwidget;
     QGridLayout *gridLayout;
     QHBoxLayout *horizontalLayout;
@@ -46,38 +48,36 @@ public:
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
         MainWindow->resize(802, 622);
-
         addBS = new QAction(MainWindow);
         addBS->setObjectName(QString::fromUtf8("addBS"));
         QIcon icon;
         icon.addFile(QString::fromUtf8(":/icons/TX_icon"), QSize(), QIcon::Normal, QIcon::Off);
         addBS->setIcon(icon);
-
-        clearBS = new QAction(MainWindow);
-        clearBS->setObjectName(QString::fromUtf8("clearBS"));
-        QIcon icon1;
-        icon1.addFile(QString::fromUtf8(":/icons/clearTX_icon.png"), QSize(), QIcon::Normal, QIcon::Off);
-        clearBS->setIcon(icon1);
-
         addRX = new QAction(MainWindow);
         addRX->setObjectName(QString::fromUtf8("addRX"));
-        QIcon icon2;
-        icon2.addFile(QString::fromUtf8(":/icons/RX_icon"), QSize(), QIcon::Normal, QIcon::Off);
-        addRX->setIcon(icon2);
-
+        QIcon icon1;
+        icon1.addFile(QString::fromUtf8(":/icons/RX_icon"), QSize(), QIcon::Normal, QIcon::Off);
+        addRX->setIcon(icon1);
         addBuilding = new QAction(MainWindow);
         addBuilding->setObjectName(QString::fromUtf8("addBuilding"));
         addBuilding->setCheckable(true);
+        QIcon icon2;
+        icon2.addFile(QString::fromUtf8("resources/rect_icon.png"), QSize(), QIcon::Normal, QIcon::Off);
+        addBuilding->setIcon(icon2);
+        clearBS = new QAction(MainWindow);
+        clearBS->setObjectName(QString::fromUtf8("clearBS"));
         QIcon icon3;
-        icon3.addFile(QString::fromUtf8(":/icons/rect_icon.png"), QSize(), QIcon::Normal, QIcon::Off);
-        addBuilding->setIcon(icon3);
-
+        icon3.addFile(QString::fromUtf8(":/icons/clearTX_icon.png"), QSize(), QIcon::Normal, QIcon::Off);
+        clearBS->setIcon(icon3);
         clearBuilding = new QAction(MainWindow);
-        clearBuilding->setObjectName(QString::fromUtf8("clear building"));
+        clearBuilding->setObjectName(QString::fromUtf8("clearBuilding"));
         QIcon icon4;
         icon4.addFile(QString::fromUtf8(":/icons/clearRect_icon.png"), QSize(), QIcon::Normal, QIcon::Off);
         clearBuilding->setIcon(icon4);
-
+        open = new QAction(MainWindow);
+        open->setObjectName(QString::fromUtf8("open"));
+        save = new QAction(MainWindow);
+        save->setObjectName(QString::fromUtf8("save"));
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         gridLayout = new QGridLayout(centralwidget);
@@ -96,6 +96,7 @@ public:
 
         horizontalLayout->addWidget(widget);
 
+
         gridLayout->addLayout(horizontalLayout, 0, 0, 1, 1);
 
         MainWindow->setCentralWidget(centralwidget);
@@ -112,6 +113,8 @@ public:
         MainWindow->addToolBar(Qt::TopToolBarArea, toolBar);
 
         menubar->addAction(menuFile->menuAction());
+        menuFile->addAction(open);
+        menuFile->addAction(save);
         toolBar->addAction(addBS);
         toolBar->addAction(addRX);
         toolBar->addAction(clearBS);
@@ -126,33 +129,28 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
-
         addBS->setText(QCoreApplication::translate("MainWindow", "Add base station", nullptr));
 #if QT_CONFIG(tooltip)
         addBS->setToolTip(QCoreApplication::translate("MainWindow", "Add base station", nullptr));
 #endif // QT_CONFIG(tooltip)
-
         addRX->setText(QCoreApplication::translate("MainWindow", "Add receiver", nullptr));
 #if QT_CONFIG(tooltip)
         addRX->setToolTip(QCoreApplication::translate("MainWindow", "Add receiver", nullptr));
 #endif // QT_CONFIG(tooltip)
-
+        addBuilding->setText(QCoreApplication::translate("MainWindow", "Add Building", nullptr));
+#if QT_CONFIG(tooltip)
+        addBuilding->setToolTip(QCoreApplication::translate("MainWindow", "Add Building", nullptr));
+#endif // QT_CONFIG(tooltip)
         clearBS->setText(QCoreApplication::translate("MainWindow", "Clear base station", nullptr));
 #if QT_CONFIG(tooltip)
         clearBS->setToolTip(QCoreApplication::translate("MainWindow", "Clear base station", nullptr));
 #endif // QT_CONFIG(tooltip)
-
-        addBuilding->setText(QCoreApplication::translate("MainWindow", "Add building", nullptr));
-#if QT_CONFIG(tooltip)
-        addBuilding->setToolTip(QCoreApplication::translate("MainWindow", "Add building", nullptr));
-#endif // QT_CONFIG(tooltip)
-
         clearBuilding->setText(QCoreApplication::translate("MainWindow", "Clear building", nullptr));
 #if QT_CONFIG(tooltip)
         clearBuilding->setToolTip(QCoreApplication::translate("MainWindow", "Clear building", nullptr));
 #endif // QT_CONFIG(tooltip)
-
-
+        open->setText(QCoreApplication::translate("MainWindow", "Open project...", nullptr));
+        save->setText(QCoreApplication::translate("MainWindow", "Save project...", nullptr));
         menuFile->setTitle(QCoreApplication::translate("MainWindow", "File", nullptr));
         toolBar->setWindowTitle(QCoreApplication::translate("MainWindow", "toolBar", nullptr));
     } // retranslateUi

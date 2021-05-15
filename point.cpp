@@ -60,3 +60,5 @@ void Point::hoverLeaveEvent(QGraphicsSceneHoverEvent *event){
     setPen(pen);
     QGraphicsEllipseItem::hoverLeaveEvent(event);
 }
+
+

@@ -24,6 +24,9 @@ private:
     qreal maxScale = 2;
     void updateLabel(QRectF rect);
 
+    // Operator overloaded to write objects from this class into a files
+    friend QDataStream &operator>>(QDataStream &in, Building *&o);
+    friend QDataStream &operator<<(QDataStream &out, Building *o);
 };
 
 

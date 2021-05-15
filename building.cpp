@@ -14,6 +14,7 @@ Building::Building(const QRectF building_rect, QGraphicsItem *parent)
     this->updateLabel(building_rect);
     this->corners.push_back(this->rect().topLeft());this->corners.push_back(this->rect().topRight());this->corners.push_back(this->rect().bottomLeft());this->corners.push_back(this->rect().bottomRight());
     this->walls.push_back(QLineF(this->rect().topLeft(),this->rect().topRight()));this->walls.push_back(QLineF(this->rect().topRight(),this->rect().bottomRight()));this->walls.push_back(QLineF(this->rect().bottomRight(),this->rect().bottomLeft()));this->walls.push_back(QLineF(this->rect().bottomLeft(),this->rect().topLeft()));
+    setFlag(QGraphicsItem::ItemIsSelectable);
 }
 
 Building::~Building()
@@ -85,4 +86,25 @@ void Building::updateLabel(QRectF rect)
     this->building_label->setText("dx : "+QString::number(rect.height()*this->px_per_m)+"\ndy : "+QString::number(rect.width()*this->px_per_m));
     this->building_label->setScale(scale);
     this->building_label->setPos(rect.center());
+}
+
+QDataStream &operator>>(QDataStream &in, Building *&o) {
+    QPointF pos;
+    QRectF rect;
+
+    in >> pos;
+    in >> rect;
+
+    // Initialize the object (don't compute transfer data)
+    o = new Building(rect);
+    o->setPos(pos);
+
+    return in;
+}
+
+QDataStream &operator<<(QDataStream &out, Building *o) {
+    out << o->pos();
+    out << o->rect();
+
+    return out;
 }

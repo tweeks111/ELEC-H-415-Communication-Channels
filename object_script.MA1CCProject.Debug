@@ -5,7 +5,7 @@ debug/main.o
 debug/mainwindow.o
 debug/point.o
 debug/ray.o
-debug/wall.o
+debug/raytracing.o
 debug/qrc_res.o
 debug/moc_drawingscene.o
 debug/moc_drawingview.o

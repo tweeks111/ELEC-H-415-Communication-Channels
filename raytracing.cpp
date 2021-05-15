@@ -38,6 +38,7 @@ std::complex<qreal> RayTracing::computeCoef(Ray *ray, QLineF* wall)
     qreal incAngleRad=angle*pi/180;    // incAngle is in degrees => rad
     qreal tranAngle = asin(sqrt(1/relPermittivity)*sin(incAngleRad));
     qreal s = thickness/(100*cos(tranAngle));  // thickness is in cm => /100
+
     std::complex<qreal> R = ((Z*cos(incAngleRad)-Z0*cos(tranAngle))/(Z*cos(incAngleRad)+Z0*cos(tranAngle)));
     std::complex<qreal> a = -gammam*s;   //(0,-betam*s);
     std::complex<qreal> b(0,beta0*2*s*sin(incAngleRad)*sin(tranAngle));

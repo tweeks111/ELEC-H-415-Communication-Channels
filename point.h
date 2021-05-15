@@ -19,6 +19,7 @@ protected:
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 private:
     QColor pointColor;
+    bool isMoving;
 
 };
 

@@ -37,6 +37,11 @@ public:
     int map_height;
     int px_per_m;
     int grid_spacing_m;
+    QList<Building*> getSceneBuildingList();
+    Point getSceneTX();
+    Point getSceneRX();
+    QList<int> getMapDim();
+    void draw();
 public slots:
 
 protected:
@@ -58,14 +63,12 @@ private:
     QGraphicsSimpleTextItem* currentBuildLabel;
     QGraphicsItemGroup* raysGroup;
 
-
     SceneState::SceneState scene_state;
     RayTracing* rayTracing;
     bool checkTxRxAreSet();
     QPointF snapToGrid(QPointF *event,int precision=1);
     bool isOnTheGrid(QGraphicsSceneMouseEvent *event);
     QPointF eventToTheGrid(QGraphicsSceneMouseEvent *event);
-    void draw();
 };
 
 #endif // DRAWINGSCENE_H

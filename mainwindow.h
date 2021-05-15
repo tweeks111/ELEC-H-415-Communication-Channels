@@ -28,8 +28,15 @@ private slots:
     void placeBuilding(bool);
     void clearBS();
     void clearBuilding();
+    void saveProject();
+    void openProject();
 private:
     Ui::MainWindow *ui;
     DrawingScene *drawing_scene;
+    void saveProjectDataToFile(QString filename);
+
+    void openProjectDataFile(QString filename);
 };
+
+
 #endif // MAINWINDOW_H
