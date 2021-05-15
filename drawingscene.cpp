@@ -105,7 +105,7 @@ void DrawingScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     QPointF eventPoint = eventToTheGrid(event);
     bool ray = true;
 
-    this->currentBuildLabel->setText("("+QString::number(qRound(snapToGrid(&eventPoint).x()/this->px_per_m))+","+QString::number(qRound(snapToGrid(&eventPoint).y()/this->px_per_m))+")");
+    this->currentBuildLabel->setText("("+QString::number(snapToGrid(&eventPoint,2).x()/this->px_per_m)+","+QString::number(snapToGrid(&eventPoint,2).y()/this->px_per_m)+")");
     this->currentBuildLabel->setPos(eventPoint+QPointF(12,-20));
 
     if(this->scene_state == SceneState::Building){
@@ -114,6 +114,9 @@ void DrawingScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             QRectF temp_building_rect(this->temp_building->rect().topLeft(),snapToGrid(&eventPoint));
             this->temp_building->setRect(temp_building_rect);
         }
+        this->currentBuildLabel->setText("("+QString::number(snapToGrid(&eventPoint).x()/this->px_per_m)+","+QString::number(snapToGrid(&eventPoint).y()/this->px_per_m)+")");
+        this->currentBuildLabel->setPos(eventPoint+QPointF(12,-20));
+
     }
     else if(this->scene_state == SceneState::RX && pointIsAvailable(&eventPoint)){
         this->rx_item->setCenter(snapToGrid(&eventPoint,2));
