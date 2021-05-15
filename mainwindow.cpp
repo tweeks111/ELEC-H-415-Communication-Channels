@@ -131,9 +131,7 @@ void MainWindow::saveProjectDataToFile(QString filename) {
 
     // ----- Scene ----- //
     // Map dimensions
-    qDebug()<< 'save';
     out << this->drawing_scene->getMapDim();
-    qDebug() << this->drawing_scene->getMapDim();
     // Buildings
     out << this->drawing_scene->getSceneBuildingList();
 
@@ -193,18 +191,16 @@ void MainWindow::openProjectDataFile(QString filename) {
                     "The file you are trying to open appears not to be a compatible project file.");
         return;
     }
-    qDebug() << "open";
     // ----- Base images ----- //
     // Map dimensions
     in >> map_dim;
-    qDebug() << map_dim;
     // ----- Pasted items ----- //
     in >> building_list;
-    qDebug() << building_list;
     // Add the new items to the scene
+    this->drawing_scene->building_list.clear();
     foreach (Building *building, building_list) {
        this->drawing_scene->building_list.append(building);
-       this->drawing_scene->draw();
+       this->drawing_scene->draw(false);
     }
 
 }

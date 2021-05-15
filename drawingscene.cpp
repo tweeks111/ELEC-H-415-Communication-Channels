@@ -265,7 +265,10 @@ Point DrawingScene::getSceneRX()
 
 QList<int> DrawingScene::getMapDim()
 {
-    return QList<int>(this->map_width, this->map_height);
+    QList<int> list;
+    list.append(this->map_width);
+    list.append(this->map_height);
+    return list;
 }
 
 QList<Building *> DrawingScene::getSceneBuildingList()
