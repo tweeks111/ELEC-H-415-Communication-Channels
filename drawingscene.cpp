@@ -28,6 +28,7 @@ DrawingScene::DrawingScene(QObject *parent)
 
     this->startBuildLabel = nullptr;
     this->currentBuildLabel = new QGraphicsSimpleTextItem();this->currentBuildLabel->setScale(1.5);
+    this->power_label = new QGraphicsSimpleTextItem();this->power_label->setScale(1.5);
     this->addItem(currentBuildLabel);
 
     for (int x=0; x<=this->map_width*this->px_per_m; x+=this->px_per_m*this->grid_spacing_m)
@@ -180,7 +181,14 @@ void DrawingScene::draw(bool ray)
 
     //BS
     if(this->tx_item){this->removeItem(this->tx_item);this->addItem(this->tx_item);}
-    if(this->rx_item){this->removeItem(this->rx_item);this->addItem(this->rx_item);}
+    if(this->rx_item){
+        this->removeItem(this->rx_item);
+        this->addItem(this->rx_item);
+        this->removeItem(this->power_label);
+        this->power_label->setText(QString::number(qRound(this->rayTracing->received_power_dbm))+" dBm");
+        this->power_label->setPos(this->rx_item->pos()+QPointF(10,0));
+        this->addItem(this->power_label);
+    }
 
     //Labels
     if(this->startBuildLabel){this->removeItem(this->startBuildLabel);this->addItem(this->startBuildLabel);}

@@ -62,6 +62,7 @@ private:
     QGraphicsSimpleTextItem* startBuildLabel;
     QGraphicsSimpleTextItem* currentBuildLabel;
     QGraphicsItemGroup* raysGroup;
+    QGraphicsSimpleTextItem* power_label;
 
     SceneState::SceneState scene_state;
     RayTracing* rayTracing;
