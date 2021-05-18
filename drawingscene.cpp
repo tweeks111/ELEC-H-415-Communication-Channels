@@ -23,6 +23,8 @@ DrawingScene::DrawingScene(QObject *parent)
     this->buildingsGroup = nullptr;
     this->raysGroup = nullptr;
 
+    this->rayTracing = new RayTracing(&(this->map_width),&(this->map_width),&(this->px_per_m),&(this->grid_spacing_m));
+
     this->updateMapSize(this->map_width, this->map_height);
 
     this->startBuildLabel = nullptr;
@@ -118,8 +120,6 @@ void DrawingScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         ray = false;
     }
     draw(ray); //Comment this for easier debugging (click for update)
-
-
 }
 
 void DrawingScene::draw(bool ray)
@@ -234,7 +234,7 @@ void DrawingScene::updateMapSize(int width, int height)
     }
 
     this->setSceneRect(QRectF(0,0,this->map_width*this->px_per_m,this->map_height*this->px_per_m));
-    this->rayTracing = new RayTracing(&width,&height,&(this->px_per_m),&(this->grid_spacing_m));
+    this->rayTracing->setMapDim(width, height);
 }
 
 

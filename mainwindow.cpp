@@ -108,7 +108,7 @@ void MainWindow::updateMapSize()
     ui->widthLabel->setText(QString::number(map_width)+'m');
     ui->heightLabel->setText(QString::number(map_height)+'m');
     this->drawing_scene->updateMapSize(map_width, map_height);
-    ui->graphicsView->fitInView(this->drawing_scene->itemsBoundingRect(), Qt::KeepAspectRatio);
+    ui->graphicsView->fitInView(this->drawing_scene->sceneRect(), Qt::KeepAspectRatio);
 }
 
 void MainWindow::saveProject() {
