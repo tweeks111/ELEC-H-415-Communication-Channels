@@ -34,8 +34,11 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->clearBS, SIGNAL(triggered(bool)), this, SLOT(clearBS()));
     connect(ui->addBuilding, SIGNAL(toggled(bool)), this, SLOT(placeBuilding(bool)));
     connect(ui->clearBuilding, SIGNAL(triggered(bool)), this, SLOT(clearBuilding()));
+    connect(ui->actionRun, SIGNAL(triggered(bool)), this, SLOT(runSimulation()));
     connect(ui->open, SIGNAL(triggered(bool)), this, SLOT(openProject()));
     connect(ui->save, SIGNAL(triggered(bool)), this, SLOT(saveProject()));
+    connect(ui->widthSlider, SIGNAL(valueChanged(int)), this, SLOT(updateMapSize()));
+    connect(ui->heightSlider, SIGNAL(valueChanged(int)), this, SLOT(updateMapSize()));
 }
 
 MainWindow::~MainWindow()
@@ -91,6 +94,21 @@ void MainWindow::clearBuilding()
     ui->addBuilding->setChecked(false);
     this->drawing_scene->clearBuilding();
     this->drawing_scene->setSceneState(SceneState::Disabled);
+}
+
+void MainWindow::runSimulation()
+{
+    this->drawing_scene->runSimulation();
+}
+
+void MainWindow::updateMapSize()
+{
+    int map_width = ui->widthSlider->value()*50;
+    int map_height = ui->heightSlider->value()*50;
+    ui->widthLabel->setText(QString::number(map_width)+'m');
+    ui->heightLabel->setText(QString::number(map_height)+'m');
+    this->drawing_scene->updateMapSize(map_width, map_height);
+    ui->graphicsView->fitInView(this->drawing_scene->itemsBoundingRect(), Qt::KeepAspectRatio);
 }
 
 void MainWindow::saveProject() {

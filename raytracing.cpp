@@ -322,6 +322,12 @@ void RayTracing::findMainStreetQRectF(QPointF* tx, QList<Building*>* building_li
     }
 }
 
+void RayTracing::setMapDim(int width, int height)
+{
+    this->map_width = &width;
+    this->map_height = &height;
+}
+
 QPointF RayTracing::mirrorPointMaker(QLineF* wall, QPointF* initialPoint)
 {
     float a = (wall->p2().y()-wall->p1().y())/wall->length();

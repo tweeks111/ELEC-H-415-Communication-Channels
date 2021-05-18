@@ -7,12 +7,11 @@
 DrawingScene::DrawingScene(QObject *parent)
     : QGraphicsScene(parent)
 {
-    this->map_width         = 600;
-    this->map_height        = 300;
+    this->map_width         = 500;
+    this->map_height        = 500;
     this->px_per_m          = 2;
     this->grid_spacing_m    = 5;
 
-    this->setSceneRect(QRectF(0,0,this->map_width*this->px_per_m,this->map_height*this->px_per_m));
 
     this->scene_state = SceneState::Disabled;
     this->temp_building = nullptr;
@@ -20,26 +19,16 @@ DrawingScene::DrawingScene(QObject *parent)
     this->rx_item = nullptr;
     this->tx_item = nullptr;
     this->main_street = nullptr;
-    this->rayTracing = new RayTracing(&(this->map_width),&(this->map_height),&(this->px_per_m),&(this->grid_spacing_m));
-
 
     this->buildingsGroup = nullptr;
     this->raysGroup = nullptr;
+
+    this->updateMapSize(this->map_width, this->map_height);
 
     this->startBuildLabel = nullptr;
     this->currentBuildLabel = new QGraphicsSimpleTextItem();this->currentBuildLabel->setScale(1.5);
     this->power_label = new QGraphicsSimpleTextItem();this->power_label->setScale(1.5);
     this->addItem(currentBuildLabel);
-
-    for (int x=0; x<=this->map_width*this->px_per_m; x+=this->px_per_m*this->grid_spacing_m)
-    {
-        this->addLine(x,0,x,this->map_height*this->px_per_m,QPen(Qt::gray));
-    }
-
-    for (int y=0; y<=this->map_height*this->px_per_m; y+=this->px_per_m*this->grid_spacing_m)
-    {
-        this->addLine(0,y,this->map_width*this->px_per_m,y,QPen(Qt::gray));
-    }
 }
 
 DrawingScene::~DrawingScene()
@@ -195,6 +184,59 @@ void DrawingScene::draw(bool ray)
     if(this->currentBuildLabel){this->removeItem(this->currentBuildLabel);this->addItem(this->currentBuildLabel);}
 
 }
+
+void DrawingScene::runSimulation()
+{
+//    int x0 =  this->main_street->rect().x()/this->px_per_m;
+//    int y0 =  this->main_street->rect().y()/this->px_per_m;
+//    int w  = this->main_street->rect().width()/this->px_per_m;
+//    int h  = this->main_street->rect().height()/this->px_per_m;
+
+//    for(int i=x0; i<x0+w; i++){
+//        for(int j=y0; j<y0+h; j++){
+//            float x_m = (float)(i+0.5);
+//            float y_m = (float)(j+0.5);
+
+//        }
+//    }
+
+
+}
+
+void DrawingScene::updateMapSize(int width, int height)
+{
+    this->map_width  = width;
+    this->map_height = height;
+
+    if(this->tx_item || this->rx_item) this->clearBS();
+    if(this->buildingsGroup) this->clearBuilding();
+
+    foreach(QGraphicsLineItem *line, this->grid){
+        this->removeItem(line);
+    }
+    this->grid.clear();
+
+    QPen pen = QPen(Qt::gray);
+    for (int x=0; x<=this->map_width*this->px_per_m; x+=this->px_per_m*this->grid_spacing_m)
+    {
+        QGraphicsLineItem *line = new QGraphicsLineItem(x,0,x,this->map_height*this->px_per_m);
+        line->setPen(pen);
+        this->grid.append(line);
+        this->addItem(line);
+    }
+
+    for (int y=0; y<=this->map_height*this->px_per_m; y+=this->px_per_m*this->grid_spacing_m)
+    {
+        QGraphicsLineItem *line = new QGraphicsLineItem(0,y,this->map_width*this->px_per_m,y);
+        line->setPen(pen);
+        this->grid.append(line);
+        this->addItem(line);
+    }
+
+    this->setSceneRect(QRectF(0,0,this->map_width*this->px_per_m,this->map_height*this->px_per_m));
+    this->rayTracing = new RayTracing(&width,&height,&(this->px_per_m),&(this->grid_spacing_m));
+}
+
 
 bool DrawingScene::checkTxRxAreSet()
 {

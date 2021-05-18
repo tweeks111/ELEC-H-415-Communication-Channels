@@ -14,9 +14,11 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QSlider>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
 #include "drawingview.h"
@@ -33,12 +35,19 @@ public:
     QAction *clearBuilding;
     QAction *open;
     QAction *save;
+    QAction *actionRun;
     QWidget *centralwidget;
     QGridLayout *gridLayout;
     QHBoxLayout *horizontalLayout;
+    DrawingView *graphicsView;
     QWidget *widget;
     QGridLayout *gridLayout_2;
-    DrawingView *graphicsView;
+    QLabel *label_2;
+    QLabel *label;
+    QLabel *heightLabel;
+    QLabel *widthLabel;
+    QSlider *heightSlider;
+    QSlider *widthSlider;
     QMenuBar *menubar;
     QMenu *menuFile;
     QToolBar *toolBar;
@@ -47,7 +56,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(802, 622);
+        MainWindow->resize(765, 616);
         addBS = new QAction(MainWindow);
         addBS->setObjectName(QString::fromUtf8("addBS"));
         QIcon icon;
@@ -78,23 +87,83 @@ public:
         open->setObjectName(QString::fromUtf8("open"));
         save = new QAction(MainWindow);
         save->setObjectName(QString::fromUtf8("save"));
+        actionRun = new QAction(MainWindow);
+        actionRun->setObjectName(QString::fromUtf8("actionRun"));
+        QIcon icon5;
+        icon5.addFile(QString::fromUtf8(":/icons/play-fill.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionRun->setIcon(icon5);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         gridLayout = new QGridLayout(centralwidget);
         gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
-        widget = new QWidget(centralwidget);
-        widget->setObjectName(QString::fromUtf8("widget"));
-        gridLayout_2 = new QGridLayout(widget);
-        gridLayout_2->setObjectName(QString::fromUtf8("gridLayout_2"));
-        graphicsView = new DrawingView(widget);
+        graphicsView = new DrawingView(centralwidget);
         graphicsView->setObjectName(QString::fromUtf8("graphicsView"));
 
-        gridLayout_2->addWidget(graphicsView, 0, 0, 1, 1);
+        horizontalLayout->addWidget(graphicsView);
+
+        widget = new QWidget(centralwidget);
+        widget->setObjectName(QString::fromUtf8("widget"));
+        QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(widget->sizePolicy().hasHeightForWidth());
+        widget->setSizePolicy(sizePolicy);
+        widget->setMaximumSize(QSize(369, 16777215));
+        gridLayout_2 = new QGridLayout(widget);
+        gridLayout_2->setObjectName(QString::fromUtf8("gridLayout_2"));
+        label_2 = new QLabel(widget);
+        label_2->setObjectName(QString::fromUtf8("label_2"));
+
+        gridLayout_2->addWidget(label_2, 1, 0, 1, 1);
+
+        label = new QLabel(widget);
+        label->setObjectName(QString::fromUtf8("label"));
+
+        gridLayout_2->addWidget(label, 0, 0, 1, 1);
+
+        heightLabel = new QLabel(widget);
+        heightLabel->setObjectName(QString::fromUtf8("heightLabel"));
+
+        gridLayout_2->addWidget(heightLabel, 0, 2, 1, 1);
+
+        widthLabel = new QLabel(widget);
+        widthLabel->setObjectName(QString::fromUtf8("widthLabel"));
+
+        gridLayout_2->addWidget(widthLabel, 1, 2, 1, 1);
+
+        heightSlider = new QSlider(widget);
+        heightSlider->setObjectName(QString::fromUtf8("heightSlider"));
+        heightSlider->setMinimum(1);
+        heightSlider->setMaximum(18);
+        heightSlider->setSingleStep(1);
+        heightSlider->setPageStep(1);
+        heightSlider->setValue(10);
+        heightSlider->setSliderPosition(10);
+        heightSlider->setOrientation(Qt::Horizontal);
+        heightSlider->setInvertedAppearance(false);
+        heightSlider->setInvertedControls(false);
+        heightSlider->setTickPosition(QSlider::TicksBelow);
+        heightSlider->setTickInterval(1);
+
+        gridLayout_2->addWidget(heightSlider, 0, 1, 1, 1);
+
+        widthSlider = new QSlider(widget);
+        widthSlider->setObjectName(QString::fromUtf8("widthSlider"));
+        widthSlider->setMinimum(1);
+        widthSlider->setMaximum(18);
+        widthSlider->setSingleStep(1);
+        widthSlider->setPageStep(1);
+        widthSlider->setValue(10);
+        widthSlider->setOrientation(Qt::Horizontal);
+        widthSlider->setTickPosition(QSlider::TicksBelow);
+        widthSlider->setTickInterval(1);
+
+        gridLayout_2->addWidget(widthSlider, 1, 1, 1, 1);
 
 
-        horizontalLayout->addWidget(widget);
+        horizontalLayout->addWidget(widget, 0, Qt::AlignTop);
 
 
         gridLayout->addLayout(horizontalLayout, 0, 0, 1, 1);
@@ -102,7 +171,7 @@ public:
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
-        menubar->setGeometry(QRect(0, 0, 802, 20));
+        menubar->setGeometry(QRect(0, 0, 765, 20));
         menuFile = new QMenu(menubar);
         menuFile->setObjectName(QString::fromUtf8("menuFile"));
         MainWindow->setMenuBar(menubar);
@@ -120,6 +189,8 @@ public:
         toolBar->addAction(clearBS);
         toolBar->addAction(addBuilding);
         toolBar->addAction(clearBuilding);
+        toolBar->addSeparator();
+        toolBar->addAction(actionRun);
 
         retranslateUi(MainWindow);
 
@@ -151,6 +222,14 @@ public:
 #endif // QT_CONFIG(tooltip)
         open->setText(QCoreApplication::translate("MainWindow", "Open project...", nullptr));
         save->setText(QCoreApplication::translate("MainWindow", "Save project...", nullptr));
+        actionRun->setText(QCoreApplication::translate("MainWindow", "Run", nullptr));
+#if QT_CONFIG(tooltip)
+        actionRun->setToolTip(QCoreApplication::translate("MainWindow", "Run ", nullptr));
+#endif // QT_CONFIG(tooltip)
+        label_2->setText(QCoreApplication::translate("MainWindow", "Width", nullptr));
+        label->setText(QCoreApplication::translate("MainWindow", "Height:", nullptr));
+        heightLabel->setText(QCoreApplication::translate("MainWindow", "500m", nullptr));
+        widthLabel->setText(QCoreApplication::translate("MainWindow", "500m", nullptr));
         menuFile->setTitle(QCoreApplication::translate("MainWindow", "File", nullptr));
         toolBar->setWindowTitle(QCoreApplication::translate("MainWindow", "toolBar", nullptr));
     } // retranslateUi

@@ -23,6 +23,7 @@ public:
     QList<Ray*> raysList;
     QRectF* mainStreet;
     qreal received_power_dbm;
+    void setMapDim(int, int);
 
 private:
     //Attributs

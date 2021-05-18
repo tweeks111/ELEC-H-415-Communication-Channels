@@ -7,5 +7,6 @@
         <file>rect_icon.png</file>
         <file>clearTX_icon.png</file>
         <file>clearRect_icon.png</file>
+        <file>play-fill.png</file>
     </qresource>
 </RCC>

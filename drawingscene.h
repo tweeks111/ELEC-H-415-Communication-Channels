@@ -42,6 +42,9 @@ public:
     Point getSceneRX();
     QList<int> getMapDim();
     void draw(bool ray = true);
+    void runSimulation();
+    void updateMapSize(int, int);
+
 public slots:
 
 protected:
@@ -59,6 +62,7 @@ private:
 
     QGraphicsRectItem* main_street;
     QGraphicsItemGroup* buildingsGroup;
+    QList<QGraphicsLineItem*> grid;
     QGraphicsSimpleTextItem* startBuildLabel;
     QGraphicsSimpleTextItem* currentBuildLabel;
     QGraphicsItemGroup* raysGroup;

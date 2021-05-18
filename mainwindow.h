@@ -30,6 +30,8 @@ private slots:
     void clearBuilding();
     void saveProject();
     void openProject();
+    void runSimulation();
+    void updateMapSize();
 private:
     Ui::MainWindow *ui;
     DrawingScene *drawing_scene;
