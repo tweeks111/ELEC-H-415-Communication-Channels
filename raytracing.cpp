@@ -16,7 +16,6 @@ RayTracing::RayTracing(int* map_width, int* map_height, int* px_per_m, int* grid
     this->Ptx = this->EIRPmax/this->GtxMax;
     this->heMax = this->he(pi/2);
     this->beta = (2*pi*frequency/c);
-
 }
 
 
@@ -322,11 +321,6 @@ void RayTracing::findMainStreetQRectF(QPointF* tx, QList<Building*>* building_li
     }
 }
 
-void RayTracing::setMapDim(int width, int height)
-{
-    this->map_width = &width;
-    this->map_height = &height;
-}
 
 QPointF RayTracing::mirrorPointMaker(QLineF* wall, QPointF* initialPoint)
 {

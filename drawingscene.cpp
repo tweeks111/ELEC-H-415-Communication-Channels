@@ -129,6 +129,7 @@ void DrawingScene::draw(bool ray)
     this->main_street = nullptr;
     if(this->tx_item && this->tx_item->isSet)
     {
+        qDebug() << this->tx_item->center;
         this->rayTracing->findMainStreetQRectF(&(this->tx_item->center), &(this->building_list));
         if(this->rayTracing->mainStreet)
         {
@@ -234,7 +235,7 @@ void DrawingScene::updateMapSize(int width, int height)
     }
 
     this->setSceneRect(QRectF(0,0,this->map_width*this->px_per_m,this->map_height*this->px_per_m));
-    this->rayTracing->setMapDim(width, height);
+
 }
 
 
