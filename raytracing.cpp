@@ -112,6 +112,7 @@ void RayTracing::makeDirectAndGroundReflection()
         qreal coef = coefReflGround(theta_ground);
         std::complex<qreal> power_ground = Power_comp(d_ground,coef,pi - theta_ground); //check angle
         this->power_comp = power_direct + power_ground;
+
         QPen rayPen(QColor(106, 224, 27));
         rayPen.setWidth(2);
         Ray* directRay = new Ray(directLine);
@@ -173,7 +174,7 @@ void RayTracing::makeWallReflection(QList<QPointF> mirrorPoints,QList<QLineF*> w
                                 if(!lineIsBlocked(&lineLIPtoIP)){//Is there no other wall blocking the ray ?
                                     Ray* ray = new Ray(lineLIPtoIP);
                                     coef *= coefReflWall((180/pi)*lineLIPtoIP.angleTo(*currentWall));
-                                    length += lineLIPtoMP.length();
+                                    length += lineLIPtoMP.length()/ *(this->px_per_m);
                                     rays.push_back(ray);
                                     lastIntersectionPoint = intersectionPoint;
                                 }else{break;}

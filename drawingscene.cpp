@@ -119,7 +119,7 @@ void DrawingScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     else if(this->scene_state == SceneState::Disabled){
         ray = false;
     }
-    draw(ray); //Comment this for easier debugging (click for update)
+    //draw(ray); //Comment this for easier debugging (click for update)
 }
 
 void DrawingScene::draw(bool ray)
