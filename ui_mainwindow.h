@@ -18,6 +18,7 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QPushButton>
 #include <QtWidgets/QSlider>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
@@ -42,12 +43,13 @@ public:
     DrawingView *graphicsView;
     QWidget *widget;
     QGridLayout *gridLayout_2;
-    QLabel *label_2;
     QLabel *label;
-    QLabel *heightLabel;
-    QLabel *widthLabel;
-    QSlider *heightSlider;
     QSlider *widthSlider;
+    QSlider *heightSlider;
+    QLabel *widthLabel;
+    QLabel *label_2;
+    QLabel *heightLabel;
+    QPushButton *runBtn;
     QMenuBar *menubar;
     QMenu *menuFile;
     QToolBar *toolBar;
@@ -113,25 +115,23 @@ public:
         widget->setMaximumSize(QSize(369, 16777215));
         gridLayout_2 = new QGridLayout(widget);
         gridLayout_2->setObjectName(QString::fromUtf8("gridLayout_2"));
-        label_2 = new QLabel(widget);
-        label_2->setObjectName(QString::fromUtf8("label_2"));
-
-        gridLayout_2->addWidget(label_2, 1, 0, 1, 1);
-
         label = new QLabel(widget);
         label->setObjectName(QString::fromUtf8("label"));
 
         gridLayout_2->addWidget(label, 0, 0, 1, 1);
 
-        heightLabel = new QLabel(widget);
-        heightLabel->setObjectName(QString::fromUtf8("heightLabel"));
+        widthSlider = new QSlider(widget);
+        widthSlider->setObjectName(QString::fromUtf8("widthSlider"));
+        widthSlider->setMinimum(1);
+        widthSlider->setMaximum(18);
+        widthSlider->setSingleStep(1);
+        widthSlider->setPageStep(1);
+        widthSlider->setValue(10);
+        widthSlider->setOrientation(Qt::Horizontal);
+        widthSlider->setTickPosition(QSlider::TicksBelow);
+        widthSlider->setTickInterval(1);
 
-        gridLayout_2->addWidget(heightLabel, 0, 2, 1, 1);
-
-        widthLabel = new QLabel(widget);
-        widthLabel->setObjectName(QString::fromUtf8("widthLabel"));
-
-        gridLayout_2->addWidget(widthLabel, 1, 2, 1, 1);
+        gridLayout_2->addWidget(widthSlider, 1, 1, 1, 1);
 
         heightSlider = new QSlider(widget);
         heightSlider->setObjectName(QString::fromUtf8("heightSlider"));
@@ -149,18 +149,25 @@ public:
 
         gridLayout_2->addWidget(heightSlider, 0, 1, 1, 1);
 
-        widthSlider = new QSlider(widget);
-        widthSlider->setObjectName(QString::fromUtf8("widthSlider"));
-        widthSlider->setMinimum(1);
-        widthSlider->setMaximum(18);
-        widthSlider->setSingleStep(1);
-        widthSlider->setPageStep(1);
-        widthSlider->setValue(10);
-        widthSlider->setOrientation(Qt::Horizontal);
-        widthSlider->setTickPosition(QSlider::TicksBelow);
-        widthSlider->setTickInterval(1);
+        widthLabel = new QLabel(widget);
+        widthLabel->setObjectName(QString::fromUtf8("widthLabel"));
 
-        gridLayout_2->addWidget(widthSlider, 1, 1, 1, 1);
+        gridLayout_2->addWidget(widthLabel, 1, 2, 1, 1);
+
+        label_2 = new QLabel(widget);
+        label_2->setObjectName(QString::fromUtf8("label_2"));
+
+        gridLayout_2->addWidget(label_2, 1, 0, 1, 1);
+
+        heightLabel = new QLabel(widget);
+        heightLabel->setObjectName(QString::fromUtf8("heightLabel"));
+
+        gridLayout_2->addWidget(heightLabel, 0, 2, 1, 1);
+
+        runBtn = new QPushButton(widget);
+        runBtn->setObjectName(QString::fromUtf8("runBtn"));
+
+        gridLayout_2->addWidget(runBtn, 2, 1, 1, 1);
 
 
         horizontalLayout->addWidget(widget, 0, Qt::AlignTop);
@@ -226,10 +233,11 @@ public:
 #if QT_CONFIG(tooltip)
         actionRun->setToolTip(QCoreApplication::translate("MainWindow", "Run ", nullptr));
 #endif // QT_CONFIG(tooltip)
-        label_2->setText(QCoreApplication::translate("MainWindow", "Width", nullptr));
         label->setText(QCoreApplication::translate("MainWindow", "Height:", nullptr));
-        heightLabel->setText(QCoreApplication::translate("MainWindow", "500m", nullptr));
         widthLabel->setText(QCoreApplication::translate("MainWindow", "500m", nullptr));
+        label_2->setText(QCoreApplication::translate("MainWindow", "Width", nullptr));
+        heightLabel->setText(QCoreApplication::translate("MainWindow", "500m", nullptr));
+        runBtn->setText(QCoreApplication::translate("MainWindow", "Heatmap", nullptr));
         menuFile->setTitle(QCoreApplication::translate("MainWindow", "File", nullptr));
         toolBar->setWindowTitle(QCoreApplication::translate("MainWindow", "toolBar", nullptr));
     } // retranslateUi

@@ -6,6 +6,7 @@ release/mainwindow.o
 release/point.o
 release/ray.o
 release/raytracing.o
+release/receiverrect.o
 release/qrc_res.o
 release/moc_drawingscene.o
 release/moc_drawingview.o

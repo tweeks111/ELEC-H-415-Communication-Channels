@@ -58,11 +58,11 @@ void DrawingScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         this->addItem(this->startBuildLabel);
         ray = false;
     }
-    else if(this->scene_state == SceneState::RX && pointIsAvailable(&eventPoint)){
+    else if(this->scene_state == SceneState::RX && pointIsAvailable(eventPoint)){
         this->scene_state = SceneState::Disabled;
         this->rx_item->setCenter(snapToGrid(&eventPoint,2));
     }
-    else if(this->scene_state == SceneState::TX && pointIsAvailable(&eventPoint)){
+    else if(this->scene_state == SceneState::TX && pointIsAvailable(eventPoint)){
         this->scene_state = SceneState::Disabled;
         this->tx_item->setCenter(snapToGrid(&eventPoint,2));
     }
@@ -110,11 +110,11 @@ void DrawingScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         this->currentBuildLabel->setPos(eventPoint+QPointF(12,-20));
 
     }
-    else if(this->scene_state == SceneState::RX && pointIsAvailable(&eventPoint)){
-        this->rx_item->setCenter(snapToGrid(&eventPoint,2));
+    else if(this->scene_state == SceneState::RX && pointIsAvailable(eventPoint)){
+        this->rx_item->setCenter(snapToGrid(&eventPoint,2)/this->px_per_m);
     }
-    else if(this->scene_state == SceneState::TX && pointIsAvailable(&eventPoint)){
-        this->tx_item->setCenter(snapToGrid(&eventPoint,2));
+    else if(this->scene_state == SceneState::TX && pointIsAvailable(eventPoint)){
+        this->tx_item->setCenter(snapToGrid(&eventPoint,2)/this->px_per_m);
     }
     else if(this->scene_state == SceneState::Disabled){
         ray = false;
@@ -129,7 +129,7 @@ void DrawingScene::draw(bool ray)
     this->main_street = nullptr;
     if(this->tx_item && this->tx_item->isSet)
     {
-        qDebug() << this->tx_item->center;
+        //qDebug() << this->tx_item->center;
         this->rayTracing->findMainStreetQRectF(&(this->tx_item->center), &(this->building_list));
         if(this->rayTracing->mainStreet)
         {
@@ -188,18 +188,27 @@ void DrawingScene::draw(bool ray)
 
 void DrawingScene::runSimulation()
 {
-//    int x0 =  this->main_street->rect().x()/this->px_per_m;
-//    int y0 =  this->main_street->rect().y()/this->px_per_m;
-//    int w  = this->main_street->rect().width()/this->px_per_m;
-//    int h  = this->main_street->rect().height()/this->px_per_m;
+    this->rectList.clear();
+    int x0 =  this->main_street->rect().x()/this->px_per_m;
+    int y0 =  this->main_street->rect().y()/this->px_per_m;
+    int w  = this->main_street->rect().width()/this->px_per_m;
+    int h  = this->main_street->rect().height()/this->px_per_m;
 
-//    for(int i=x0; i<x0+w; i++){
-//        for(int j=y0; j<y0+h; j++){
-//            float x_m = (float)(i+0.5);
-//            float y_m = (float)(j+0.5);
+    for(int i=x0; i<x0+w; i++){
+        for(int j=y0; j<y0+h; j++){
+            float x_m = (float)(i+0.5);
+            float y_m = (float)(j+0.5);
+            if(pointIsAvailable(QPointF(x_m*this->px_per_m, y_m*this->px_per_m))){
+                QPointF *RX = new QPointF(x_m, y_m);
+                this->rayTracing->drawRays(&this->tx_item->center, RX, &this->building_list);
+                qreal power = this->rayTracing->received_power_dbm;
+                ReceiverRect *rect = new ReceiverRect(i*this->px_per_m, j*this->px_per_m, this->px_per_m, this->px_per_m, power);
+                this->rectList.append(rect);
+                this->addItem(rect);
+            }
 
-//        }
-//    }
+        }
+    }
 
 
 }
@@ -235,7 +244,6 @@ void DrawingScene::updateMapSize(int width, int height)
     }
 
     this->setSceneRect(QRectF(0,0,this->map_width*this->px_per_m,this->map_height*this->px_per_m));
-
 }
 
 
@@ -267,11 +275,11 @@ QPointF DrawingScene::eventToTheGrid(QGraphicsSceneMouseEvent *event)
     return eventGridPoint;
 }
 
-bool DrawingScene::pointIsAvailable(QPointF *point)
+bool DrawingScene::pointIsAvailable(QPointF point)
 {
     for(Building* building:this->building_list)
     {
-        if(building->isContainingPoint(*point) || building->isContainingPoint(*point))
+        if(building->isContainingPoint(point) || building->isContainingPoint(point))
         {return false;}
     }
     return true;
@@ -329,8 +337,6 @@ QList<Building *> DrawingScene::getSceneBuildingList()
 {
     return this->building_list;
 }
-
-
 
 void DrawingScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {

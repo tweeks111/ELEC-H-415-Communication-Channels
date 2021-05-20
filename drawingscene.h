@@ -5,6 +5,8 @@
 #include "point.h"
 #include "building.h"
 #include "raytracing.h"
+#include "receiverrect.h"
+
 
 namespace SceneState {
 enum SceneState {
@@ -27,7 +29,7 @@ public:
     void setSceneState(SceneState::SceneState state);
     void createRX();
     void addBS();
-    bool pointIsAvailable(QPointF* point);
+    bool pointIsAvailable(QPointF point);
     void clearBS();
     void clearBuilding();
     QList<Building*> building_list;
@@ -67,6 +69,8 @@ private:
     QGraphicsSimpleTextItem* currentBuildLabel;
     QGraphicsItemGroup* raysGroup;
     QGraphicsSimpleTextItem* power_label;
+    QList<ReceiverRect*> rectList;
+
 
     SceneState::SceneState scene_state;
     RayTracing* rayTracing;
