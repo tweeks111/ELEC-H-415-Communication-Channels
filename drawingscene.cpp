@@ -189,10 +189,13 @@ void DrawingScene::draw(bool ray)
 void DrawingScene::runSimulation()
 {
     this->rectList.clear();
-    int x0 =  this->main_street->rect().x()/this->px_per_m;
-    int y0 =  this->main_street->rect().y()/this->px_per_m;
-    int w  = this->main_street->rect().width()/this->px_per_m;
-    int h  = this->main_street->rect().height()/this->px_per_m;
+    int x0 =  0;//this->main_street->rect().x()/this->px_per_m;
+    int y0 =  0;//this->main_street->rect().y()/this->px_per_m;
+    int w  = this->map_width; //this->main_street->rect().width()/this->px_per_m;
+    int h  = this->map_height; //this->main_street->rect().height()/this->px_per_m;
+
+    float x_tx = this->tx_item->center.x()/this->px_per_m;
+    float y_tx = this->tx_item->center.y()/this->px_per_m;
 
     int counter = 0;
     for(int i=x0; i<x0+w; i++){
@@ -201,15 +204,16 @@ void DrawingScene::runSimulation()
             float y_m = (float)(j+0.5);
             if(pointIsAvailable(QPointF(x_m*this->px_per_m, y_m*this->px_per_m))){
                 QPointF *RX = new QPointF(x_m*this->px_per_m, y_m*this->px_per_m);
-                this->rayTracing->drawRays(&this->tx_item->center, RX, &this->building_list);
-                qreal power = this->rayTracing->received_power_dbm;
-                ReceiverRect *rect = new ReceiverRect(i*this->px_per_m, j*this->px_per_m, this->px_per_m, this->px_per_m, power);
-                this->rectList.append(rect);
-                this->addItem(rect);
-                counter += 1;
-                emit updateBar(counter);
+                if(sqrt(pow(x_m-x_tx,2)+pow(y_m-y_tx,2)) > 10){
+                    this->rayTracing->drawRays(&this->tx_item->center, RX, &this->building_list);
+                    qreal power = this->rayTracing->received_power_dbm;
+                    ReceiverRect *rect = new ReceiverRect(i*this->px_per_m, j*this->px_per_m, this->px_per_m, this->px_per_m, power);
+                    this->rectList.append(rect);
+                    this->addItem(rect);
+                }
             }
-
+            counter += 1;
+            emit updateBar(counter);
         }
     }
 
@@ -355,3 +359,11 @@ void DrawingScene::keyPressEvent(QKeyEvent *event)
 {
     Q_UNUSED(event);
 }
+
+/*
+ * TODO: load map dim when loading project
+ * TODO: add rerun of simulation
+ * TODO: correct bug when resizing when in placement state
+ * TODO: correct bug with diffraction corner
+ *
+ */

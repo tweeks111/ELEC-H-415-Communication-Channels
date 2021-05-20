@@ -106,6 +106,8 @@ void MainWindow::runSimulation()
 
     ui->progressBar->setRange(0, map_width*map_height);
 
+    ui->runBtn->setEnabled(false);
+    ui->actionRun->setEnabled(false);
     this->drawing_scene->runSimulation();
 }
 
