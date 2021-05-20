@@ -58,6 +58,8 @@ protected:
     void wheelEvent(QGraphicsSceneWheelEvent *event) override;
 
     void keyPressEvent(QKeyEvent *event) override;
+signals:
+    int  updateBar(int value);
 private:
     Building* temp_building;
     Building* temp_MS;//To remove

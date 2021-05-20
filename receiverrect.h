@@ -19,8 +19,8 @@ class ReceiverRect : public QGraphicsRectItem
 
         void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
         void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
-        int scaleMax=-20;
-        int scaleMin=-55;
+        int scaleMax=-40;
+        int scaleMin=-100;
     private:
         void colorRect();
 

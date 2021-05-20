@@ -119,7 +119,7 @@ void DrawingScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     else if(this->scene_state == SceneState::Disabled){
         ray = false;
     }
-    //draw(ray); //Comment this for easier debugging (click for update)
+    draw(ray); //Comment this for easier debugging (click for update)
 }
 
 void DrawingScene::draw(bool ray)
@@ -194,17 +194,20 @@ void DrawingScene::runSimulation()
     int w  = this->main_street->rect().width()/this->px_per_m;
     int h  = this->main_street->rect().height()/this->px_per_m;
 
+    int counter = 0;
     for(int i=x0; i<x0+w; i++){
         for(int j=y0; j<y0+h; j++){
             float x_m = (float)(i+0.5);
             float y_m = (float)(j+0.5);
             if(pointIsAvailable(QPointF(x_m*this->px_per_m, y_m*this->px_per_m))){
-                QPointF *RX = new QPointF(x_m, y_m);
+                QPointF *RX = new QPointF(x_m*this->px_per_m, y_m*this->px_per_m);
                 this->rayTracing->drawRays(&this->tx_item->center, RX, &this->building_list);
                 qreal power = this->rayTracing->received_power_dbm;
                 ReceiverRect *rect = new ReceiverRect(i*this->px_per_m, j*this->px_per_m, this->px_per_m, this->px_per_m, power);
                 this->rectList.append(rect);
                 this->addItem(rect);
+                counter += 1;
+                emit updateBar(counter);
             }
 
         }

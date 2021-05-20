@@ -41,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->heightSlider, SIGNAL(valueChanged(int)), this, SLOT(updateMapSize()));
     connect(ui->actionRun, SIGNAL(triggered(bool)), this, SLOT(runSimulation()));
     connect(ui->runBtn, SIGNAL(released()), this, SLOT(runSimulation()));
+    connect(this->drawing_scene, SIGNAL(updateBar(int)), ui->progressBar, SLOT(setValue(int)));
 }
 
 MainWindow::~MainWindow()
@@ -100,6 +101,11 @@ void MainWindow::clearBuilding()
 
 void MainWindow::runSimulation()
 {
+    int map_width = ui->widthSlider->value()*50;
+    int map_height = ui->heightSlider->value()*50;
+
+    ui->progressBar->setRange(0, map_width*map_height);
+
     this->drawing_scene->runSimulation();
 }
 
