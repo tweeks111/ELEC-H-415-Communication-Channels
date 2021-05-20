@@ -50,7 +50,7 @@ private:
     qreal Ptx;
     qreal GtxMax;
     qreal heMax;
-    std::complex<qreal> power_comp;
+    std::complex<qreal> tension;
     qreal received_power;
 
     qreal he(qreal theta);
@@ -59,7 +59,7 @@ private:
     qreal coefReflWall(qreal theta);
     qreal coefReflGround(qreal theta);
     std::complex<qreal> coefDiff(qreal Dr);
-    std::complex<qreal> Power_comp(qreal distance, qreal coef = 1, qreal incidence_angle = pi/2, qreal dephasage=0);
+    std::complex<qreal> tension_comp(qreal distance, qreal coef = 1, qreal incidence_angle = pi/2, qreal dephasage=0);
 
     //Methods
     bool lineIsBlocked(QLineF* line);

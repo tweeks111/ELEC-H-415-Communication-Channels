@@ -6,3 +6,5 @@ debug/*
 *.Debug
 *.Release
 debug/
+
+Makefile
