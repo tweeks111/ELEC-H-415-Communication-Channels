@@ -111,10 +111,10 @@ void DrawingScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
     }
     else if(this->scene_state == SceneState::RX && pointIsAvailable(eventPoint)){
-        this->rx_item->setCenter(snapToGrid(&eventPoint,2)/this->px_per_m);
+        this->rx_item->setCenter(snapToGrid(&eventPoint,2));
     }
     else if(this->scene_state == SceneState::TX && pointIsAvailable(eventPoint)){
-        this->tx_item->setCenter(snapToGrid(&eventPoint,2)/this->px_per_m);
+        this->tx_item->setCenter(snapToGrid(&eventPoint,2));
     }
     else if(this->scene_state == SceneState::Disabled){
         ray = false;

@@ -40,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->widthSlider, SIGNAL(valueChanged(int)), this, SLOT(updateMapSize()));
     connect(ui->heightSlider, SIGNAL(valueChanged(int)), this, SLOT(updateMapSize()));
     connect(ui->actionRun, SIGNAL(triggered(bool)), this, SLOT(runSimulation()));
-    connect(ui->runBtn, SIGNAL(triggered(bool)), this, SLOT(runSimulation()));
+    connect(ui->runBtn, SIGNAL(released()), this, SLOT(runSimulation()));
 }
 
 MainWindow::~MainWindow()
