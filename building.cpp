@@ -12,7 +12,7 @@ Building::Building(const QRectF building_rect, QGraphicsItem *parent)
     this->px_per_m          = 2;
     this->grid_spacing_m    = 5;
     //this->updateLabel(building_rect);
-    this->corners.push_back(this->rect().topLeft());this->corners.push_back(this->rect().topRight());this->corners.push_back(this->rect().bottomLeft());this->corners.push_back(this->rect().bottomRight());
+    this->corners.push_back(this->rect().topLeft());this->corners.push_back(this->rect().topRight());this->corners.push_back(this->rect().bottomRight());this->corners.push_back(this->rect().bottomLeft());
     this->walls.push_back(QLineF(this->rect().topLeft(),this->rect().topRight()));this->walls.push_back(QLineF(this->rect().topRight(),this->rect().bottomRight()));this->walls.push_back(QLineF(this->rect().bottomRight(),this->rect().bottomLeft()));this->walls.push_back(QLineF(this->rect().bottomLeft(),this->rect().topLeft()));
     setFlag(QGraphicsItem::ItemIsSelectable);
 }
