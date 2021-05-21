@@ -46,7 +46,7 @@ qreal RayTracing::coefReflGround(qreal theta)//parra
 
 std::complex<qreal> RayTracing::coefDiff(qreal Dr)
 {
-    qreal nu = sqrt(2*beta*Dr/pi);//check beta here
+    qreal nu = sqrt(2*beta*Dr/pi);
     return std::polar(pow(10,(-6.9 -20*log10(sqrt(pow(nu - 0.1,2)+1)+nu-0.1))/20),-(pi/2)-(pi/2)*pow(nu,2));
 }
 
@@ -74,7 +74,7 @@ void RayTracing::drawRays(QPointF* tx, QPointF* rx, QList<Building*>* building_l
         else
         {
             if(this->raysList.isEmpty()){
-                //makeDiffraction();
+                makeDiffraction();
                 //qDebug() << "Second Street Computation NLOS";
                 //qDebug() << "Diffraction " << (this->counterDiff) << "/" << (this->counterDiffMax);
             }
@@ -83,14 +83,12 @@ void RayTracing::drawRays(QPointF* tx, QPointF* rx, QList<Building*>* building_l
             }
         }     
     }
-    //this->received_power = (1/(2*Ra)) * pow(abs(this->tension),2);
     this->received_power = (1/(2*Ra)) * pow(abs(this->tension),2);
     this->received_power_dbm = 10*log10(this->received_power/0.01);
 }
 
 void RayTracing::makeDirectAndGroundReflection()
 {
-
     QLineF directLine = QLineF(*(transmitter),*(receiver));
     if(!lineIsBlocked(&directLine)){
        std::complex<qreal> E_direct = std::polar(sqrt(60*Ptx*GtxMax)/(directLine.length()/ *(this->px_per_m)),-beta*(directLine.length()/ *(this->px_per_m)));
@@ -131,7 +129,7 @@ void RayTracing::makeWallReflection(QList<QPointF> mirrorPoints,QList<QLineF*> w
             if((walls.isEmpty() || wall!=*(walls.last())))
             {
                 this->counterReflMax ++;
-                if(wallIsValid(&wall)){
+                if(wallIsValid(wall)){
                     this->counterRefl ++;
                     //Compute the new mirror pt based on the last one (tx pos for the 1st reflection)
                     QList<QLineF*> tempWalls = walls;
@@ -210,6 +208,7 @@ void RayTracing::makeWallReflection(QList<QPointF> mirrorPoints,QList<QLineF*> w
     }
 }
 
+
 void RayTracing::makeDiffraction()
 {
     QPen rayPen(QColor(155, 0, 233)); //print the direct ray "- - -"
@@ -217,19 +216,42 @@ void RayTracing::makeDiffraction()
     for(Building* building:*building_list){
         for(QPointF corner:*(building->getCorners())){
             this->counterDiffMax ++;
-            if(cornerIsValid(&corner))
+            if(cornerIsValid(corner))
             {
                 this->counterDiff ++;
                 QLineF lineTXtoEP(*(transmitter),corner);
                 QLineF lineEPtoRX(corner,*(receiver));
-                if(!lineIsBlocked(&lineTXtoEP) && !lineIsBlocked(&lineEPtoRX) && (lineTXtoEP.angleTo(lineEPtoRX)<=90 || lineTXtoEP.angleTo(lineEPtoRX)>=270)){
+
+                QPointF point1 = makeNormalPoint(lineTXtoEP);
+                QPointF point2 = makeNormalPoint(lineEPtoRX);
+
+                QPointF checkPoint1 = corner+2*point1;
+                QPointF checkPoint2 = corner+2*point2;
+                qreal angle = lineTXtoEP.angleTo(lineEPtoRX);
+                bool diff = false;
+                if(checkPoint1 == checkPoint2 || (checkPoint1.y() == checkPoint2.y() && (checkPoint1.x() == corner.x() || checkPoint2.x() == corner.x())) || (checkPoint1.x() == checkPoint2.x() && (checkPoint1.y() == corner.y() || checkPoint2.y() == corner.y()))){
+                    if(building->rect().toRect().contains(checkPoint1.toPoint())){
+                        if(angle<=90){
+                            diff = true;
+                        }
+                    } else {
+                        if(angle>=270){
+                            diff = true;
+                        }
+                    }
+                 }
+                if(diff && !lineIsBlocked(&lineTXtoEP) && !lineIsBlocked(&lineEPtoRX))
+                {
                     Ray* rayTXtoDP = new Ray(lineTXtoEP);
                     Ray* rayDPtoRX = new Ray(lineEPtoRX);
                     QLineF direct = QLineF(*(this->transmitter),*(this->receiver));
-                    //qreal h = lineTXtoEP.length()/ *(this->px_per_m) / abs(sin(direct.angleTo(lineEPtoRX)));
-                    //qreal Dr = (pow(h,2)/2) * ((1/lineTXtoEP.length()/ *(this->px_per_m))+(1/lineEPtoRX.length()/ *(this->px_per_m)));
-                    //std::complex<qreal> F = coefDiff(Dr);
-                    //this->tension += tension_comp(lineTXtoEP.length()/ *(this->px_per_m)+lineEPtoRX.length()/ *(this->px_per_m),abs(F),90,arg(F));
+                    qreal h = lineTXtoEP.length()/ *(this->px_per_m) / abs(sin(direct.angleTo(lineEPtoRX)));
+                    qreal Dr = (pow(h,2)/2) * ((1/lineTXtoEP.length()/ *(this->px_per_m))+(1/lineEPtoRX.length()/ *(this->px_per_m)));
+                    std::complex<qreal> F = coefDiff(Dr);
+                    qreal total_length = (lineTXtoEP.length() + lineEPtoRX.length())/ *(this->px_per_m);
+                    std::complex<qreal> E_refl = std::polar(abs(F)*sqrt(60* GtxMax * Ptx )/ total_length, (-this->beta*total_length) + arg(F));
+                    std::complex<qreal> T_refl = E_refl * heMax;
+                    this->tension += T_refl;
                     rayTXtoDP->setPen(rayPen);
                     rayDPtoRX->setPen(rayPen);
                     this->raysList.push_back(rayTXtoDP);
@@ -258,7 +280,7 @@ void RayTracing::findMainStreetQRectF(QPointF* tx, QList<Building*>* building_li
                 return;
             }
             for(QLineF wall:*(building->getWalls())){
-                if(wallIsValid(&wall)){
+                if(wallIsValid(wall)){
                     QPointF intersectionPointh;
                     if(wall.intersects(h_line,&intersectionPointh)==QLineF::BoundedIntersection){//horizontal
                         if(intersectionPointh.x() == this->transmitter->x())
@@ -330,15 +352,15 @@ bool RayTracing::lineIsBlocked(QLineF* line)
     return false;
 }
 
-bool RayTracing::wallIsValid(QLineF* wall)
+bool RayTracing::wallIsValid(QLineF wall)
 {
-    return !((wall->dx() == 0 && (wall->x1() == 0 || wall->x1() == *(this->map_width)**(this->px_per_m))) || (wall->dy() == 0 && (wall->y1() == 0 || wall->y1() == *(this->map_height)**(this->px_per_m))));
+    return !((wall.dx() == 0 && (wall.x1() == 0 || wall.x1() == *(this->map_width)**(this->px_per_m))) || (wall.dy() == 0 && (wall.y1() == 0 || wall.y1() == *(this->map_height)**(this->px_per_m))));
 
 }
 
-bool RayTracing::cornerIsValid(QPointF* corner)
+bool RayTracing::cornerIsValid(QPointF corner)
 {
-    return !((corner->x() == 0 || corner->x() == *(this->map_width)**(this->px_per_m)) || (corner->y() == 0 || corner->y() == *(this->map_height)**(this->px_per_m)));
+    return !((corner.x() == 0 || corner.x() == *(this->map_width)**(this->px_per_m)) || (corner.y() == 0 || corner.y() == *(this->map_height)**(this->px_per_m)));
 
 }
 
@@ -354,6 +376,18 @@ bool RayTracing::checkTxRxValidity()
         return true;
     }
     else{return false;}
+}
+
+QPointF RayTracing::makeNormalPoint(QLineF line)
+{
+    QPointF point = QPointF((line.normalVector().dx())/abs(line.normalVector().dx()),(line.normalVector().dy())/abs(line.normalVector().dy()));
+    if(point.x() != point.x()){
+        point.setX(0);
+    }
+    if(point.y() != point.y()){
+        point.setY(0);
+    }
+    return point;
 }
 
 

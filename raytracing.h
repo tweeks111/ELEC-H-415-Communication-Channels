@@ -67,10 +67,11 @@ private:
     void makeDirectAndGroundReflection();
     void makeWallReflection(QList<QPointF> = QList<QPointF>(), QList<QLineF*> = QList<QLineF*>(), qint16 n_reflection = 1);
     void makeDiffraction();
-    bool wallIsValid(QLineF*);
-    bool cornerIsValid(QPointF* corner);
+    bool wallIsValid(QLineF wall);
+    bool cornerIsValid(QPointF corner);
     bool checkTxRxValidity();
 
+    QPointF makeNormalPoint(QLineF line);
 };
 
 #endif // RAYTRACING_H
