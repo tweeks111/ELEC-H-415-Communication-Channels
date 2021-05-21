@@ -11,6 +11,10 @@ class ReceiverRect : public QGraphicsRectItem
     public:
         ReceiverRect(int x,int y, int w, int h,qreal power, QGraphicsItem* parent=nullptr);
         qreal power;
+        qreal SNR;
+        qreal rice;
+        qreal delayspread;
+
         bool mouseOver=false;
         QColor rectColor;
         int debitBin;

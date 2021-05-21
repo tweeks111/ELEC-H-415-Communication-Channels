@@ -12,6 +12,7 @@
 #include <QtCore/QVariant>
 #include <QtGui/QAction>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QComboBox>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QLabel>
@@ -21,6 +22,7 @@
 #include <QtWidgets/QProgressBar>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSlider>
+#include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
 #include "drawingview.h"
@@ -45,13 +47,17 @@ public:
     QWidget *widget;
     QGridLayout *gridLayout_2;
     QSlider *widthSlider;
-    QLabel *label_2;
     QLabel *label;
-    QLabel *widthLabel;
-    QPushButton *runBtn;
-    QLabel *heightLabel;
-    QSlider *heightSlider;
     QProgressBar *progressBar;
+    QSlider *heightSlider;
+    QComboBox *mapBox;
+    QSpacerItem *verticalSpacer;
+    QPushButton *runBtn;
+    QSpacerItem *verticalSpacer_2;
+    QLabel *heightLabel;
+    QLabel *label_2;
+    QLabel *widthLabel;
+    QPushButton *settingsBtn;
     QMenuBar *menubar;
     QMenu *menuFile;
     QToolBar *toolBar;
@@ -128,32 +134,18 @@ public:
         widthSlider->setTickPosition(QSlider::TicksBelow);
         widthSlider->setTickInterval(1);
 
-        gridLayout_2->addWidget(widthSlider, 1, 1, 1, 1);
-
-        label_2 = new QLabel(widget);
-        label_2->setObjectName(QString::fromUtf8("label_2"));
-
-        gridLayout_2->addWidget(label_2, 1, 0, 1, 1);
+        gridLayout_2->addWidget(widthSlider, 2, 1, 1, 1);
 
         label = new QLabel(widget);
         label->setObjectName(QString::fromUtf8("label"));
 
-        gridLayout_2->addWidget(label, 0, 0, 1, 1);
+        gridLayout_2->addWidget(label, 1, 0, 1, 1);
 
-        widthLabel = new QLabel(widget);
-        widthLabel->setObjectName(QString::fromUtf8("widthLabel"));
+        progressBar = new QProgressBar(widget);
+        progressBar->setObjectName(QString::fromUtf8("progressBar"));
+        progressBar->setValue(0);
 
-        gridLayout_2->addWidget(widthLabel, 1, 2, 1, 1);
-
-        runBtn = new QPushButton(widget);
-        runBtn->setObjectName(QString::fromUtf8("runBtn"));
-
-        gridLayout_2->addWidget(runBtn, 3, 1, 1, 1);
-
-        heightLabel = new QLabel(widget);
-        heightLabel->setObjectName(QString::fromUtf8("heightLabel"));
-
-        gridLayout_2->addWidget(heightLabel, 0, 2, 1, 1);
+        gridLayout_2->addWidget(progressBar, 5, 0, 1, 3);
 
         heightSlider = new QSlider(widget);
         heightSlider->setObjectName(QString::fromUtf8("heightSlider"));
@@ -169,19 +161,55 @@ public:
         heightSlider->setTickPosition(QSlider::TicksBelow);
         heightSlider->setTickInterval(1);
 
-        gridLayout_2->addWidget(heightSlider, 0, 1, 1, 1);
+        gridLayout_2->addWidget(heightSlider, 1, 1, 1, 1);
 
-        progressBar = new QProgressBar(widget);
-        progressBar->setObjectName(QString::fromUtf8("progressBar"));
-        progressBar->setValue(0);
+        mapBox = new QComboBox(widget);
+        mapBox->addItem(QString());
+        mapBox->addItem(QString());
+        mapBox->addItem(QString());
+        mapBox->addItem(QString());
+        mapBox->setObjectName(QString::fromUtf8("mapBox"));
 
-        gridLayout_2->addWidget(progressBar, 2, 0, 1, 3);
+        gridLayout_2->addWidget(mapBox, 9, 0, 1, 3);
+
+        verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+        gridLayout_2->addItem(verticalSpacer, 7, 1, 1, 1);
+
+        runBtn = new QPushButton(widget);
+        runBtn->setObjectName(QString::fromUtf8("runBtn"));
+
+        gridLayout_2->addWidget(runBtn, 6, 0, 1, 3);
+
+        verticalSpacer_2 = new QSpacerItem(20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+        gridLayout_2->addItem(verticalSpacer_2, 4, 1, 1, 1);
+
+        heightLabel = new QLabel(widget);
+        heightLabel->setObjectName(QString::fromUtf8("heightLabel"));
+
+        gridLayout_2->addWidget(heightLabel, 1, 2, 1, 1);
+
+        label_2 = new QLabel(widget);
+        label_2->setObjectName(QString::fromUtf8("label_2"));
+
+        gridLayout_2->addWidget(label_2, 2, 0, 1, 1);
+
+        widthLabel = new QLabel(widget);
+        widthLabel->setObjectName(QString::fromUtf8("widthLabel"));
+
+        gridLayout_2->addWidget(widthLabel, 2, 2, 1, 1);
+
+        settingsBtn = new QPushButton(widget);
+        settingsBtn->setObjectName(QString::fromUtf8("settingsBtn"));
+
+        gridLayout_2->addWidget(settingsBtn, 10, 0, 1, 3);
 
 
         horizontalLayout->addWidget(widget, 0, Qt::AlignTop);
 
 
-        gridLayout->addLayout(horizontalLayout, 0, 0, 1, 1);
+        gridLayout->addLayout(horizontalLayout, 0, 1, 1, 1);
 
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
@@ -241,11 +269,17 @@ public:
 #if QT_CONFIG(tooltip)
         actionRun->setToolTip(QCoreApplication::translate("MainWindow", "Run ", nullptr));
 #endif // QT_CONFIG(tooltip)
-        label_2->setText(QCoreApplication::translate("MainWindow", "Width", nullptr));
         label->setText(QCoreApplication::translate("MainWindow", "Height:", nullptr));
-        widthLabel->setText(QCoreApplication::translate("MainWindow", "500m", nullptr));
-        runBtn->setText(QCoreApplication::translate("MainWindow", "Heatmap", nullptr));
+        mapBox->setItemText(0, QCoreApplication::translate("MainWindow", "Received power", nullptr));
+        mapBox->setItemText(1, QCoreApplication::translate("MainWindow", "User-end SNR", nullptr));
+        mapBox->setItemText(2, QCoreApplication::translate("MainWindow", "Rice factor", nullptr));
+        mapBox->setItemText(3, QCoreApplication::translate("MainWindow", "Delay spread", nullptr));
+
+        runBtn->setText(QCoreApplication::translate("MainWindow", "Run", nullptr));
         heightLabel->setText(QCoreApplication::translate("MainWindow", "500m", nullptr));
+        label_2->setText(QCoreApplication::translate("MainWindow", "Width", nullptr));
+        widthLabel->setText(QCoreApplication::translate("MainWindow", "500m", nullptr));
+        settingsBtn->setText(QCoreApplication::translate("MainWindow", "Settings", nullptr));
         menuFile->setTitle(QCoreApplication::translate("MainWindow", "File", nullptr));
         toolBar->setWindowTitle(QCoreApplication::translate("MainWindow", "toolBar", nullptr));
     } // retranslateUi

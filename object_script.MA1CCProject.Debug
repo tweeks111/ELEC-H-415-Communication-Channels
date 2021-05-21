@@ -7,7 +7,9 @@ debug/point.o
 debug/ray.o
 debug/raytracing.o
 debug/receiverrect.o
+debug/settingwindow.o
 debug/qrc_res.o
 debug/moc_drawingscene.o
 debug/moc_drawingview.o
 debug/moc_mainwindow.o
+debug/moc_settingwindow.o

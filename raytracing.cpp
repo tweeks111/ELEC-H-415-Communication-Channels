@@ -88,6 +88,23 @@ void RayTracing::drawRays(QPointF* tx, QPointF* rx, QList<Building*>* building_l
     this->received_power_dbm = 10*log10(this->received_power/0.01);
 }
 
+qreal RayTracing::SNR()
+{
+    qreal power_dbw = this->received_power_dbm - 30;
+    qreal SNR = power_dbw - 10*log10(noise_figure) - 10*log10(boltzman*BW*temp);
+    return SNR;
+}
+
+void RayTracing::setSettings(QMap<QString, qreal> dict)
+{
+    this->h = dict["height"];
+    this->noise_figure = dict["noisefig"];
+    this->BW = dict["BW"];
+    this->temp = dict["temp"];
+    qDebug()<<temp;
+}
+
+
 void RayTracing::makeDirectAndGroundReflection()
 {
 

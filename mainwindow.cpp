@@ -15,6 +15,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    this->settingWindow = new SettingWindow(this);
+
     // Create graphics scene
     this->drawing_scene = new DrawingScene(this);
 
@@ -29,6 +31,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->graphicsView->show();
 
+    ui->progressBar->setAlignment(Qt::AlignCenter);
+
     connect(ui->addBS, SIGNAL(triggered(bool)), this, SLOT(placeBS()));
     connect(ui->addRX, SIGNAL(triggered(bool)), this, SLOT(placeRX()));
     connect(ui->clearBS, SIGNAL(triggered(bool)), this, SLOT(clearBS()));
@@ -42,6 +46,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionRun, SIGNAL(triggered(bool)), this, SLOT(runSimulation()));
     connect(ui->runBtn, SIGNAL(released()), this, SLOT(runSimulation()));
     connect(this->drawing_scene, SIGNAL(updateBar(int)), ui->progressBar, SLOT(setValue(int)));
+    connect(ui->settingsBtn, SIGNAL(released()), this, SLOT(openDialog()));
+    connect(this->settingWindow, SIGNAL(accept()), this, SLOT(acceptSettings()));
+
+
 }
 
 MainWindow::~MainWindow()
@@ -119,6 +127,18 @@ void MainWindow::updateMapSize()
     ui->heightLabel->setText(QString::number(map_height)+'m');
     this->drawing_scene->updateMapSize(map_width, map_height);
     ui->graphicsView->fitInView(this->drawing_scene->sceneRect(), Qt::KeepAspectRatio);
+}
+
+void MainWindow::openDialog()
+{
+    this->settingWindow->show();
+}
+
+void MainWindow::acceptSettings()
+{
+    this->settingWindow->hide();
+    QMap<QString, qreal> settingsDict = this->settingWindow->getSettings();
+    this->drawing_scene->setSettings(settingsDict);
 }
 
 void MainWindow::saveProject() {

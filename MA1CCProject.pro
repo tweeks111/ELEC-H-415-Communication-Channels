@@ -17,7 +17,8 @@ SOURCES += \
     point.cpp \
     ray.cpp \
     raytracing.cpp \
-    receiverrect.cpp
+    receiverrect.cpp \
+    settingwindow.cpp
 
 HEADERS += \
     building.h \
@@ -27,10 +28,12 @@ HEADERS += \
     point.h \
     ray.h \
     raytracing.h \
-    receiverrect.h
+    receiverrect.h \
+    settingwindow.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    settingwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

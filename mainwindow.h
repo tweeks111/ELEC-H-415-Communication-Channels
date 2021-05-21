@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "settingwindow.h"
+
 
 class DrawingScene;
 
@@ -32,9 +34,13 @@ private slots:
     void openProject();
     void runSimulation();
     void updateMapSize();
+    void openDialog();
+    void acceptSettings();
+
 private:
     Ui::MainWindow *ui;
     DrawingScene *drawing_scene;
+    SettingWindow* settingWindow;
     void saveProjectDataToFile(QString filename);
 
     void openProjectDataFile(QString filename);

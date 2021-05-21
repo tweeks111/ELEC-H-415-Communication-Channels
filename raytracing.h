@@ -24,6 +24,9 @@ public:
     QRectF* mainStreet;
     qreal received_power_dbm;
 
+    qreal SNR();
+    void setSettings(QMap<QString, qreal>);
+
 private:
     //Attributs
     int* map_width;
@@ -41,17 +44,26 @@ private:
     int maxReflection = 3;
 
     qreal const c = 299792458;
+    const qreal boltzman = 1.379*1e-23;
+    qreal BW = 200*1e6;
+
+
     qreal frequency=27e9;
     qreal relPermittivity = 5;
     qreal h = 2;
     qreal Ra = 71;//check
     qreal EIRPmax = 2;
+    qreal noise_figure = 10;
+    qreal temp = 293.15;
+
+
     qreal beta;
     qreal Ptx;
     qreal GtxMax;
     qreal heMax;
     std::complex<qreal> tension;
     qreal received_power;
+
 
     qreal he(qreal theta);
     qreal Gtx(qreal theta);

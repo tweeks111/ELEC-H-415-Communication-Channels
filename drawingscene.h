@@ -13,7 +13,8 @@ enum SceneState {
     Disabled,
     Building,
     TX,
-    RX
+    RX,
+    Simulation
 };
 }
 
@@ -46,6 +47,7 @@ public:
     void draw(bool ray = true);
     void runSimulation();
     void updateMapSize(int, int);
+    void setSettings(QMap<QString, qreal>);
 
 public slots:
 

@@ -66,6 +66,9 @@ void DrawingScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         this->scene_state = SceneState::Disabled;
         this->tx_item->setCenter(snapToGrid(&eventPoint,2));
     }
+    else if(this->scene_state == SceneState::Simulation){
+        ray=false;
+    }
     draw(ray);
 }
 
@@ -84,6 +87,10 @@ void DrawingScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         this->removeItem(this->startBuildLabel);
         this->startBuildLabel = nullptr;
         this->temp_building = nullptr;
+    }
+    else if(this->scene_state == SceneState::Simulation)
+    {
+        ray = false;
     }
     else {
         this->scene_state = SceneState::Disabled;
@@ -119,27 +126,31 @@ void DrawingScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     else if(this->scene_state == SceneState::Disabled){
         ray = false;
     }
+    else if(this->scene_state == SceneState::Simulation){
+        ray = false;
+    }
     draw(ray); //Comment this for easier debugging (click for update)
 }
 
 void DrawingScene::draw(bool ray)
 {
-    //MainStreet
-    if(this->main_street){this->removeItem(this->main_street);}
-    this->main_street = nullptr;
-    if(this->tx_item && this->tx_item->isSet)
-    {
-        //qDebug() << this->tx_item->center;
-        this->rayTracing->findMainStreetQRectF(&(this->tx_item->center), &(this->building_list));
-        if(this->rayTracing->mainStreet)
+    if(this->scene_state != SceneState::Simulation){
+        //MainStreet
+        if(this->main_street){this->removeItem(this->main_street);}
+        this->main_street = nullptr;
+        if(this->tx_item && this->tx_item->isSet)
         {
-            this->main_street = new QGraphicsRectItem(this->rayTracing->mainStreet->toRect());
-            this->main_street->setBrush(Qt::blue);
-            this->main_street->setOpacity(0.15);
-            this->addItem(this->main_street);
+            //qDebug() << this->tx_item->center;
+            this->rayTracing->findMainStreetQRectF(&(this->tx_item->center), &(this->building_list));
+            if(this->rayTracing->mainStreet)
+            {
+                this->main_street = new QGraphicsRectItem(this->rayTracing->mainStreet->toRect());
+                this->main_street->setBrush(Qt::blue);
+                this->main_street->setOpacity(0.15);
+                this->addItem(this->main_street);
+            }
         }
     }
-
     //Buildings
     if(this->buildingsGroup){this->removeItem(this->buildingsGroup);}
     this->buildingsGroup = new QGraphicsItemGroup();
@@ -188,7 +199,9 @@ void DrawingScene::draw(bool ray)
 
 void DrawingScene::runSimulation()
 {
+    this->scene_state = SceneState::Simulation;
     this->rectList.clear();
+    this->removeItem(this->main_street);
     int x0 =  0;//this->main_street->rect().x()/this->px_per_m;
     int y0 =  0;//this->main_street->rect().y()/this->px_per_m;
     int w  = this->map_width; //this->main_street->rect().width()/this->px_per_m;
@@ -208,6 +221,7 @@ void DrawingScene::runSimulation()
                     this->rayTracing->drawRays(&this->tx_item->center, RX, &this->building_list);
                     qreal power = this->rayTracing->received_power_dbm;
                     ReceiverRect *rect = new ReceiverRect(i*this->px_per_m, j*this->px_per_m, this->px_per_m, this->px_per_m, power);
+                    rect->SNR = this->rayTracing->SNR();
                     this->rectList.append(rect);
                     this->addItem(rect);
                 }
@@ -251,6 +265,16 @@ void DrawingScene::updateMapSize(int width, int height)
     }
 
     this->setSceneRect(QRectF(0,0,this->map_width*this->px_per_m,this->map_height*this->px_per_m));
+}
+
+void DrawingScene::setSettings(QMap<QString, qreal> dict)
+{
+    this->rayTracing->setSettings(dict);
+    if(this->scene_state == SceneState::Simulation){
+        foreach(ReceiverRect* rect, this->rectList){
+
+        }
+    }
 }
 
 
