@@ -145,7 +145,7 @@ public:
         progressBar->setObjectName(QString::fromUtf8("progressBar"));
         progressBar->setValue(0);
 
-        gridLayout_2->addWidget(progressBar, 5, 0, 1, 3);
+        gridLayout_2->addWidget(progressBar, 6, 0, 1, 3);
 
         heightSlider = new QSlider(widget);
         heightSlider->setObjectName(QString::fromUtf8("heightSlider"));
@@ -170,20 +170,20 @@ public:
         mapBox->addItem(QString());
         mapBox->setObjectName(QString::fromUtf8("mapBox"));
 
-        gridLayout_2->addWidget(mapBox, 9, 0, 1, 3);
+        gridLayout_2->addWidget(mapBox, 10, 0, 1, 3);
 
         verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
-        gridLayout_2->addItem(verticalSpacer, 7, 1, 1, 1);
+        gridLayout_2->addItem(verticalSpacer, 8, 1, 1, 1);
 
         runBtn = new QPushButton(widget);
         runBtn->setObjectName(QString::fromUtf8("runBtn"));
 
-        gridLayout_2->addWidget(runBtn, 6, 0, 1, 3);
+        gridLayout_2->addWidget(runBtn, 7, 0, 1, 3);
 
         verticalSpacer_2 = new QSpacerItem(20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
-        gridLayout_2->addItem(verticalSpacer_2, 4, 1, 1, 1);
+        gridLayout_2->addItem(verticalSpacer_2, 5, 1, 1, 1);
 
         heightLabel = new QLabel(widget);
         heightLabel->setObjectName(QString::fromUtf8("heightLabel"));
@@ -203,7 +203,7 @@ public:
         settingsBtn = new QPushButton(widget);
         settingsBtn->setObjectName(QString::fromUtf8("settingsBtn"));
 
-        gridLayout_2->addWidget(settingsBtn, 10, 0, 1, 3);
+        gridLayout_2->addWidget(settingsBtn, 4, 0, 1, 3);
 
 
         horizontalLayout->addWidget(widget, 0, Qt::AlignTop);

@@ -1,33 +1,34 @@
 #include "receiverrect.h"
 
-ReceiverRect::ReceiverRect(int x,int y, int w, int h,qreal power, QGraphicsItem* parent):QGraphicsRectItem(x,y,w,h,parent)
+
+RectState::RectState ReceiverRect::rect_state;
+
+ReceiverRect::ReceiverRect(int x,int y, int w, int h, QGraphicsItem* parent)
+    :QGraphicsRectItem(x,y,w,h,parent)
 {
-    this->power=power;
-    this->colorRect();
-    QPen pen(rectColor);
-    pen.setWidth(0);
-    this->setPen(pen);
     //setAcceptHoverEvents(true);
+
+
 }
 
 
-void ReceiverRect::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
-{
-    mouseOver=true;
-//    QPen pen(Qt::cyan);
-//    pen.setWidth(2);
-//    setPen(pen);
-//    QGraphicsRectItem::hoverEnterEvent(event);
-}
+//void ReceiverRect::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+//{
+//    mouseOver=true;
+////    QPen pen(Qt::cyan);
+////    pen.setWidth(2);
+////    setPen(pen);
+////    QGraphicsRectItem::hoverEnterEvent(event);
+//}
 
-void ReceiverRect::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
-{
-    mouseOver=false;
-//    QPen pen(rectColor);
-//    pen.setWidth(0);
-//    setPen(pen);
-//    QGraphicsRectItem::hoverLeaveEvent(event);
-}
+//void ReceiverRect::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+//{
+//    mouseOver=false;
+////    QPen pen(rectColor);
+////    pen.setWidth(0);
+////    setPen(pen);
+////    QGraphicsRectItem::hoverLeaveEvent(event);
+//}
 
 
 
@@ -51,33 +52,71 @@ void ReceiverRect::debit()
 void ReceiverRect::colorRect()
 {
     int R=0;int G=0;int B=0;
-    qreal ratioPower = (this->power-scaleMin)/(scaleMax-scaleMin);
-    if (ratioPower >1){
-        ratioPower =1;
+    qreal value = 0;qreal min =0;qreal max=0;
+
+    if(rect_state == RectState::Power){
+        value = this->power;
+        min = this->powMin;
+        max = this->powMax;
     }
-    else if(ratioPower<0){
-        ratioPower=0;
+    else if(rect_state == RectState::SNR){
+        value = this->SNR;
+        min = this->SNRMin;
+        max = this->SNRMax;
+    }
+    else if(rect_state == RectState::Rice){
+        value = this->rice;
+        min = this->riceMin;
+        max = this->riceMax;
+    }
+    else if(rect_state == RectState::DelaySpread){
+        value = this->delayspread;
+        min = this->dsMin;
+        max = this->dsMax;
     }
 
-    if(ratioPower<0.25){
+    qreal ratio = (value-min)/(max-min);
+    if (ratio >1){
+        ratio =1;
+    }
+    else if(ratio<0){
+        ratio=0;
+    }
+
+    if(ratio<0.25){
         B=255;
-        G=4*ratioPower*255;
+        G=4*ratio*255;
     }
-    else if(ratioPower<0.5){
+    else if(ratio<0.5){
         G=255;
-        B=4*(0.5-ratioPower)*255;
+        B=4*(0.5-ratio)*255;
     }
-    else if(ratioPower<0.75){
+    else if(ratio<0.75){
         // Green -> Yellow
         G=255;
-        R=4*(ratioPower-0.5)*255;
+        R=4*(ratio-0.5)*255;
     }
     else{
         // Yellow -> Red
         R=255;
-        G=4*(1-ratioPower)*255;
+        G=4*(1-ratio)*255;
     }
     this->rectColor = QColor(R,G,B,255);
+    QPen pen(rectColor);
+    pen.setWidth(0);
+    this->setPen(pen);
     QBrush brush(this->rectColor);
     this->setBrush(brush);
+}
+
+void ReceiverRect::changeState(RectState::RectState state){
+     ReceiverRect::rect_state = state;
+}
+
+void ReceiverRect::setPower(qreal power){
+    this->power = power;
+}
+
+void ReceiverRect::setSNR(qreal SNR){
+    this->SNR = SNR;
 }

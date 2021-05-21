@@ -12,8 +12,9 @@ DrawingScene::DrawingScene(QObject *parent)
     this->px_per_m          = 2;
     this->grid_spacing_m    = 5;
 
-
     this->scene_state = SceneState::Disabled;
+    ReceiverRect::changeState(RectState::Power);
+
     this->temp_building = nullptr;
     this->temp_MS = nullptr;
     this->rx_item = nullptr;
@@ -220,10 +221,14 @@ void DrawingScene::runSimulation()
                 if(sqrt(pow(x_m-x_tx,2)+pow(y_m-y_tx,2)) > 10){
                     this->rayTracing->drawRays(&this->tx_item->center, RX, &this->building_list);
                     qreal power = this->rayTracing->received_power_dbm;
-                    ReceiverRect *rect = new ReceiverRect(i*this->px_per_m, j*this->px_per_m, this->px_per_m, this->px_per_m, power);
+                    ReceiverRect *rect = new ReceiverRect(i*this->px_per_m, j*this->px_per_m, this->px_per_m, this->px_per_m);
+                    rect->power = power;
                     rect->SNR = this->rayTracing->SNR();
+                    rect->colorRect();
+
                     this->rectList.append(rect);
                     this->addItem(rect);
+                    update();
                 }
             }
             counter += 1;
@@ -272,7 +277,30 @@ void DrawingScene::setSettings(QMap<QString, qreal> dict)
     this->rayTracing->setSettings(dict);
     if(this->scene_state == SceneState::Simulation){
         foreach(ReceiverRect* rect, this->rectList){
+            // TODO: update map when changing settings ? How ?
+        }
+    }
+}
 
+void DrawingScene::changeMap(int index)
+{
+    switch(index){
+        case 0:
+            ReceiverRect::changeState(RectState::Power);
+            break;
+        case 1:
+            ReceiverRect::changeState(RectState::SNR);
+            break;
+        case 2:
+            ReceiverRect::changeState(RectState::Rice);
+            break;
+        case 3:
+            ReceiverRect::changeState(RectState::DelaySpread);
+            break;
+    }
+    if(this->scene_state==SceneState::Simulation){
+        foreach(ReceiverRect *rect, this->rectList){
+            rect->colorRect();
         }
     }
 }

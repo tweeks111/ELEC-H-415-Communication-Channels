@@ -50,6 +50,7 @@ public:
     void setSettings(QMap<QString, qreal>);
 
 public slots:
+    void changeMap(int index);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
@@ -77,6 +78,7 @@ private:
 
 
     SceneState::SceneState scene_state;
+
     RayTracing* rayTracing;
     bool checkTxRxAreSet();
     QPointF snapToGrid(QPointF *event,int precision=1);

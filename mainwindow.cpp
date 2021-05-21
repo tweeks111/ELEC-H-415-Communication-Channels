@@ -48,7 +48,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->drawing_scene, SIGNAL(updateBar(int)), ui->progressBar, SLOT(setValue(int)));
     connect(ui->settingsBtn, SIGNAL(released()), this, SLOT(openDialog()));
     connect(this->settingWindow, SIGNAL(accept()), this, SLOT(acceptSettings()));
-
+    connect(ui->mapBox, SIGNAL(currentIndexChanged(int)), this->drawing_scene, SLOT(changeMap(int)));
 
 }
 
