@@ -270,7 +270,7 @@ void DrawingScene::updateMapSize(int width, int height)
     }
 
     this->setSceneRect(QRectF(0,0,this->map_width*this->px_per_m,this->map_height*this->px_per_m));
-    this->draw(false);
+   // this->draw(false);
 }
 
 void DrawingScene::setSettings(QMap<QString, qreal> dict)
