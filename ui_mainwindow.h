@@ -233,7 +233,6 @@ public:
         toolBar->addAction(addBuilding);
         toolBar->addAction(clearBuilding);
         toolBar->addSeparator();
-        toolBar->addAction(actionRun);
 
         retranslateUi(MainWindow);
 

@@ -51,6 +51,7 @@ public:
 
 public slots:
     void changeMap(int index);
+    void clearSimulation();
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
@@ -63,6 +64,7 @@ protected:
     void keyPressEvent(QKeyEvent *event) override;
 signals:
     int  updateBar(int value);
+    void simulationFinished();
 private:
     Building* temp_building;
     Building* temp_MS;//To remove

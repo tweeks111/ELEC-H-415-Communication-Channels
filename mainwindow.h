@@ -36,6 +36,8 @@ private slots:
     void updateMapSize();
     void openDialog();
     void acceptSettings();
+    void simulationFinished();
+    void clearSimulation();
 
 private:
     Ui::MainWindow *ui;

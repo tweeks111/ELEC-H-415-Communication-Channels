@@ -43,13 +43,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->save, SIGNAL(triggered(bool)), this, SLOT(saveProject()));
     connect(ui->widthSlider, SIGNAL(valueChanged(int)), this, SLOT(updateMapSize()));
     connect(ui->heightSlider, SIGNAL(valueChanged(int)), this, SLOT(updateMapSize()));
-    connect(ui->actionRun, SIGNAL(triggered(bool)), this, SLOT(runSimulation()));
     connect(ui->runBtn, SIGNAL(released()), this, SLOT(runSimulation()));
     connect(this->drawing_scene, SIGNAL(updateBar(int)), ui->progressBar, SLOT(setValue(int)));
     connect(ui->settingsBtn, SIGNAL(released()), this, SLOT(openDialog()));
     connect(this->settingWindow, SIGNAL(accept()), this, SLOT(acceptSettings()));
     connect(ui->mapBox, SIGNAL(currentIndexChanged(int)), this->drawing_scene, SLOT(changeMap(int)));
-
+    connect(this->drawing_scene, SIGNAL(simulationFinished()), this, SLOT(simulationFinished()));
 }
 
 MainWindow::~MainWindow()
@@ -139,6 +138,23 @@ void MainWindow::acceptSettings()
     this->settingWindow->hide();
     QMap<QString, qreal> settingsDict = this->settingWindow->getSettings();
     this->drawing_scene->setSettings(settingsDict);
+}
+
+void MainWindow::simulationFinished()
+{
+    ui->runBtn->setText("Clear");
+    ui->runBtn->setEnabled(true);
+    ui->runBtn->disconnect();
+    connect(ui->runBtn, SIGNAL(released()), this, SLOT(clearSimulation()));
+}
+
+void MainWindow::clearSimulation()
+{
+    this->drawing_scene->clearSimulation();
+    ui->runBtn->setText("Run");
+    ui->runBtn->setEnabled(true);
+    ui->runBtn->disconnect();
+    connect(ui->runBtn, SIGNAL(released()), this, SLOT(runSimulation()));
 }
 
 void MainWindow::saveProject() {

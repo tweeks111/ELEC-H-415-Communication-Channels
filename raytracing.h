@@ -26,7 +26,6 @@ public:
 
     qreal SNR();
     void setSettings(QMap<QString, qreal>);
-
 private:
     //Attributs
     int* map_width;

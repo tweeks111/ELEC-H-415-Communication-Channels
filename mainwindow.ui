@@ -246,7 +246,6 @@
    <addaction name="addBuilding"/>
    <addaction name="clearBuilding"/>
    <addaction name="separator"/>
-   <addaction name="actionRun"/>
   </widget>
   <action name="addBS">
    <property name="icon">
