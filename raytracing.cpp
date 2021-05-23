@@ -47,7 +47,7 @@ qreal RayTracing::coefReflGround(qreal theta)//parra
 std::complex<qreal> RayTracing::coefDiff(qreal Dr)
 {
     qreal nu = sqrt(2*beta*Dr/pi);
-    return std::polar(pow(10,(-6.9 -20*log10(sqrt(pow(nu - 0.1,2)+1)+nu-0.1))/20),-(pi/2)-(pi/2)*pow(nu,2));
+    return std::polar(pow(10,(-6.9 -20*log10(sqrt(pow(nu - 0.1,2)+1)+nu-0.1))/10),-(pi/4)-(pi/2)*pow(nu,2));
 }
 
 void RayTracing::drawRays(QPointF* tx, QPointF* rx, QList<Building*>* building_list)
@@ -91,7 +91,7 @@ qreal RayTracing::SNR()
 {
     qreal power_dbw = this->received_power_dbm - 30;
     qreal SNR = power_dbw - 10*log10(noise_figure) - 10*log10(boltzman*BW*temp);
-    qDebug()<<SNR;
+    //qDebug()<<SNR;
     return SNR;
 }
 
@@ -262,11 +262,12 @@ void RayTracing::makeDiffraction()
                     Ray* rayTXtoDP = new Ray(lineTXtoEP);
                     Ray* rayDPtoRX = new Ray(lineEPtoRX);
                     QLineF direct = QLineF(*(this->transmitter),*(this->receiver));
-                    qreal h = lineTXtoEP.length()/ *(this->px_per_m) / abs(sin(direct.angleTo(lineEPtoRX)));
-                    qreal Dr = (pow(h,2)/2) * ((1/lineTXtoEP.length()/ *(this->px_per_m))+(1/lineEPtoRX.length()/ *(this->px_per_m)));
+                    qreal startAngle = direct.angleTo(lineTXtoEP)*(pi/180);
+                    qreal h = lineTXtoEP.length()/ *(this->px_per_m) * abs(sin(startAngle));
+                    qreal Dr = (pow(h,2)/2) * ( 1/(lineTXtoEP.length()/ *(this->px_per_m)) + 1/(lineEPtoRX.length()/ *(this->px_per_m)) );
                     std::complex<qreal> F = coefDiff(Dr);
                     qreal total_length = (lineTXtoEP.length() + lineEPtoRX.length())/ *(this->px_per_m);
-                    std::complex<qreal> E_refl = std::polar(abs(F)*sqrt(60* GtxMax * Ptx )/ total_length, (-this->beta*total_length) + arg(F));
+                    std::complex<qreal> E_refl = std::polar(sqrt(abs(F))*sqrt(60* GtxMax * Ptx )/ total_length, (-this->beta*total_length) + arg(F));
                     std::complex<qreal> T_refl = E_refl * heMax;
                     this->tension += T_refl;
                     rayTXtoDP->setPen(rayPen);
