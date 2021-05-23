@@ -276,11 +276,11 @@ void DrawingScene::updateMapSize(int width, int height)
 void DrawingScene::setSettings(QMap<QString, qreal> dict)
 {
     this->rayTracing->setSettings(dict);
-    if(this->scene_state == SceneState::Simulation){
-        foreach(ReceiverRect* rect, this->rectList){
-            // TODO: update map when changing settings ? How ?
-        }
-    }
+//    if(this->scene_state == SceneState::Simulation){
+//        foreach(ReceiverRect* rect, this->rectList){
+//            // TODO: update map when changing settings ? How ?
+//        }
+//    }
 }
 
 void DrawingScene::changeMap(int index)

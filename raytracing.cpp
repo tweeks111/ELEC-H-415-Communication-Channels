@@ -91,7 +91,6 @@ qreal RayTracing::SNR()
 {
     qreal power_dbw = this->received_power_dbm - 30;
     qreal SNR = power_dbw - 10*log10(noise_figure) - 10*log10(boltzman*BW*temp);
-    //qDebug()<<SNR;
     return SNR;
 }
 

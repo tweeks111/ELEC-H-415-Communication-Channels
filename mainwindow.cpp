@@ -59,8 +59,11 @@ MainWindow::~MainWindow()
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
     QMainWindow::resizeEvent(event);
-    //ui->graphicsView->fitInView(this->drawing_scene->itemsBoundingRect(), Qt::KeepAspectRatio);
-    this->updateMapSize();
+    this->drawing_scene->setSceneRect(QRectF(0,
+                                             0,
+                                             this->drawing_scene->map_width*this->drawing_scene->px_per_m,
+                                             this->drawing_scene->map_height* this->drawing_scene->px_per_m));
+    ui->graphicsView->fitInView(this->drawing_scene->sceneRect(), Qt::KeepAspectRatio);
 }
 
 void MainWindow::showEvent(QShowEvent *event)
@@ -274,6 +277,9 @@ void MainWindow::openProjectDataFile(QString filename) {
     // ----- Base images ----- //
     // Map dimensions
     in >> map_dim;
+    ui->widthSlider->setValue(map_dim[0]/50);
+    ui->heightSlider->setValue(map_dim[1]/50);
+    this->updateMapSize();
     // ----- Pasted items ----- //
     in >> building_list;
     // Add the new items to the scene
