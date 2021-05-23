@@ -6,7 +6,7 @@ Building::Building(const QRectF building_rect, QGraphicsItem *parent)
     :QGraphicsRectItem(building_rect,parent)
 {
     QPen pen(Qt::lightGray);
-    pen.setWidth(3);
+    pen.setWidth(0);
     this->setBrush(QBrush(Qt::gray));
     this->setPen(pen);
     this->px_per_m          = 2;

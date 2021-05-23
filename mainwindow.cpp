@@ -59,7 +59,8 @@ MainWindow::~MainWindow()
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
     QMainWindow::resizeEvent(event);
-    ui->graphicsView->fitInView(this->drawing_scene->itemsBoundingRect(), Qt::KeepAspectRatio);
+    //ui->graphicsView->fitInView(this->drawing_scene->itemsBoundingRect(), Qt::KeepAspectRatio);
+    this->updateMapSize();
 }
 
 void MainWindow::showEvent(QShowEvent *event)
@@ -113,8 +114,16 @@ void MainWindow::runSimulation()
 
     ui->progressBar->setRange(0, map_width*map_height);
 
+    ui->widthSlider->setEnabled(false);
+    ui->heightSlider->setEnabled(false);
+    ui->settingsBtn->setEnabled(false);
+
     ui->runBtn->setEnabled(false);
     ui->actionRun->setEnabled(false);
+    ui->addBS->setEnabled(false);
+    ui->clearBS->setEnabled(false);
+    ui->addBuilding->setEnabled(false);
+    ui->clearBuilding->setEnabled(false);
     this->drawing_scene->runSimulation();
 }
 
@@ -153,6 +162,13 @@ void MainWindow::clearSimulation()
     this->drawing_scene->clearSimulation();
     ui->runBtn->setText("Run");
     ui->runBtn->setEnabled(true);
+    ui->widthSlider->setEnabled(true);
+    ui->heightSlider->setEnabled(true);
+    ui->settingsBtn->setEnabled(true);
+    ui->addBS->setEnabled(true);
+    ui->clearBS->setEnabled(true);
+    ui->addBuilding->setEnabled(true);
+    ui->clearBuilding->setEnabled(true);
     ui->runBtn->disconnect();
     connect(ui->runBtn, SIGNAL(released()), this, SLOT(runSimulation()));
 }

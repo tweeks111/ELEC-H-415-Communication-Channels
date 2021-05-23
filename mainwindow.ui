@@ -15,7 +15,7 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="1">
+    <item row="0" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="DrawingView" name="graphicsView"/>
@@ -30,11 +30,18 @@
         </property>
         <property name="maximumSize">
          <size>
-          <width>369</width>
+          <width>200</width>
           <height>16777215</height>
          </size>
         </property>
         <layout class="QGridLayout" name="gridLayout_2">
+         <item row="2" column="2">
+          <widget class="QLabel" name="widthLabel">
+           <property name="text">
+            <string>500m</string>
+           </property>
+          </widget>
+         </item>
          <item row="2" column="1">
           <widget class="QSlider" name="widthSlider">
            <property name="minimum">
@@ -60,13 +67,6 @@
            </property>
            <property name="tickInterval">
             <number>1</number>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>Height:</string>
            </property>
           </widget>
          </item>
@@ -138,23 +138,24 @@
            </item>
           </widget>
          </item>
-         <item row="8" column="1">
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
+         <item row="1" column="2">
+          <widget class="QLabel" name="heightLabel">
+           <property name="text">
+            <string>500m</string>
            </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
+          </widget>
          </item>
          <item row="7" column="0" colspan="3">
           <widget class="QPushButton" name="runBtn">
            <property name="text">
             <string>Run</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Height:</string>
            </property>
           </widget>
          </item>
@@ -171,10 +172,23 @@
            </property>
           </spacer>
          </item>
-         <item row="1" column="2">
-          <widget class="QLabel" name="heightLabel">
+         <item row="8" column="1">
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="4" column="0" colspan="3">
+          <widget class="QPushButton" name="settingsBtn">
            <property name="text">
-            <string>500m</string>
+            <string>Settings</string>
            </property>
           </widget>
          </item>
@@ -182,20 +196,6 @@
           <widget class="QLabel" name="label_2">
            <property name="text">
             <string>Width</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="2">
-          <widget class="QLabel" name="widthLabel">
-           <property name="text">
-            <string>500m</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0" colspan="3">
-          <widget class="QPushButton" name="settingsBtn">
-           <property name="text">
-            <string>Settings</string>
            </property>
           </widget>
          </item>
