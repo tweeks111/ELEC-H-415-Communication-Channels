@@ -12,6 +12,7 @@ SOURCES += \
     building.cpp \
     drawingscene.cpp \
     drawingview.cpp \
+    legendscene.cpp \
     main.cpp \
     mainwindow.cpp \
     point.cpp \
@@ -24,6 +25,7 @@ HEADERS += \
     building.h \
     drawingscene.h \
     drawingview.h \
+    legendscene.h \
     mainwindow.h \
     point.h \
     ray.h \

@@ -6,7 +6,7 @@
 
 
 class DrawingScene;
-
+class LegendScene;
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -38,10 +38,12 @@ private slots:
     void acceptSettings();
     void simulationFinished();
     void clearSimulation();
+    void changeMap(int);
 
 private:
     Ui::MainWindow *ui;
     DrawingScene *drawing_scene;
+    LegendScene *legend_scene;
     SettingWindow* settingWindow;
     void saveProjectDataToFile(QString filename);
 

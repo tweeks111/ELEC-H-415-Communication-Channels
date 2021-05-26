@@ -35,19 +35,22 @@ class ReceiverRect : public QGraphicsRectItem
         void setSNR(qreal SNR);
         void colorRect();
         static void changeState(RectState::RectState state);
+        static RectState::RectState rect_state;
+        static const int powMax=-40;
+        static const int powMin=-150;
+        static const int SNRMax=30;
+        static const int SNRMin=-100;
+        static const int riceMax=1;
+        static const int riceMin=0;
+        static constexpr qreal dsMax=1e-6;
+        static constexpr qreal dsMin=1e-7;
+
 
     protected:
 //        void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
 //        void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
-        int powMax=-40;
-        int powMin=-150;
-        int SNRMax=30;
-        int SNRMin=-100;
-        int riceMax=1;
-        int riceMin=0;
-        float dsMax=1e-6;
-        float dsMin=1e-7;
-        static RectState::RectState rect_state;
+
+
 
 
 

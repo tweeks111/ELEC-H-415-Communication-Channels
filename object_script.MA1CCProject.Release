@@ -1,6 +1,7 @@
 release/building.o
 release/drawingscene.o
 release/drawingview.o
+release/legendscene.o
 release/main.o
 release/mainwindow.o
 release/point.o

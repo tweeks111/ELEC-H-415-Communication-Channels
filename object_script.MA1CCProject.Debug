@@ -1,6 +1,7 @@
 debug/building.o
 debug/drawingscene.o
 debug/drawingview.o
+debug/legendscene.o
 debug/main.o
 debug/mainwindow.o
 debug/point.o

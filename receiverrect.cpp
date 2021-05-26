@@ -1,7 +1,14 @@
 #include "receiverrect.h"
 
-
 RectState::RectState ReceiverRect::rect_state;
+const int ReceiverRect::powMax;
+const int ReceiverRect::powMin;
+const int ReceiverRect::SNRMax;
+const int ReceiverRect::SNRMin;
+const int ReceiverRect::riceMax;
+const int ReceiverRect::riceMin;
+constexpr qreal ReceiverRect::dsMax;
+constexpr qreal ReceiverRect::dsMin;
 
 ReceiverRect::ReceiverRect(int x,int y, int w, int h, QGraphicsItem* parent)
     :QGraphicsRectItem(x,y,w,h,parent)
@@ -56,23 +63,23 @@ void ReceiverRect::colorRect()
 
     if(rect_state == RectState::Power){
         value = this->power;
-        min = this->powMin;
-        max = this->powMax;
+        min = ReceiverRect::powMin;
+        max = ReceiverRect::powMax;
     }
     else if(rect_state == RectState::SNR){
         value = this->SNR;
-        min = this->SNRMin;
-        max = this->SNRMax;
+        min = ReceiverRect::SNRMin;
+        max = ReceiverRect::SNRMax;
     }
     else if(rect_state == RectState::Rice){
         value = this->rice;
-        min = this->riceMin;
-        max = this->riceMax;
+        min = ReceiverRect::riceMin;
+        max =ReceiverRect::riceMax;
     }
     else if(rect_state == RectState::DelaySpread){
         value = this->delayspread;
-        min = this->dsMin;
-        max = this->dsMax;
+        min = ReceiverRect::dsMin;
+        max = ReceiverRect::dsMax;
     }
 
     qreal ratio = (value-min)/(max-min);
@@ -110,8 +117,9 @@ void ReceiverRect::colorRect()
 }
 
 void ReceiverRect::changeState(RectState::RectState state){
-     ReceiverRect::rect_state = state;
+    ReceiverRect::rect_state = state;
 }
+
 
 void ReceiverRect::setPower(qreal power){
     this->power = power;

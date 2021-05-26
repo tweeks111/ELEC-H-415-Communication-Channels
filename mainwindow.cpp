@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include "drawingscene.h"
+#include "legendscene.h"
 #include <QFileDialog>
 #include <QGraphicsTextItem>
 
@@ -19,9 +20,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Create graphics scene
     this->drawing_scene = new DrawingScene(this);
-
+    this->legend_scene = new LegendScene(this);
     // Put scene in the view
     ui->graphicsView->setScene(this->drawing_scene);
+
+    ui->legendView->setStyleSheet("background: transparent");
+    ui->legendView->setScene(this->legend_scene);
 
     // Enable mouse tracking
     ui->graphicsView->setMouseTracking(true);
@@ -47,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->drawing_scene, SIGNAL(updateBar(int)), ui->progressBar, SLOT(setValue(int)));
     connect(ui->settingsBtn, SIGNAL(released()), this, SLOT(openDialog()));
     connect(this->settingWindow, SIGNAL(accept()), this, SLOT(acceptSettings()));
-    connect(ui->mapBox, SIGNAL(currentIndexChanged(int)), this->drawing_scene, SLOT(changeMap(int)));
+    connect(ui->mapBox, SIGNAL(currentIndexChanged(int)), this, SLOT(changeMap(int)));
     connect(this->drawing_scene, SIGNAL(simulationFinished()), this, SLOT(simulationFinished()));
 }
 
@@ -174,6 +178,12 @@ void MainWindow::clearSimulation()
     ui->clearBuilding->setEnabled(true);
     ui->runBtn->disconnect();
     connect(ui->runBtn, SIGNAL(released()), this, SLOT(runSimulation()));
+}
+
+void MainWindow::changeMap(int idx)
+{
+    this->drawing_scene->changeMap(idx);
+    this->legend_scene->changeLegend();
 }
 
 void MainWindow::saveProject() {
