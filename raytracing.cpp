@@ -90,7 +90,7 @@ void RayTracing::drawRays(QPointF* tx, QPointF* rx, QList<Building*>* building_l
         }     
     }
     if(this->los_tension_mod != 0){
-        this->rice_factor = 10*log10(this->los_tension_mod / this->nlos_tension_mod);
+        this->rice_factor = 10*log10(this->los_tension_mod / (this->los_tension_mod + this->nlos_tension_mod));
     }
     if(this->delay_min != INFINITE && this->delay_max > 0){
         this->delay_spread = this->delay_max = this->delay_min;
