@@ -90,9 +90,11 @@ void RayTracing::drawRays(QPointF* tx, QPointF* rx, QList<Building*>* building_l
         }     
     }
     if(this->los_tension_mod != 0){
-        this->rice_factor = this->los_tension_mod / this->nlos_tension_mod;
+        this->rice_factor = 10*log10(this->los_tension_mod / this->nlos_tension_mod);
     }
-    this->rice_factor = 10*log10(this->rice_factor);
+    if(this->delay_min != INFINITE && this->delay_max > 0){
+        this->delay_spread = this->delay_max = this->delay_min;
+    }
     this->received_power = (1/(2*Ra)) * pow(abs(this->tension),2);
     this->received_power_dbm = 10*log10(this->received_power/0.01);
 }
@@ -126,7 +128,8 @@ void RayTracing::makeDirectAndGroundReflection()
         this->tension = T_direct + T_ground;
         this->los_tension_mod = norm(T_direct);
         this->nlos_tension_mod = norm(T_ground);
-
+        this->delayCheck(directLine.length()/ *(this->px_per_m));
+        this->delayCheck(d_ground);
 
         QPen rayPen(QColor(106, 224, 27));
         rayPen.setWidth(2);
@@ -222,6 +225,7 @@ void RayTracing::makeWallReflection(QList<QPointF> mirrorPoints,QList<QLineF*> w
                         std::complex<qreal> T_refl = E_refl * heMax;
                         this->tension += T_refl;
                         this->nlos_tension_mod += norm(T_refl);
+                        this->delayCheck(total_length/(*(this->px_per_m)));
                         for(Ray* ray:rays){
                             ray->setPen(rayPen);
                             this->raysList.push_back(ray);
@@ -283,6 +287,8 @@ void RayTracing::makeDiffraction()
                     std::complex<qreal> T_diff = E_diff * heMax;
                     this->tension += T_diff;
                     this->nlos_tension_mod += norm(T_diff);
+                    this->delayCheck(total_length);
+
                     rayTXtoDP->setPen(rayPen);
                     rayDPtoRX->setPen(rayPen);
                     this->raysList.push_back(rayTXtoDP);
