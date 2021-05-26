@@ -23,6 +23,8 @@ public:
     QList<Ray*> raysList;
     QRectF* mainStreet;
     qreal received_power_dbm;
+    qreal rice_factor;
+    qreal delay_spread;
 
     qreal SNR();
     void setSettings(QMap<QString, qreal>);
@@ -60,6 +62,10 @@ private:
     qreal Ptx;
     qreal GtxMax;
     qreal heMax;
+    qreal los_tension_mod;
+    qreal nlos_tension_mod;
+    qreal delay_min;
+    qreal delay_max;
     std::complex<qreal> tension;
     qreal received_power;
 
