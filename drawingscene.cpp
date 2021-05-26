@@ -224,6 +224,9 @@ void DrawingScene::runSimulation()
                     ReceiverRect *rect = new ReceiverRect(i*this->px_per_m, j*this->px_per_m, this->px_per_m, this->px_per_m);
                     rect->power = power;
                     rect->SNR = this->rayTracing->SNR();
+                    rect->rice = this->rayTracing->rice_factor;
+                    rect->delayspread = this->rayTracing->delay_spread;
+                    qDebug() << this->rayTracing->delay_spread;
                     rect->colorRect();
 
                     this->rectList.append(rect);

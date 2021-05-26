@@ -20,8 +20,6 @@ enum RectState {
 
 class ReceiverRect : public QGraphicsRectItem
 {
-
-
     public:
         ReceiverRect(int x,int y, int w, int h, QGraphicsItem* parent=nullptr);
         qreal power;
@@ -45,10 +43,10 @@ class ReceiverRect : public QGraphicsRectItem
         int powMin=-150;
         int SNRMax=30;
         int SNRMin=-100;
-        int riceMax=-40;
-        int riceMin=-150;
-        int dsMax=-40;
-        int dsMin=-150;
+        int riceMax=1;
+        int riceMin=0;
+        float dsMax=1e-6;
+        float dsMin=1e-7;
         static RectState::RectState rect_state;
 
 

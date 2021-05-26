@@ -87,6 +87,7 @@ private:
     bool wallIsValid(QLineF wall);
     bool cornerIsValid(QPointF corner);
     bool checkTxRxValidity();
+    void delayCheck(qreal);
 
     QPointF makeNormalPoint(QLineF line);
 };
