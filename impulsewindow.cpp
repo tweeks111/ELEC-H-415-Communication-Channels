@@ -13,13 +13,6 @@ ImpulseWindow::ImpulseWindow(RayTracing *raytracing,QWidget *parent) :
     this->minDelay = raytracing->delay_min;
     this->BW = raytracing->BW;
     this->deltaT = 1/(2*raytracing->BW);
-    this->XAxis = new QValueAxis();
-    this->XAxis->setRange(this->minDelay/this->deltaT,this->maxDelay/this->deltaT);
-    this->XAxis->setLabelFormat("%g");
-    this->YAxis = new QValueAxis();
-    this->YAxis->setRange(0,this->totalPower);
-    this->YAxis->setLabelFormat("%g");
-
     this->makePhysical();
     this->makeTDL();
     this->makeUSTDL();
