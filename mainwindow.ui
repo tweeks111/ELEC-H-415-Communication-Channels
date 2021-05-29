@@ -321,8 +321,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset>
-     <normaloff>resources/rect_icon.png</normaloff>resources/rect_icon.png</iconset>
+    <iconset resource="resources/res.qrc">
+     <normaloff>:/icons/rect_icon.png</normaloff>:/icons/rect_icon.png</iconset>
    </property>
    <property name="text">
     <string>Add Building</string>

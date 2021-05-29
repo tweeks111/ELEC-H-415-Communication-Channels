@@ -1,4 +1,5 @@
-QT       += core gui
+QT       += core gui\
+            charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -18,6 +19,7 @@ SOURCES += \
     point.cpp \
     ray.cpp \
     raytracing.cpp \
+    impulsewindow.cpp\
     receiverrect.cpp \
     settingwindow.cpp
 
@@ -27,6 +29,7 @@ HEADERS += \
     drawingview.h \
     legendscene.h \
     mainwindow.h \
+    impulsewindow.h\
     point.h \
     ray.h \
     raytracing.h \
@@ -35,7 +38,8 @@ HEADERS += \
 
 FORMS += \
     mainwindow.ui \
-    settingwindow.ui
+    settingwindow.ui\
+    impulsewindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

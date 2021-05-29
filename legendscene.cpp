@@ -31,7 +31,7 @@ void LegendScene::drawScale()
     this->minLabel = new QGraphicsTextItem();
     this->maxLabel = new QGraphicsTextItem();
     this->minLabel->setPos(-40,0);
-    this->maxLabel->setPos(110,0);
+    this->maxLabel->setPos(101,0);
     addItem(this->minLabel);
     addItem(this->maxLabel);
     this->changeLegend();

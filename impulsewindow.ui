@@ -6,34 +6,34 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>528</width>
-    <height>538</height>
+    <width>677</width>
+    <height>638</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>677</width>
+    <height>0</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QWidget" name="verticalLayoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>501</width>
-     <height>511</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="Layout">
-    <item>
-     <widget class="QChartView" name="Physical"/>
-    </item>
-    <item>
-     <widget class="QChartView" name="TDL"/>
-    </item>
-    <item>
-     <widget class="QChartView" name="USTDL"/>
-    </item>
-   </layout>
-  </widget>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <layout class="QVBoxLayout" name="Layout">
+     <item>
+      <widget class="QChartView" name="Physical"/>
+     </item>
+     <item>
+      <widget class="QChartView" name="TDL"/>
+     </item>
+     <item>
+      <widget class="QChartView" name="USTDL"/>
+     </item>
+    </layout>
+   </item>
+  </layout>
  </widget>
  <customwidgets>
   <customwidget>

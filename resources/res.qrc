@@ -4,9 +4,9 @@
         <file>neutral_icon.png</file>
         <file>RX_icon.png</file>
         <file>TX_icon.png</file>
-        <file>rect_icon.png</file>
         <file>clearTX_icon.png</file>
         <file>clearRect_icon.png</file>
         <file>play-fill.png</file>
+        <file>rect_icon.png</file>
     </qresource>
 </RCC>
