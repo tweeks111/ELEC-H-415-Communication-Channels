@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include "settingwindow.h"
-
+#include "impulsewindow.h"
 
 class DrawingScene;
 class LegendScene;
@@ -35,6 +35,7 @@ private slots:
     void runSimulation();
     void updateMapSize();
     void openDialog();
+    void impulseResponse();
     void acceptSettings();
     void simulationFinished();
     void clearSimulation();
@@ -45,6 +46,7 @@ private:
     DrawingScene *drawing_scene;
     LegendScene *legend_scene;
     SettingWindow* settingWindow;
+    ImpulseWindow* impulseWindow;
     void saveProjectDataToFile(QString filename);
 
     void openProjectDataFile(QString filename);

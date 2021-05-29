@@ -17,7 +17,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     this->settingWindow = new SettingWindow(this);
-
     // Create graphics scene
     this->drawing_scene = new DrawingScene(this);
     this->legend_scene = new LegendScene(this);
@@ -50,6 +49,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->runBtn, SIGNAL(released()), this, SLOT(runSimulation()));
     connect(this->drawing_scene, SIGNAL(updateBar(int)), ui->progressBar, SLOT(setValue(int)));
     connect(ui->settingsBtn, SIGNAL(released()), this, SLOT(openDialog()));
+    connect(ui->impulseResponse, SIGNAL(released()), this, SLOT(impulseResponse()));
     connect(this->settingWindow, SIGNAL(accept()), this, SLOT(acceptSettings()));
     connect(ui->mapBox, SIGNAL(currentIndexChanged(int)), this, SLOT(changeMap(int)));
     connect(this->drawing_scene, SIGNAL(simulationFinished()), this, SLOT(simulationFinished()));
@@ -147,6 +147,12 @@ void MainWindow::updateMapSize()
 void MainWindow::openDialog()
 {
     this->settingWindow->show();
+}
+
+void MainWindow::impulseResponse()
+{
+    this->impulseWindow = new ImpulseWindow(this->drawing_scene->rayTracing,this);
+    this->impulseWindow->show();
 }
 
 void MainWindow::acceptSettings()

@@ -226,7 +226,7 @@ void DrawingScene::runSimulation()
                     rect->SNR = this->rayTracing->SNR();
                     rect->rice = this->rayTracing->rice_factor;
                     rect->delayspread = this->rayTracing->delay_spread;
-                    qDebug() << this->rayTracing->delay_spread;
+                    qDebug() << this->rayTracing->rice_factor;
                     rect->colorRect();
 
                     this->rectList.append(rect);

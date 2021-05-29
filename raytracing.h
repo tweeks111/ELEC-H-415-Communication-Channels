@@ -25,9 +25,14 @@ public:
     qreal received_power_dbm;
     qreal rice_factor;
     qreal delay_spread;
+    QList<QPair<qreal,std::complex<qreal>>> rayData;
+    std::complex<qreal> tension;
+    qreal delay_min;
+    qreal delay_max;
 
     qreal SNR();
     void setSettings(QMap<QString, qreal>);
+    qreal BW = 200*1e6;
 private:
     //Attributs
     int* map_width;
@@ -46,7 +51,7 @@ private:
 
     qreal const c = 299792458;
     const qreal boltzman = 1.379*1e-23;
-    qreal BW = 200*1e6;
+
 
 
     qreal frequency=27e9;
@@ -64,9 +69,7 @@ private:
     qreal heMax;
     qreal los_tension_mod;
     qreal nlos_tension_mod;
-    qreal delay_min;
-    qreal delay_max;
-    std::complex<qreal> tension;
+
     qreal received_power;
 
 

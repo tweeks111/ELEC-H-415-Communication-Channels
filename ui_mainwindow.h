@@ -48,18 +48,20 @@ public:
     QWidget *widget;
     QGridLayout *gridLayout_2;
     QPushButton *runBtn;
-    QLabel *label;
-    QSpacerItem *verticalSpacer_2;
     QSlider *heightSlider;
-    QSpacerItem *verticalSpacer;
-    QLabel *heightLabel;
     QPushButton *settingsBtn;
     QProgressBar *progressBar;
-    QLabel *widthLabel;
     QComboBox *mapBox;
-    QLabel *label_2;
     QSlider *widthSlider;
+    QLabel *label_2;
+    QPushButton *impulseResponse;
+    QLabel *heightLabel;
+    QSpacerItem *verticalSpacer;
+    QLabel *label;
+    QSpacerItem *verticalSpacer_2;
+    QLabel *widthLabel;
     QGraphicsView *legendView;
+    QSpacerItem *verticalSpacer_3;
     QMenuBar *menubar;
     QMenu *menuFile;
     QToolBar *toolBar;
@@ -130,15 +132,6 @@ public:
 
         gridLayout_2->addWidget(runBtn, 7, 0, 1, 3);
 
-        label = new QLabel(widget);
-        label->setObjectName(QString::fromUtf8("label"));
-
-        gridLayout_2->addWidget(label, 1, 0, 1, 1);
-
-        verticalSpacer_2 = new QSpacerItem(20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding);
-
-        gridLayout_2->addItem(verticalSpacer_2, 5, 1, 1, 1);
-
         heightSlider = new QSlider(widget);
         heightSlider->setObjectName(QString::fromUtf8("heightSlider"));
         heightSlider->setMinimum(1);
@@ -155,15 +148,6 @@ public:
 
         gridLayout_2->addWidget(heightSlider, 1, 1, 1, 1);
 
-        verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
-
-        gridLayout_2->addItem(verticalSpacer, 8, 1, 1, 1);
-
-        heightLabel = new QLabel(widget);
-        heightLabel->setObjectName(QString::fromUtf8("heightLabel"));
-
-        gridLayout_2->addWidget(heightLabel, 1, 2, 1, 1);
-
         settingsBtn = new QPushButton(widget);
         settingsBtn->setObjectName(QString::fromUtf8("settingsBtn"));
 
@@ -175,11 +159,6 @@ public:
 
         gridLayout_2->addWidget(progressBar, 6, 0, 1, 3);
 
-        widthLabel = new QLabel(widget);
-        widthLabel->setObjectName(QString::fromUtf8("widthLabel"));
-
-        gridLayout_2->addWidget(widthLabel, 2, 2, 1, 1);
-
         mapBox = new QComboBox(widget);
         mapBox->addItem(QString());
         mapBox->addItem(QString());
@@ -188,11 +167,6 @@ public:
         mapBox->setObjectName(QString::fromUtf8("mapBox"));
 
         gridLayout_2->addWidget(mapBox, 10, 0, 1, 3);
-
-        label_2 = new QLabel(widget);
-        label_2->setObjectName(QString::fromUtf8("label_2"));
-
-        gridLayout_2->addWidget(label_2, 2, 0, 1, 1);
 
         widthSlider = new QSlider(widget);
         widthSlider->setObjectName(QString::fromUtf8("widthSlider"));
@@ -207,6 +181,39 @@ public:
 
         gridLayout_2->addWidget(widthSlider, 2, 1, 1, 1);
 
+        label_2 = new QLabel(widget);
+        label_2->setObjectName(QString::fromUtf8("label_2"));
+
+        gridLayout_2->addWidget(label_2, 2, 0, 1, 1);
+
+        impulseResponse = new QPushButton(widget);
+        impulseResponse->setObjectName(QString::fromUtf8("impulseResponse"));
+
+        gridLayout_2->addWidget(impulseResponse, 13, 0, 1, 3);
+
+        heightLabel = new QLabel(widget);
+        heightLabel->setObjectName(QString::fromUtf8("heightLabel"));
+
+        gridLayout_2->addWidget(heightLabel, 1, 2, 1, 1);
+
+        verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+        gridLayout_2->addItem(verticalSpacer, 9, 1, 1, 1);
+
+        label = new QLabel(widget);
+        label->setObjectName(QString::fromUtf8("label"));
+
+        gridLayout_2->addWidget(label, 1, 0, 1, 1);
+
+        verticalSpacer_2 = new QSpacerItem(20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+        gridLayout_2->addItem(verticalSpacer_2, 5, 1, 1, 1);
+
+        widthLabel = new QLabel(widget);
+        widthLabel->setObjectName(QString::fromUtf8("widthLabel"));
+
+        gridLayout_2->addWidget(widthLabel, 2, 2, 1, 1);
+
         legendView = new QGraphicsView(widget);
         legendView->setObjectName(QString::fromUtf8("legendView"));
         legendView->setMaximumSize(QSize(16777215, 50));
@@ -217,6 +224,10 @@ public:
         legendView->setBackgroundBrush(brush);
 
         gridLayout_2->addWidget(legendView, 11, 0, 1, 3);
+
+        verticalSpacer_3 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+        gridLayout_2->addItem(verticalSpacer_3, 12, 1, 1, 1);
 
 
         horizontalLayout->addWidget(widget, 0, Qt::AlignTop);
@@ -282,16 +293,17 @@ public:
         actionRun->setToolTip(QCoreApplication::translate("MainWindow", "Run ", nullptr));
 #endif // QT_CONFIG(tooltip)
         runBtn->setText(QCoreApplication::translate("MainWindow", "Run", nullptr));
-        label->setText(QCoreApplication::translate("MainWindow", "Height:", nullptr));
-        heightLabel->setText(QCoreApplication::translate("MainWindow", "500m", nullptr));
         settingsBtn->setText(QCoreApplication::translate("MainWindow", "Settings", nullptr));
-        widthLabel->setText(QCoreApplication::translate("MainWindow", "500m", nullptr));
         mapBox->setItemText(0, QCoreApplication::translate("MainWindow", "Received power", nullptr));
         mapBox->setItemText(1, QCoreApplication::translate("MainWindow", "User-end SNR", nullptr));
         mapBox->setItemText(2, QCoreApplication::translate("MainWindow", "Rice factor", nullptr));
         mapBox->setItemText(3, QCoreApplication::translate("MainWindow", "Delay spread", nullptr));
 
         label_2->setText(QCoreApplication::translate("MainWindow", "Width", nullptr));
+        impulseResponse->setText(QCoreApplication::translate("MainWindow", "Impulse responses", nullptr));
+        heightLabel->setText(QCoreApplication::translate("MainWindow", "500m", nullptr));
+        label->setText(QCoreApplication::translate("MainWindow", "Height:", nullptr));
+        widthLabel->setText(QCoreApplication::translate("MainWindow", "500m", nullptr));
         menuFile->setTitle(QCoreApplication::translate("MainWindow", "File", nullptr));
         toolBar->setWindowTitle(QCoreApplication::translate("MainWindow", "toolBar", nullptr));
     } // retranslateUi

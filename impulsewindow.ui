@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ImpulseWindow</class>
+ <widget class="QDialog" name="ImpulseWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>528</width>
+    <height>538</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <widget class="QWidget" name="verticalLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>501</width>
+     <height>511</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="Layout">
+    <item>
+     <widget class="QChartView" name="Physical"/>
+    </item>
+    <item>
+     <widget class="QChartView" name="TDL"/>
+    </item>
+    <item>
+     <widget class="QChartView" name="USTDL"/>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QChartView</class>
+   <extends>QGraphicsView</extends>
+   <header>QtCharts</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

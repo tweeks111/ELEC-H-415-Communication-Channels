@@ -48,6 +48,7 @@ public:
     void runSimulation();
     void updateMapSize(int, int);
     void setSettings(QMap<QString, qreal>);
+    RayTracing* rayTracing;
 
 public slots:
     void changeMap(int index);
@@ -81,7 +82,7 @@ private:
 
     SceneState::SceneState scene_state;
 
-    RayTracing* rayTracing;
+
     bool checkTxRxAreSet();
     QPointF snapToGrid(QPointF *event,int precision=1);
     bool isOnTheGrid(QGraphicsSceneMouseEvent *event);

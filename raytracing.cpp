@@ -56,6 +56,7 @@ void RayTracing::drawRays(QPointF* tx, QPointF* rx, QList<Building*>* building_l
     this->receiver = rx;
     this->building_list = building_list;
     this->raysList.clear();
+    this->rayData.clear();
     this->los_tension_mod = 0;
     this->nlos_tension_mod = 0;
     this->tension = 0;
@@ -93,7 +94,7 @@ void RayTracing::drawRays(QPointF* tx, QPointF* rx, QList<Building*>* building_l
         this->rice_factor = 10*log10(this->los_tension_mod / (this->los_tension_mod + this->nlos_tension_mod));
     }
     if(this->delay_min != INFINITE && this->delay_max > 0){
-        this->delay_spread = this->delay_max = this->delay_min;
+        this->delay_spread = this->delay_max - this->delay_min;
     }
     this->received_power = (1/(2*Ra)) * pow(abs(this->tension),2);
     this->received_power_dbm = 10*log10(this->received_power/0.01);
@@ -130,6 +131,8 @@ void RayTracing::makeDirectAndGroundReflection()
         this->nlos_tension_mod = norm(T_ground);
         this->delayCheck(directLine.length()/ *(this->px_per_m));
         this->delayCheck(d_ground);
+        this->rayData.append(QPair<qreal,std::complex<qreal>>(directLine.length()/ *(this->px_per_m)/c,T_direct));
+        this->rayData.append(QPair<qreal,std::complex<qreal>>(d_ground/c,T_ground));
 
         QPen rayPen(QColor(106, 224, 27));
         rayPen.setWidth(2);
@@ -226,6 +229,7 @@ void RayTracing::makeWallReflection(QList<QPointF> mirrorPoints,QList<QLineF*> w
                         this->tension += T_refl;
                         this->nlos_tension_mod += norm(T_refl);
                         this->delayCheck(total_length/(*(this->px_per_m)));
+                        this->rayData.append(QPair<qreal,std::complex<qreal>>(total_length/(*(this->px_per_m))/c,T_refl));
                         for(Ray* ray:rays){
                             ray->setPen(rayPen);
                             this->raysList.push_back(ray);
@@ -288,6 +292,7 @@ void RayTracing::makeDiffraction()
                     this->tension += T_diff;
                     this->nlos_tension_mod += norm(T_diff);
                     this->delayCheck(total_length);
+                    this->rayData.append(QPair<qreal,std::complex<qreal>>(total_length/c,T_diff));
 
                     rayTXtoDP->setPen(rayPen);
                     rayDPtoRX->setPen(rayPen);

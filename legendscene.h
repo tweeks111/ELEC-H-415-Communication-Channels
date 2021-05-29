@@ -22,8 +22,8 @@ private:
     int powMin=-150;
     int SNRMax=30;
     int SNRMin=-100;
-    int riceMax=1;
-    int riceMin=0;
+    float riceMax=0;
+    float riceMin=-20;
     float dsMax=1e-6;
     float dsMin=1e-7;
 };
