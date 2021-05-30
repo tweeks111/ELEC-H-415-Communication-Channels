@@ -29,13 +29,10 @@
    <bool>false</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
-   <item row="3" column="0">
+   <item row="4" column="0">
     <widget class="QChartView" name="RiceFactor"/>
    </item>
-   <item row="5" column="1">
-    <widget class="QChartView" name="PWR"/>
-   </item>
-   <item row="3" column="1">
+   <item row="4" column="1">
     <widget class="QChartView" name="DelaySpread">
      <property name="autoFillBackground">
       <bool>true</bool>
@@ -45,7 +42,10 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="0">
+   <item row="3" column="0">
+    <widget class="QChartView" name="PWR"/>
+   </item>
+   <item row="3" column="1">
     <widget class="QChartView" name="SNR">
      <property name="sizeAdjustPolicy">
       <enum>QAbstractScrollArea::AdjustToContents</enum>

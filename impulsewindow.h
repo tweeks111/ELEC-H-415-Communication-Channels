@@ -2,6 +2,7 @@
 #define IMPULSEWINDOW_H
 
 #include <QDialog>
+#include <QValueAxis>
 #include "raytracing.h"
 
 namespace Ui {
@@ -28,6 +29,7 @@ private:
     qreal totalPower;
     qreal deltaT;
     qreal BW;
+    qreal Ra;
 
 };
 
