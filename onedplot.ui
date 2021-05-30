@@ -2,41 +2,57 @@
 <ui version="4.0">
  <class>OneDPlot</class>
  <widget class="QDialog" name="OneDPlot">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>741</width>
-    <height>573</height>
+    <width>631</width>
+    <height>509</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QWidget" name="gridLayoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>721</width>
-     <height>551</height>
-    </rect>
-   </property>
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QChartView" name="PWR"/>
-    </item>
-    <item row="0" column="1">
-     <widget class="QChartView" name="SNR"/>
-    </item>
-    <item row="1" column="0">
-     <widget class="QChartView" name="DelaySpread"/>
-    </item>
-    <item row="1" column="1">
-     <widget class="QChartView" name="RiceFactor"/>
-    </item>
-   </layout>
-  </widget>
+  <property name="layoutDirection">
+   <enum>Qt::LeftToRight</enum>
+  </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="3" column="0">
+    <widget class="QChartView" name="RiceFactor"/>
+   </item>
+   <item row="5" column="1">
+    <widget class="QChartView" name="PWR"/>
+   </item>
+   <item row="3" column="1">
+    <widget class="QChartView" name="DelaySpread">
+     <property name="autoFillBackground">
+      <bool>true</bool>
+     </property>
+     <property name="resizeAnchor">
+      <enum>QGraphicsView::AnchorViewCenter</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QChartView" name="SNR">
+     <property name="sizeAdjustPolicy">
+      <enum>QAbstractScrollArea::AdjustToContents</enum>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <customwidgets>
   <customwidget>

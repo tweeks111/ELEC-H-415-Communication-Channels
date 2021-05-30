@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'impulsewindow.ui'
 **
-** Created by: Qt User Interface Compiler version 6.1.0
+** Created by: Qt User Interface Compiler version 6.1.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -39,16 +39,19 @@ public:
         Layout->setObjectName(QString::fromUtf8("Layout"));
         Physical = new QChartView(ImpulseWindow);
         Physical->setObjectName(QString::fromUtf8("Physical"));
+        Physical->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
 
         Layout->addWidget(Physical);
 
         TDL = new QChartView(ImpulseWindow);
         TDL->setObjectName(QString::fromUtf8("TDL"));
+        TDL->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
 
         Layout->addWidget(TDL);
 
         USTDL = new QChartView(ImpulseWindow);
         USTDL->setObjectName(QString::fromUtf8("USTDL"));
+        USTDL->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
 
         Layout->addWidget(USTDL);
 

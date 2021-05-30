@@ -23,13 +23,25 @@
    <item>
     <layout class="QVBoxLayout" name="Layout">
      <item>
-      <widget class="QChartView" name="Physical"/>
+      <widget class="QChartView" name="Physical">
+       <property name="sizeAdjustPolicy">
+        <enum>QAbstractScrollArea::AdjustToContents</enum>
+       </property>
+      </widget>
      </item>
      <item>
-      <widget class="QChartView" name="TDL"/>
+      <widget class="QChartView" name="TDL">
+       <property name="sizeAdjustPolicy">
+        <enum>QAbstractScrollArea::AdjustToContents</enum>
+       </property>
+      </widget>
      </item>
      <item>
-      <widget class="QChartView" name="USTDL"/>
+      <widget class="QChartView" name="USTDL">
+       <property name="sizeAdjustPolicy">
+        <enum>QAbstractScrollArea::AdjustToContents</enum>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>

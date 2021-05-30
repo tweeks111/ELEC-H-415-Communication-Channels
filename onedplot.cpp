@@ -56,7 +56,6 @@ OneDPlot::OneDPlot(DrawingScene *drawingscene, QWidget *parent) :
     ui->SNR->show();
     ui->DelaySpread->show();
     ui->RiceFactor->show();
-
 }
 
 OneDPlot::~OneDPlot()
