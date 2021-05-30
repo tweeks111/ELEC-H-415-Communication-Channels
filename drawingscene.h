@@ -49,7 +49,8 @@ public:
     void updateMapSize(int, int);
     void setSettings(QMap<QString, qreal>);
     RayTracing* rayTracing;
-
+    QList<ReceiverRect*> mainStreetList;
+    bool MS_h;
 public slots:
     void changeMap(int index);
     void clearSimulation();
@@ -78,6 +79,7 @@ private:
     QGraphicsItemGroup* raysGroup;
     QGraphicsSimpleTextItem* power_label;
     QList<ReceiverRect*> rectList;
+
 
 
     SceneState::SceneState scene_state;

@@ -13,6 +13,8 @@ constexpr qreal ReceiverRect::dsMin;
 ReceiverRect::ReceiverRect(int x,int y, int w, int h, QGraphicsItem* parent)
     :QGraphicsRectItem(x,y,w,h,parent)
 {
+    this->x = x-w/2;
+    this->y = y-h/2;
     //setAcceptHoverEvents(true);
 
 

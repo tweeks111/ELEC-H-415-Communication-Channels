@@ -34,6 +34,8 @@ class ReceiverRect : public QGraphicsRectItem
         void setPower(qreal power);
         void setSNR(qreal SNR);
         void colorRect();
+        float x;
+        float y;
         static void changeState(RectState::RectState state);
         static RectState::RectState rect_state;
         static const int powMax=-40;
@@ -42,7 +44,7 @@ class ReceiverRect : public QGraphicsRectItem
         static const int SNRMin=-100;
         static const int riceMax=0;
         static const int riceMin=-20;
-        static constexpr qreal dsMax=1e-6;
+        static constexpr qreal dsMax=1e-2;
         static constexpr qreal dsMin=1e-7;
 
 

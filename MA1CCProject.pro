@@ -16,6 +16,7 @@ SOURCES += \
     legendscene.cpp \
     main.cpp \
     mainwindow.cpp \
+    onedplot.cpp \
     point.cpp \
     ray.cpp \
     raytracing.cpp \
@@ -27,9 +28,10 @@ HEADERS += \
     building.h \
     drawingscene.h \
     drawingview.h \
+    impulsewindow.h \
     legendscene.h \
     mainwindow.h \
-    impulsewindow.h\
+    onedplot.h \
     point.h \
     ray.h \
     raytracing.h \
@@ -37,9 +39,10 @@ HEADERS += \
     settingwindow.h
 
 FORMS += \
+    impulsewindow.ui \
     mainwindow.ui \
-    settingwindow.ui\
-    impulsewindow.ui
+    onedplot.ui \
+    settingwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

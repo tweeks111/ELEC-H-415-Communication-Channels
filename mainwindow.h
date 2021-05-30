@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "settingwindow.h"
 #include "impulsewindow.h"
+#include "onedplot.h"
 
 class DrawingScene;
 class LegendScene;
@@ -40,6 +41,7 @@ private slots:
     void simulationFinished();
     void clearSimulation();
     void changeMap(int);
+    void oneDPlot();
 
 private:
     Ui::MainWindow *ui;
@@ -47,9 +49,11 @@ private:
     LegendScene *legend_scene;
     SettingWindow* settingWindow;
     ImpulseWindow* impulseWindow;
+    OneDPlot* oneDPlotWindow;
     void saveProjectDataToFile(QString filename);
 
     void openProjectDataFile(QString filename);
+
 };
 
 

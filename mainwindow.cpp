@@ -50,6 +50,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->drawing_scene, SIGNAL(updateBar(int)), ui->progressBar, SLOT(setValue(int)));
     connect(ui->settingsBtn, SIGNAL(released()), this, SLOT(openDialog()));
     connect(ui->impulseResponse, SIGNAL(released()), this, SLOT(impulseResponse()));
+    connect(ui->oneDPlot, SIGNAL(released()), this, SLOT(oneDPlot()));
     connect(this->settingWindow, SIGNAL(accept()), this, SLOT(acceptSettings()));
     connect(ui->mapBox, SIGNAL(currentIndexChanged(int)), this, SLOT(changeMap(int)));
     connect(this->drawing_scene, SIGNAL(simulationFinished()), this, SLOT(simulationFinished()));
@@ -153,6 +154,12 @@ void MainWindow::impulseResponse()
 {
     this->impulseWindow = new ImpulseWindow(this->drawing_scene->rayTracing,this);
     this->impulseWindow->show();
+}
+
+void MainWindow::oneDPlot()
+{
+    this->oneDPlotWindow = new OneDPlot(this->drawing_scene,this);
+    this->oneDPlotWindow->show();
 }
 
 void MainWindow::acceptSettings()
@@ -306,3 +313,6 @@ void MainWindow::openProjectDataFile(QString filename) {
     }
 
 }
+
+
+

@@ -200,6 +200,11 @@ void DrawingScene::draw(bool ray)
 
 void DrawingScene::runSimulation()
 {
+    bool MS_horizontal = false;
+    if(this->main_street->rect().width() > this->main_street->rect().height()){
+        MS_horizontal = true;
+    }
+    this->MS_h = MS_horizontal;
     this->scene_state = SceneState::Simulation;
     this->rectList.clear();
     this->removeItem(this->main_street);
@@ -226,8 +231,12 @@ void DrawingScene::runSimulation()
                     rect->SNR = this->rayTracing->SNR();
                     rect->rice = this->rayTracing->rice_factor;
                     rect->delayspread = this->rayTracing->delay_spread;
-                    qDebug() << this->rayTracing->rice_factor;
+                    //qDebug() << this->rayTracing->rice_factor;
                     rect->colorRect();
+
+                    if((MS_horizontal && y_m == y_tx) || (!MS_horizontal && x_m == x_tx)){
+                        this->mainStreetList.append(rect);
+                    }
 
                     this->rectList.append(rect);
                     this->addItem(rect);
@@ -241,6 +250,8 @@ void DrawingScene::runSimulation()
     emit simulationFinished();
 
 }
+
+
 
 void DrawingScene::updateMapSize(int width, int height)
 {
