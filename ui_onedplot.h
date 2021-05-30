@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'onedplot.ui'
 **
-** Created by: Qt User Interface Compiler version 6.1.1
+** Created by: Qt User Interface Compiler version 6.1.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -22,8 +22,8 @@ class Ui_OneDPlot
 public:
     QGridLayout *gridLayout_2;
     QChartView *RiceFactor;
-    QChartView *PWR;
     QChartView *DelaySpread;
+    QChartView *PWR;
     QChartView *SNR;
 
     void setupUi(QDialog *OneDPlot)
@@ -44,25 +44,25 @@ public:
         RiceFactor = new QChartView(OneDPlot);
         RiceFactor->setObjectName(QString::fromUtf8("RiceFactor"));
 
-        gridLayout_2->addWidget(RiceFactor, 3, 0, 1, 1);
-
-        PWR = new QChartView(OneDPlot);
-        PWR->setObjectName(QString::fromUtf8("PWR"));
-
-        gridLayout_2->addWidget(PWR, 5, 1, 1, 1);
+        gridLayout_2->addWidget(RiceFactor, 4, 0, 1, 1);
 
         DelaySpread = new QChartView(OneDPlot);
         DelaySpread->setObjectName(QString::fromUtf8("DelaySpread"));
         DelaySpread->setAutoFillBackground(true);
         DelaySpread->setResizeAnchor(QGraphicsView::AnchorViewCenter);
 
-        gridLayout_2->addWidget(DelaySpread, 3, 1, 1, 1);
+        gridLayout_2->addWidget(DelaySpread, 4, 1, 1, 1);
+
+        PWR = new QChartView(OneDPlot);
+        PWR->setObjectName(QString::fromUtf8("PWR"));
+
+        gridLayout_2->addWidget(PWR, 3, 0, 1, 1);
 
         SNR = new QChartView(OneDPlot);
         SNR->setObjectName(QString::fromUtf8("SNR"));
         SNR->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
 
-        gridLayout_2->addWidget(SNR, 5, 0, 1, 1);
+        gridLayout_2->addWidget(SNR, 3, 1, 1, 1);
 
 
         retranslateUi(OneDPlot);

@@ -33,6 +33,7 @@ public:
     qreal SNR();
     void setSettings(QMap<QString, qreal>);
     qreal BW = 200*1e6;
+    qreal Ra = 71;//check
 private:
     //Attributs
     int* map_width;
@@ -57,7 +58,7 @@ private:
     qreal frequency=27e9;
     qreal relPermittivity = 5;
     qreal h = 2;
-    qreal Ra = 71;//check
+
     qreal EIRPmax = 2;
     qreal noise_figure = 10;
     qreal temp = 293.15;
