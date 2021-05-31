@@ -212,8 +212,10 @@ void DrawingScene::runSimulation()
     bool MS_horizontal = false;
     if(this->main_street->rect().width() > this->main_street->rect().height()){
         MS_horizontal = true;
+        ReceiverRect::dsMax = (4*this->main_street->rect().height() - 20)*(10/3);
+    } else {
+        ReceiverRect::dsMax = (4*this->main_street->rect().width() - 20)*(10/3);
     }
-    ReceiverRect::dsMax = 10 * std::max(this->map_height,this->map_width);
     this->MS_h = MS_horizontal;
     this->scene_state = SceneState::Simulation;
     this->rectList.clear();
