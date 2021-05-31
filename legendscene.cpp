@@ -15,10 +15,10 @@ LegendScene::~LegendScene()
 
 void LegendScene::drawScale()
 {
-    QGraphicsRectItem *backgroundScaleRect = new QGraphicsRectItem(0,0,100,20);
+    QGraphicsRectItem *backgroundScaleRect = new QGraphicsRectItem(0,0,140,20);
     backgroundScaleRect->setBrush(Qt::white);
     addItem(backgroundScaleRect);
-    scaleRect= new QGraphicsRectItem(0,0,100,20);
+    scaleRect= new QGraphicsRectItem(0,0,140,20);
     scaleRect->setPen(QPen(Qt::gray,2));
     grad = new QLinearGradient(scaleRect->rect().topLeft(),scaleRect->rect().topRight());
     grad->setColorAt(0,QColor(255,0,0,255));
@@ -30,8 +30,8 @@ void LegendScene::drawScale()
     addItem(scaleRect);
     this->minLabel = new QGraphicsTextItem();
     this->maxLabel = new QGraphicsTextItem();
-    this->minLabel->setPos(-40,0);
-    this->maxLabel->setPos(101,0);
+    this->minLabel->setPos(0,20);
+    this->maxLabel->setPos(100,20);
     addItem(this->minLabel);
     addItem(this->maxLabel);
     this->changeLegend();
@@ -57,6 +57,14 @@ void LegendScene::changeLegend()
         min = ReceiverRect::dsMin;
         max = ReceiverRect::dsMax;
     }
-    this->minLabel->setPlainText(QString::number(min));
-    this->maxLabel->setPlainText(QString::number(max));
+    if(ReceiverRect::rect_state == RectState::DelaySpread){
+        this->minLabel->setPlainText(QString::number(min)+"ns");
+        this->maxLabel->setPlainText(QString::number(max)+"ns");
+    } else if(ReceiverRect::rect_state == RectState::Rice){
+        this->minLabel->setPlainText(QString::number(min)+"dB");
+        this->maxLabel->setPlainText(QString::number(max)+"dB");
+    } else {
+        this->minLabel->setPlainText(QString::number(min)+"dBm");
+        this->maxLabel->setPlainText(QString::number(max)+"dBm");
+    }
 }

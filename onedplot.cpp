@@ -22,7 +22,7 @@ OneDPlot::OneDPlot(DrawingScene *drawingscene, QWidget *parent) :
         }
         seriePWR->append(dist,rect->power);
         serieSNR->append(dist,rect->SNR);
-        serieDelaySpread->append(dist,rect->delayspread/(10e-9));
+        serieDelaySpread->append(dist,rect->delayspread);
         serieRiceFactor->append(dist,rect->rice);
     }
     QChart *chartPWR = new QChart();

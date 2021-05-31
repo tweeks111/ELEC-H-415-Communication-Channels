@@ -14,6 +14,7 @@ DrawingScene::DrawingScene(QObject *parent)
 
     this->scene_state = SceneState::Disabled;
     ReceiverRect::changeState(RectState::Power);
+    ReceiverRect::dsMax = 2000;
 
     this->temp_building = nullptr;
     this->temp_MS = nullptr;
@@ -187,7 +188,15 @@ void DrawingScene::draw(bool ray)
         this->removeItem(this->rx_item);
         this->addItem(this->rx_item);
         this->removeItem(this->power_label);
-        this->power_label->setText(QString::number(qRound(this->rayTracing->received_power_dbm))+" dBm");
+        if(ReceiverRect::rect_state == RectState::Power){
+            this->power_label->setText(QString::number(qRound(this->rayTracing->received_power_dbm))+" dBm");
+        } else if(ReceiverRect::rect_state == RectState::SNR){
+            this->power_label->setText(QString::number(qRound(this->rayTracing->SNR()))+" dBm");//dbm or db , also in legendview
+        } else if(ReceiverRect::rect_state == RectState::Rice){
+            this->power_label->setText(QString::number(qRound(this->rayTracing->rice_factor))+" dB");
+        } else if(ReceiverRect::rect_state == RectState::DelaySpread){
+            this->power_label->setText(QString::number(qRound(this->rayTracing->delay_spread))+" ns");
+        }
         this->power_label->setPos(this->rx_item->pos()+QPointF(10,0));
         this->addItem(this->power_label);
     }
@@ -204,6 +213,7 @@ void DrawingScene::runSimulation()
     if(this->main_street->rect().width() > this->main_street->rect().height()){
         MS_horizontal = true;
     }
+    ReceiverRect::dsMax = 10 * std::max(this->map_height,this->map_width);
     this->MS_h = MS_horizontal;
     this->scene_state = SceneState::Simulation;
     this->rectList.clear();
@@ -231,7 +241,7 @@ void DrawingScene::runSimulation()
                     rect->SNR = this->rayTracing->SNR();
                     rect->rice = this->rayTracing->rice_factor;
                     rect->delayspread = this->rayTracing->delay_spread;
-                    //qDebug() << this->rayTracing->rice_factor;
+                    //qDebug() << this->rayTracing->delay_spread;
                     rect->colorRect();
 
                     if((MS_horizontal && y_m == y_tx) || (!MS_horizontal && x_m == x_tx)){

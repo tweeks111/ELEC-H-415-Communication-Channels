@@ -12,8 +12,8 @@ ImpulseWindow::ImpulseWindow(RayTracing *raytracing,QWidget *parent) :
     this->rayData = &(raytracing->rayData);
     this->maxDelay = raytracing->delay_max;
     this->minDelay = raytracing->delay_min;
-    this->BW = raytracing->BW;
-    this->deltaT = 1/(2*raytracing->BW);
+    this->BW = raytracing->BW*1e-9;
+    this->deltaT = 1/(2*this->BW);
     this->Ra = raytracing->Ra;
     this->makePhysical();
     this->makeTDL();

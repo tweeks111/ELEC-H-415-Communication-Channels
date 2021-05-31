@@ -44,8 +44,8 @@ class ReceiverRect : public QGraphicsRectItem
         static const int SNRMin=-100;
         static const int riceMax=0;
         static const int riceMin=-20;
-        static constexpr qreal dsMax=1e-2;
-        static constexpr qreal dsMin=1e-7;
+        static qreal dsMax;
+        static constexpr qreal dsMin=0;
 
 
     protected:

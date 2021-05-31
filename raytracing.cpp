@@ -129,8 +129,8 @@ void RayTracing::makeDirectAndGroundReflection()
         this->tension = T_direct + T_ground;
         this->los_tension_mod = norm(T_direct);
         this->nlos_tension_mod = norm(T_ground);
-        this->delayCheck(directLine.length()/ *(this->px_per_m));
-        this->delayCheck(d_ground);
+        this->delayCheck(1e9 * directLine.length()/ *(this->px_per_m));
+        this->delayCheck(1e9 * d_ground);
         this->rayData.append(QPair<qreal,std::complex<qreal>>(directLine.length()/ *(this->px_per_m)/c,T_direct));
         this->rayData.append(QPair<qreal,std::complex<qreal>>(d_ground/c,T_ground));
 
@@ -228,7 +228,7 @@ void RayTracing::makeWallReflection(QList<QPointF> mirrorPoints,QList<QLineF*> w
                         std::complex<qreal> T_refl = E_refl * heMax;
                         this->tension += T_refl;
                         this->nlos_tension_mod += norm(T_refl);
-                        this->delayCheck(total_length/(*(this->px_per_m)));
+                        this->delayCheck(1e9 * total_length/(*(this->px_per_m)));
                         this->rayData.append(QPair<qreal,std::complex<qreal>>(total_length/(*(this->px_per_m))/c,T_refl));
                         for(Ray* ray:rays){
                             ray->setPen(rayPen);
@@ -272,7 +272,7 @@ void RayTracing::makeDiffraction()
                             diff = true;
                         }
                     } else {
-                        if(angle>=270){
+                        if(angle>=270 || angle == 0){
                             diff = true;
                         }
                     }
@@ -291,7 +291,7 @@ void RayTracing::makeDiffraction()
                     std::complex<qreal> T_diff = E_diff * heMax;
                     this->tension += T_diff;
                     this->nlos_tension_mod += norm(T_diff);
-                    this->delayCheck(total_length);
+                    this->delayCheck(1e9 * total_length);
                     this->rayData.append(QPair<qreal,std::complex<qreal>>(total_length/c,T_diff));
 
                     rayTXtoDP->setPen(rayPen);

@@ -24,8 +24,8 @@ private:
     int SNRMin=-100;
     float riceMax=0;
     float riceMin=-20;
-    float dsMax=1e-6;
-    float dsMin=1e-7;
+    float dsMax=1000;
+    float dsMin=0;
 };
 
 #endif // LEGENDSCENE_H

@@ -7,7 +7,7 @@ const int ReceiverRect::SNRMax;
 const int ReceiverRect::SNRMin;
 const int ReceiverRect::riceMax;
 const int ReceiverRect::riceMin;
-constexpr qreal ReceiverRect::dsMax;
+qreal ReceiverRect::dsMax;
 constexpr qreal ReceiverRect::dsMin;
 
 ReceiverRect::ReceiverRect(int x,int y, int w, int h, QGraphicsItem* parent)
@@ -80,8 +80,8 @@ void ReceiverRect::colorRect()
     }
     else if(rect_state == RectState::DelaySpread){
         value = this->delayspread;
-        min = ReceiverRect::dsMin;
-        max = ReceiverRect::dsMax;
+        max = ReceiverRect::dsMin;
+        min = ReceiverRect::dsMax;
     }
 
     qreal ratio = (value-min)/(max-min);
