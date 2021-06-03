@@ -9,7 +9,7 @@
 #include <QGraphicsItemGroup>
 
 #ifndef pi
-#define pi  3.14159
+#define pi  3.141592653589793
 #endif
 
 class RayTracing
@@ -17,7 +17,7 @@ class RayTracing
 
 public:
     RayTracing();
-    RayTracing(int* map_width, int* map_height, int* px_per_m, int* grid_spacing_m);
+    RayTracing(int map_width, int map_height, int* px_per_m, int* grid_spacing_m);
     void drawRays(QPointF* tx, QPointF* rx, QList<Building*>* building_list);
     void findMainStreetQRectF(QPointF* tx, QList<Building*>* building_list);
     QList<Ray*> raysList;
@@ -33,11 +33,12 @@ public:
     qreal SNR();
     void setSettings(QMap<QString, qreal>);
     qreal BW = 200*1e6;
-    qreal Ra = 71;//check
+    qreal Ra;//check
+    void updateMapSize(int, int);
 private:
     //Attributs
-    int* map_width;
-    int* map_height;
+    int map_width;
+    int map_height;
     int* px_per_m;
     int* grid_spacing_m;
     QList<Building*>* building_list;

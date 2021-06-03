@@ -60,11 +60,11 @@ void LegendScene::changeLegend()
     if(ReceiverRect::rect_state == RectState::DelaySpread){
         this->minLabel->setPlainText(QString::number(min)+"ns");
         this->maxLabel->setPlainText(QString::number(max)+"ns");
-    } else if(ReceiverRect::rect_state == RectState::Rice){
-        this->minLabel->setPlainText(QString::number(min)+"dB");
-        this->maxLabel->setPlainText(QString::number(max)+"dB");
-    } else {
+    } else if(ReceiverRect::rect_state == RectState::Power){
         this->minLabel->setPlainText(QString::number(min)+"dBm");
         this->maxLabel->setPlainText(QString::number(max)+"dBm");
+    } else {
+        this->minLabel->setPlainText(QString::number(min)+"dB");
+        this->maxLabel->setPlainText(QString::number(max)+"dB");
     }
 }

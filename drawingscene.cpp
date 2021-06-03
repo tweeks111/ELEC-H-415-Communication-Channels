@@ -25,13 +25,13 @@ DrawingScene::DrawingScene(QObject *parent)
     this->buildingsGroup = nullptr;
     this->raysGroup = nullptr;
 
-    this->rayTracing = new RayTracing(&(this->map_width),&(this->map_width),&(this->px_per_m),&(this->grid_spacing_m));
+    this->rayTracing = new RayTracing((this->map_width),(this->map_width),&(this->px_per_m),&(this->grid_spacing_m));
 
     this->updateMapSize(this->map_width, this->map_height);
 
     this->startBuildLabel = nullptr;
-    this->currentBuildLabel = new QGraphicsSimpleTextItem();this->currentBuildLabel->setScale(1.5);
-    this->power_label = new QGraphicsSimpleTextItem();this->power_label->setScale(1.5);
+    this->currentBuildLabel = new QGraphicsSimpleTextItem();this->currentBuildLabel->setScale(0.75);
+    this->power_label = new QGraphicsSimpleTextItem();this->power_label->setScale(0.75);
     this->addItem(currentBuildLabel);
 }
 
@@ -54,7 +54,7 @@ void DrawingScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         QRectF temp_building_rect(snapToGrid(&eventPoint),snapToGrid(&eventPoint));
         this->temp_building = new Building(temp_building_rect);
         this->scene_state = SceneState::Building;
-        this->startBuildLabel = new QGraphicsSimpleTextItem();this->startBuildLabel->setScale(1.5);
+        this->startBuildLabel = new QGraphicsSimpleTextItem();this->startBuildLabel->setScale(0.75);
         this->startBuildLabel->setText("("+QString::number(qRound(snapToGrid(&eventPoint).x()/this->px_per_m))+","+QString::number(qRound(snapToGrid(&eventPoint).y()/this->px_per_m))+")");
         this->startBuildLabel->setPos(eventPoint+QPointF(12,-20));
         this->addItem(this->startBuildLabel);
@@ -189,13 +189,13 @@ void DrawingScene::draw(bool ray)
         this->addItem(this->rx_item);
         this->removeItem(this->power_label);
         if(ReceiverRect::rect_state == RectState::Power){
-            this->power_label->setText(QString::number(qRound(this->rayTracing->received_power_dbm))+" dBm");
+            this->power_label->setText(QString::number(this->rayTracing->received_power_dbm)+" dBm");
         } else if(ReceiverRect::rect_state == RectState::SNR){
-            this->power_label->setText(QString::number(qRound(this->rayTracing->SNR()))+" dBm");//dbm or db , also in legendview
+            this->power_label->setText(QString::number(this->rayTracing->SNR())+" dB");
         } else if(ReceiverRect::rect_state == RectState::Rice){
-            this->power_label->setText(QString::number(qRound(this->rayTracing->rice_factor))+" dB");
+            this->power_label->setText(QString::number(this->rayTracing->rice_factor)+" dB");
         } else if(ReceiverRect::rect_state == RectState::DelaySpread){
-            this->power_label->setText(QString::number(qRound(this->rayTracing->delay_spread))+" ns");
+            this->power_label->setText(QString::number(this->rayTracing->delay_spread)+" ns");
         }
         this->power_label->setPos(this->rx_item->pos()+QPointF(10,0));
         this->addItem(this->power_label);
@@ -212,13 +212,20 @@ void DrawingScene::runSimulation()
     bool MS_horizontal = false;
     if(this->main_street->rect().width() > this->main_street->rect().height()){
         MS_horizontal = true;
-        ReceiverRect::dsMax = (4*this->main_street->rect().height() - 20)*(10/3);
+        ReceiverRect::dsMax = (3*this->main_street->rect().height() - 20)*(10/3);
     } else {
-        ReceiverRect::dsMax = (4*this->main_street->rect().width() - 20)*(10/3);
+        ReceiverRect::dsMax = (3*this->main_street->rect().width() - 20)*(10/3);
+    }
+    bool after;
+    if(MS_horizontal){
+        after = this->tx_item->center.x()/this->px_per_m <= this->map_width/2;
+    } else {
+        after = this->tx_item->center.y()/this->px_per_m <= this->map_height/2;
     }
     this->MS_h = MS_horizontal;
     this->scene_state = SceneState::Simulation;
     this->rectList.clear();
+    this->mainStreetList.clear();
     this->removeItem(this->main_street);
     int x0 =  0;//this->main_street->rect().x()/this->px_per_m;
     int y0 =  0;//this->main_street->rect().y()/this->px_per_m;
@@ -246,7 +253,7 @@ void DrawingScene::runSimulation()
                     //qDebug() << this->rayTracing->delay_spread;
                     rect->colorRect();
 
-                    if((MS_horizontal && y_m == y_tx) || (!MS_horizontal && x_m == x_tx)){
+                    if((MS_horizontal && y_m == y_tx && ((after && x_m > x_tx) ||(!after && x_m < x_tx))) || (!MS_horizontal && x_m == x_tx && ((after && y_m > y_tx) ||(!after && y_m < y_tx)))){
                         this->mainStreetList.append(rect);
                     }
 
@@ -269,6 +276,8 @@ void DrawingScene::updateMapSize(int width, int height)
 {
     this->map_width  = width;
     this->map_height = height;
+
+    this->rayTracing->updateMapSize(width,height);
 
     if(this->tx_item || this->rx_item) this->clearBS();
     if(this->buildingsGroup) this->clearBuilding();
@@ -449,9 +458,7 @@ void DrawingScene::keyPressEvent(QKeyEvent *event)
 }
 
 /*
- * TODO: load map dim when loading project
- * TODO: add rerun of simulation
  * TODO: correct bug when resizing when in placement state
- * TODO: correct bug with diffraction corner
+ * TODO: Change rice factor range for gradient
  *
  */

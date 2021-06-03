@@ -1,6 +1,6 @@
 #include "raytracing.h"
 
-RayTracing::RayTracing(int* map_width, int* map_height, int* px_per_m, int* grid_spacing_m)
+RayTracing::RayTracing(int map_width, int map_height, int* px_per_m, int* grid_spacing_m)
 {
     this->map_width         = map_width;
     this->map_height        = map_height;
@@ -15,7 +15,8 @@ RayTracing::RayTracing(int* map_width, int* map_height, int* px_per_m, int* grid
     this->GtxMax = this->Gtx(pi/2);
     this->Ptx = this->EIRPmax/this->GtxMax;
     this->heMax = this->he(pi/2);
-    this->beta = (2*pi*frequency/c);
+    this->Ra = 720*pi/32;
+    this->beta = (2*pi)*(frequency/c);
 }
 
 
@@ -35,7 +36,7 @@ qreal RayTracing::coefReflWall(qreal theta)//perpendicular coef
     if(theta < pi/2){theta = pi/2 - theta;}
     else if(theta > pi/2){theta = theta - pi/2;}
     qreal temp = sqrt(1 - (1/relPermittivity)*pow(sin(theta),2))*sqrt(relPermittivity);
-    return (cos(theta)-temp)/(cos(theta)+temp);
+    return abs((cos(theta)-temp)/(cos(theta)+temp));
 }
 
 qreal RayTracing::coefReflGround(qreal theta)//parra
@@ -65,7 +66,7 @@ void RayTracing::drawRays(QPointF* tx, QPointF* rx, QList<Building*>* building_l
     this->delay_spread = 0;
     this->received_power = 0;
     this->received_power_dbm = 0;
-    this->rice_factor = 0;
+    this->rice_factor = INFINITE;
     if(checkTxRxValidity())
     {
         this->counterRefl = 0;
@@ -91,12 +92,12 @@ void RayTracing::drawRays(QPointF* tx, QPointF* rx, QList<Building*>* building_l
         }     
     }
     if(this->los_tension_mod != 0){
-        this->rice_factor = 10*log10(this->los_tension_mod / (this->los_tension_mod + this->nlos_tension_mod));
+        this->rice_factor = 10*log10(this->los_tension_mod / this->nlos_tension_mod);
     }
     if(this->delay_min != INFINITE && this->delay_max > 0){
         this->delay_spread = this->delay_max - this->delay_min;
     }
-    this->received_power = (1/(2*Ra)) * pow(abs(this->tension),2);
+    this->received_power = (1/(8*Ra)) * pow(abs(this->tension),2);
     this->received_power_dbm = 10*log10(this->received_power/0.01);
 }
 
@@ -115,6 +116,12 @@ void RayTracing::setSettings(QMap<QString, qreal> dict)
     this->temp = dict["temp"];
 }
 
+void RayTracing::updateMapSize(int width, int height)
+{
+    this->map_width = width;
+    this->map_height = height;
+}
+
 void RayTracing::makeDirectAndGroundReflection()
 {
     QLineF directLine = QLineF(*(transmitter),*(receiver));
@@ -124,8 +131,8 @@ void RayTracing::makeDirectAndGroundReflection()
         qreal d_ground = sqrt(pow(directLine.length()/ *(this->px_per_m),2)+pow(2*h,2));
         qreal theta_ground = pi/2 - atan((2*h)/directLine.length() * *(this->px_per_m));
         qreal coef = coefReflGround(theta_ground);
-        std::complex<qreal> E_ground = std::polar(coef*sqrt(60*Ptx*Gtx(theta_ground))/(d_ground),-beta*(d_ground));
-        std::complex<qreal> T_ground = E_ground * he(theta_ground) * sin(theta_ground);
+        std::complex<qreal> E_ground = std::polar(coef*sqrt(60*Ptx*Gtx(pi - theta_ground))/(d_ground),-beta*(d_ground));
+        std::complex<qreal> T_ground = E_ground * he(pi - theta_ground) * sin(pi - theta_ground);
         this->tension = T_direct + T_ground;
         this->los_tension_mod = norm(T_direct);
         this->nlos_tension_mod = norm(T_ground);
@@ -140,9 +147,6 @@ void RayTracing::makeDirectAndGroundReflection()
         directRay->coef*=1;
         directRay->setPen(rayPen);
         this->raysList.push_back(directRay);
-    }
-    else{
-        //kill directLine
     }
 }
 
@@ -224,7 +228,7 @@ void RayTracing::makeWallReflection(QList<QPointF> mirrorPoints,QList<QLineF*> w
                             rayPen = QPen(QColor(224, 27, 27));
                         }
                         rayPen.setWidth(2);
-                        std::complex<qreal> E_refl = std::polar(coef*sqrt(60* GtxMax * Ptx )/ (total_length/ *(this->px_per_m)), (-this->beta*(total_length/(*(this->px_per_m)))));
+                        std::complex<qreal> E_refl = std::polar(coef*sqrt(60* GtxMax * Ptx )/ (total_length/ *(this->px_per_m)),(-this->beta*(total_length/(*(this->px_per_m)))));
                         std::complex<qreal> T_refl = E_refl * heMax;
                         this->tension += T_refl;
                         this->nlos_tension_mod += norm(T_refl);
@@ -321,9 +325,9 @@ void RayTracing::findMainStreetQRectF(QPointF* tx, QList<Building*>* building_li
     this->building_list = building_list;
     if(this->transmitter)
     {
-        QPointF v_up = QPointF(this->transmitter->x(),*(this->map_height)**(this->px_per_m));
+        QPointF v_up = QPointF(this->transmitter->x(),(this->map_height)**(this->px_per_m));
         QPointF v_down = QPointF(this->transmitter->x(),0);
-        QPointF h_up = QPointF(*(this->map_width)**(this->px_per_m),this->transmitter->y());
+        QPointF h_up = QPointF((this->map_width)**(this->px_per_m),this->transmitter->y());
         QPointF h_down = QPointF(0,this->transmitter->y());
         QLineF v_line = QLineF(v_up,v_down);
         QLineF h_line = QLineF(h_up,h_down);
@@ -407,13 +411,13 @@ bool RayTracing::lineIsBlocked(QLineF* line)
 
 bool RayTracing::wallIsValid(QLineF wall)
 {
-    return !((wall.dx() == 0 && (wall.x1() == 0 || wall.x1() == *(this->map_width)**(this->px_per_m))) || (wall.dy() == 0 && (wall.y1() == 0 || wall.y1() == *(this->map_height)**(this->px_per_m))));
+    return !((wall.dx() == 0 && (wall.x1() == 0 || wall.x1() == (this->map_width)**(this->px_per_m))) || (wall.dy() == 0 && (wall.y1() == 0 || wall.y1() == (this->map_height)**(this->px_per_m))));
 
 }
 
 bool RayTracing::cornerIsValid(QPointF corner)
 {
-    return !((corner.x() == 0 || corner.x() == *(this->map_width)**(this->px_per_m)) || (corner.y() == 0 || corner.y() == *(this->map_height)**(this->px_per_m)));
+    return !((corner.x() == 0 || corner.x() == (this->map_width)**(this->px_per_m)) || (corner.y() == 0 || corner.y() == (this->map_height)**(this->px_per_m)));
 
 }
 

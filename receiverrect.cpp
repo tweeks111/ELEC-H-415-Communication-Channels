@@ -60,7 +60,7 @@ void ReceiverRect::debit()
 
 void ReceiverRect::colorRect()
 {
-    int R=0;int G=0;int B=0;
+    int R=0;int G=0;int B=0; int T = 255;
     qreal value = 0;qreal min =0;qreal max=0;
 
     if(rect_state == RectState::Power){
@@ -69,6 +69,9 @@ void ReceiverRect::colorRect()
         max = ReceiverRect::powMax;
     }
     else if(rect_state == RectState::SNR){
+        if(this->SNR < this->target_SNR){
+            T = 64;
+        }
         value = this->SNR;
         min = ReceiverRect::SNRMin;
         max = ReceiverRect::SNRMax;
@@ -80,37 +83,42 @@ void ReceiverRect::colorRect()
     }
     else if(rect_state == RectState::DelaySpread){
         value = this->delayspread;
-        max = ReceiverRect::dsMin;
-        min = ReceiverRect::dsMax;
+        min = ReceiverRect::dsMin;
+        max = ReceiverRect::dsMax;
     }
 
-    qreal ratio = (value-min)/(max-min);
-    if (ratio >1){
-        ratio =1;
-    }
-    else if(ratio<0){
-        ratio=0;
-    }
+    if(value == INFINITE){
+        this->rectColor = QColor(R,G,B,0);
+    } else {
 
-    if(ratio<0.25){
-        B=255;
-        G=4*ratio*255;
+        qreal ratio = (value-max)/(min-max);
+        if (ratio >1){
+            ratio =1;
+        }
+        else if(ratio<0){
+            ratio=0;
+        }
+
+        if(ratio<0.25){
+            B=255;
+            G=4*ratio*255;
+        }
+        else if(ratio<0.5){
+            G=255;
+            B=4*(0.5-ratio)*255;
+        }
+        else if(ratio<0.75){
+            // Green -> Yellow
+            G=255;
+            R=4*(ratio-0.5)*255;
+        }
+        else{
+            // Yellow -> Red
+            R=255;
+            G=4*(1-ratio)*255;
+        }
+        this->rectColor = QColor(R,G,B,T);
     }
-    else if(ratio<0.5){
-        G=255;
-        B=4*(0.5-ratio)*255;
-    }
-    else if(ratio<0.75){
-        // Green -> Yellow
-        G=255;
-        R=4*(ratio-0.5)*255;
-    }
-    else{
-        // Yellow -> Red
-        R=255;
-        G=4*(1-ratio)*255;
-    }
-    this->rectColor = QColor(R,G,B,255);
     QPen pen(rectColor);
     pen.setWidth(0);
     this->setPen(pen);

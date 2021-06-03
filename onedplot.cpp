@@ -20,10 +20,10 @@ OneDPlot::OneDPlot(DrawingScene *drawingscene, QWidget *parent) :
         else{
             dist = abs(rect->y - drawingscene->tx_item->center.y())/drawingscene->px_per_m;
         }
-        seriePWR->append(dist,rect->power);
-        serieSNR->append(dist,rect->SNR);
-        serieDelaySpread->append(dist,rect->delayspread);
-        serieRiceFactor->append(dist,rect->rice);
+        seriePWR->append(log10(dist),rect->power);
+        serieSNR->append(log10(dist),rect->SNR);
+        serieDelaySpread->append(log10(dist),rect->delayspread);
+        serieRiceFactor->append(log10(dist),rect->rice);
     }
     QChart *chartPWR = new QChart();
     QChart *chartSNR = new QChart();
@@ -40,25 +40,25 @@ OneDPlot::OneDPlot(DrawingScene *drawingscene, QWidget *parent) :
     QValueAxis *axisXPWR = new QValueAxis();
     chartPWR->addAxis(axisXPWR,Qt::AlignBottom);
     seriePWR->attachAxis(axisXPWR);
-    axisXPWR->setTitleText("Distance (m)");
+    axisXPWR->setTitleText("Log(d");
     QValueAxis *axisYPWR = new QValueAxis();
     chartPWR->addAxis(axisYPWR,Qt::AlignLeft);
     seriePWR->attachAxis(axisYPWR);
-    axisYPWR->setTitleText("Power (dB)");
+    axisYPWR->setTitleText("Power (dBm)");
     chartPWR->legend()->hide();
     QValueAxis *axisXSNR = new QValueAxis();
     chartSNR->addAxis(axisXSNR,Qt::AlignBottom);
     serieSNR->attachAxis(axisXSNR);
-    axisXSNR->setTitleText("Distance (m)");
+    axisXSNR->setTitleText("Log(d");
     QValueAxis *axisYSNR = new QValueAxis();
     chartSNR->addAxis(axisYSNR,Qt::AlignLeft);
     serieSNR->attachAxis(axisYSNR);
-    axisYSNR->setTitleText("Power (dB)");
+    axisYSNR->setTitleText("SNR (dB)");
     chartSNR->legend()->hide();
     QValueAxis *axisXDP = new QValueAxis();
     chartDelaySpread->addAxis(axisXDP,Qt::AlignBottom);
     serieDelaySpread->attachAxis(axisXDP);
-    axisXDP->setTitleText("Distance (m)");
+    axisXDP->setTitleText("Log(d)");
     QValueAxis *axisYDP = new QValueAxis();
     chartDelaySpread->addAxis(axisYDP,Qt::AlignLeft);
     serieDelaySpread->attachAxis(axisYDP);
@@ -67,11 +67,11 @@ OneDPlot::OneDPlot(DrawingScene *drawingscene, QWidget *parent) :
     QValueAxis *axisXRF = new QValueAxis();
     chartRiceFactor->addAxis(axisXRF,Qt::AlignBottom);
     serieRiceFactor->attachAxis(axisXRF);
-    axisXRF->setTitleText("Distance (m)");
+    axisXRF->setTitleText("Log(d)");
     QValueAxis *axisYRF = new QValueAxis();
     chartRiceFactor->addAxis(axisYRF,Qt::AlignLeft);
     serieRiceFactor->attachAxis(axisYRF);
-    axisYRF->setTitleText("Power (dB)");
+    axisYRF->setTitleText("Rice factor (dB)");
     chartRiceFactor->legend()->hide();
     chartPWR->setTitle("Power");
     chartSNR->setTitle("SNR");
