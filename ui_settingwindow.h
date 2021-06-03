@@ -147,7 +147,7 @@ public:
     void retranslateUi(QDialog *SettingWindow)
     {
         SettingWindow->setWindowTitle(QCoreApplication::translate("SettingWindow", "Dialog", nullptr));
-        BWLabel->setText(QCoreApplication::translate("SettingWindow", "200 MHz", nullptr));
+        BWLabel->setText(QCoreApplication::translate("SettingWindow", "100 MHz", nullptr));
         label->setText(QCoreApplication::translate("SettingWindow", "Bandwidth", nullptr));
         label_3->setText(QCoreApplication::translate("SettingWindow", "Temperature", nullptr));
         tempLabel->setText(QCoreApplication::translate("SettingWindow", "20 \302\260C", nullptr));

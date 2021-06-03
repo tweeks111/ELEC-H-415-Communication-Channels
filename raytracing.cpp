@@ -138,8 +138,8 @@ void RayTracing::makeDirectAndGroundReflection()
         this->nlos_tension_mod = norm(T_ground);
         this->delayCheck(1e9 * directLine.length()/ *(this->px_per_m));
         this->delayCheck(1e9 * d_ground);
-        this->rayData.append(QPair<qreal,std::complex<qreal>>(directLine.length()/ *(this->px_per_m)/c,T_direct));
-        this->rayData.append(QPair<qreal,std::complex<qreal>>(d_ground/c,T_ground));
+        this->rayData.append(QPair<qreal,std::complex<qreal>>(1e9 *directLine.length()/ *(this->px_per_m)/c,T_direct));
+        this->rayData.append(QPair<qreal,std::complex<qreal>>(1e9 *d_ground/c,T_ground));
 
         QPen rayPen(QColor(106, 224, 27));
         rayPen.setWidth(2);
@@ -233,7 +233,7 @@ void RayTracing::makeWallReflection(QList<QPointF> mirrorPoints,QList<QLineF*> w
                         this->tension += T_refl;
                         this->nlos_tension_mod += norm(T_refl);
                         this->delayCheck(1e9 * total_length/(*(this->px_per_m)));
-                        this->rayData.append(QPair<qreal,std::complex<qreal>>(total_length/(*(this->px_per_m))/c,T_refl));
+                        this->rayData.append(QPair<qreal,std::complex<qreal>>(1e9 *total_length/(*(this->px_per_m))/c,T_refl));
                         for(Ray* ray:rays){
                             ray->setPen(rayPen);
                             this->raysList.push_back(ray);
@@ -296,7 +296,7 @@ void RayTracing::makeDiffraction()
                     this->tension += T_diff;
                     this->nlos_tension_mod += norm(T_diff);
                     this->delayCheck(1e9 * total_length);
-                    this->rayData.append(QPair<qreal,std::complex<qreal>>(total_length/c,T_diff));
+                    this->rayData.append(QPair<qreal,std::complex<qreal>>(1e9 *total_length/c,T_diff));
 
                     rayTXtoDP->setPen(rayPen);
                     rayDPtoRX->setPen(rayPen);

@@ -6,6 +6,7 @@ SettingWindow::SettingWindow(QWidget *parent) :
     ui(new Ui::SettingWindow)
 {
     ui->setupUi(this);
+    this->setWindowTitle("Settings");
     connect(ui->BWSlider, SIGNAL(valueChanged(int)), this, SLOT(updateLabels()));
     connect(ui->tempSlider, SIGNAL(valueChanged(int)), this, SLOT(updateLabels()));
     connect(ui->eqheightSlider, SIGNAL(valueChanged(int)), this, SLOT(updateLabels()));
@@ -20,7 +21,7 @@ SettingWindow::~SettingWindow()
 QMap<QString, qreal> SettingWindow::getSettings()
 {
     QMap<QString, qreal> settingsDict;
-    settingsDict["BW"] = (qreal)((100+ui->BWSlider->value()*10)*1e6);
+    settingsDict["BW"] = (qreal)((ui->BWSlider->value()*10)*1e6);
     settingsDict["height"] = (qreal)(1 + ui->eqheightSlider->value()*0.1);
     settingsDict["temp"] = (qreal)(-20 + ui->tempSlider->value() + 273.15);
     settingsDict["noisefig"] = (qreal)(ui->noiseSlider->value());
@@ -29,7 +30,7 @@ QMap<QString, qreal> SettingWindow::getSettings()
 
 void SettingWindow::updateLabels()
 {
-    int BW = 100 + ui->BWSlider->value()*10;
+    int BW = ui->BWSlider->value()*10;
     qreal eqheight = 1 + ui->eqheightSlider->value()*0.1;
     int temp = -20 + ui->tempSlider->value();
     int noisefig = ui->noiseSlider->value();

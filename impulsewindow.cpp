@@ -9,7 +9,7 @@ ImpulseWindow::ImpulseWindow(RayTracing *raytracing,QWidget *parent) :
 {
     ui->setupUi(this);
     this->setWindowTitle("Impulse responses");
-    this->rayData = &(raytracing->rayData);
+    this->rayData = raytracing->rayData;
     this->maxDelay = raytracing->delay_max;
     this->minDelay = raytracing->delay_min;
     this->BW = raytracing->BW*1e-9;
@@ -31,10 +31,12 @@ void ImpulseWindow::makePhysical()
     QScatterSeries *seriePhy = new QScatterSeries();
     seriePhy->setMarkerSize(7);
     qreal max = 0;
-    for(QPair<qreal,std::complex<qreal>> data :*(this->rayData)){
-        seriePhy->append(QPointF(data.first/this->deltaT,(1/(2*Ra)) * pow(abs(data.second),2)));
-        if((1/(2*Ra)) * pow(abs(data.second),2) > max){
-            max = (1/(2*Ra)) * pow(abs(data.second),2);
+    for(QPair<qreal,std::complex<qreal>> data :this->rayData){
+        qreal taps = data.first/this->deltaT;
+        qreal pwr = (1/(8*Ra)) * pow(abs(data.second),2)*1e9;
+        seriePhy->append(QPointF(taps,pwr));
+        if(pwr > max){
+            max = pwr;
         }
     }
     QChart *chartPhy = new QChart();
@@ -45,14 +47,17 @@ void ImpulseWindow::makePhysical()
     QValueAxis *axisX = new QValueAxis();
     chartPhy->addAxis(axisX,Qt::AlignBottom);
     seriePhy->attachAxis(axisX);
-    axisX->setRange(round(minDelay/deltaT) - 5, round(maxDelay/deltaT) +2);
+    axisX->setRange(round(minDelay/deltaT) - 3, round(maxDelay/deltaT) +2);
+    axisX->setTickType(QValueAxis::TicksDynamic);
+    axisX->setTickInterval(std::max(round(((maxDelay/deltaT) - (minDelay/deltaT) +6)/8),1.0));
+    axisX->setLabelFormat("%.2d");
     axisX->setTitleText("Taps");
     QValueAxis *axisY = new QValueAxis();
     chartPhy->addAxis(axisY,Qt::AlignLeft);
     seriePhy->attachAxis(axisY);
-    axisY->setLabelFormat("%.2e");
-    axisY->setRange(0,max*1.1);
-    axisY->setTitleText("|h(t)|");
+    axisY->setLabelFormat("%.2f");
+    axisY->setRange(0,max*1.05);
+    axisY->setTitleText("|h(t)| 1e9");
     ui->Physical->setChart(chartPhy);
     ui->Physical->setRenderHint(QPainter::Antialiasing);
     ui->Physical->show();
@@ -64,15 +69,17 @@ void ImpulseWindow::makeTDL()
     QScatterSeries *serieTDL = new QScatterSeries();
     serieTDL->setMarkerSize(7);
     qreal max = 0;
-    for(int i= round(minDelay/this->deltaT)-1;i<round(maxDelay/this->deltaT)+1;i++){
+    for(int i= round(minDelay/this->deltaT)-3;i<round(maxDelay/this->deltaT)+2;i++){
+        qreal taps = i+0.5;
         std::complex<qreal> hl = 0;
-        for(QPair<qreal,std::complex<qreal>> data :*(this->rayData)){
-            hl += (data.second*this->sinc(2*this->BW*(data.first - i*this->deltaT)));
+        for(QPair<qreal,std::complex<qreal>> data :this->rayData){
+            hl += (data.second*this->sinc(2*this->BW*(data.first - (i+0.5)*this->deltaT)));
         }
-        if((1/(2*Ra)) * pow(abs(hl),2) > max){
-            max = (1/(2*Ra)) * pow(abs(hl),2);
+        qreal pwr = (1/(8*Ra)) * pow(abs(hl),2)*1e9;
+        if(pwr > max){
+            max = pwr;
         }
-        serieTDL->append(QPointF(i,(1/(2*Ra)) * pow(abs(hl),2)));
+        serieTDL->append(QPointF(taps,pwr));
     }
     QChart *chartTDL = new QChart();
     chartTDL->setMargins(QMargins(0,0,0,0));
@@ -82,14 +89,17 @@ void ImpulseWindow::makeTDL()
     QValueAxis *axisX = new QValueAxis();
     chartTDL->addAxis(axisX,Qt::AlignBottom);
     serieTDL->attachAxis(axisX);
-    axisX->setRange(round(minDelay/deltaT) - 5, round(maxDelay/deltaT) +2);
+    axisX->setRange(round(minDelay/deltaT) - 3, round(maxDelay/deltaT) +2);
+    axisX->setTickType(QValueAxis::TicksDynamic);
+    axisX->setTickInterval(std::max(round(((maxDelay/deltaT) - (minDelay/deltaT) +6)/8),1.0));
+    axisX->setLabelFormat("%.2d");
     axisX->setTitleText("Taps");
     QValueAxis *axisY = new QValueAxis();
     chartTDL->addAxis(axisY,Qt::AlignLeft);
     serieTDL->attachAxis(axisY);
-    axisY->setRange(0,max*1.1);
-    axisY->setTitleText("|h(t)|");
-    axisY->setLabelFormat("%.2e");
+    axisY->setRange(0,max*1.05);
+    axisY->setTitleText("|h(t)| 1e9");
+    axisY->setLabelFormat("%.2f");
     ui->TDL->setChart(chartTDL);
     ui->TDL->setRenderHint(QPainter::Antialiasing);
     ui->TDL->show();
@@ -100,17 +110,21 @@ void ImpulseWindow::makeUSTDL()
     QScatterSeries *serieUSTDL = new QScatterSeries();
     qreal max = 0;
     serieUSTDL->setMarkerSize(7);
-    for(int i= round(minDelay/this->deltaT)-1;i<round(maxDelay/this->deltaT)+1;i++){
+    for(int i= round(minDelay/this->deltaT)-3;i<round(maxDelay/this->deltaT)+2;i++){
         std::complex<qreal> hl = 0;
-        for(QPair<qreal,std::complex<qreal>> data :*(this->rayData)){//TODO copy list and remove elem
-            if(data.first >= (i-0.5)*this->deltaT && data.first < (i+0.5)*this->deltaT){
+        qreal taps = i+0.5;
+        for(QPair<qreal,std::complex<qreal>> data :this->rayData){//TODO copy list and remove elem
+            if(data.first >= (taps-0.5)*this->deltaT && data.first < (taps+0.5)*this->deltaT){
                 hl += data.second;
             }
         }
-        if((1/(2*Ra)) * pow(abs(hl),2) > max){
-            max = (1/(2*Ra)) * pow(abs(hl),2);
+        qreal pwr = (1/(8*Ra)) * pow(abs(hl),2)*1e9;
+        if(pwr != 0){
+            if(pwr > max){
+                max = pwr;
+            }
+            serieUSTDL->append(QPointF(taps,pwr));
         }
-        serieUSTDL->append(QPointF(i,(1/(2*Ra)) * pow(abs(hl),2)));
     }
     QChart *chartUSTDL = new QChart();
     chartUSTDL->setMargins(QMargins(0,0,0,0));
@@ -120,14 +134,17 @@ void ImpulseWindow::makeUSTDL()
     QValueAxis *axisX = new QValueAxis();
     chartUSTDL->addAxis(axisX,Qt::AlignBottom);
     serieUSTDL->attachAxis(axisX);
-    axisX->setRange(round(minDelay/deltaT) - 5, round(maxDelay/deltaT) +2);
+    axisX->setRange(round(minDelay/deltaT) - 3, round(maxDelay/deltaT) +2);
+    axisX->setTickType(QValueAxis::TicksDynamic);
+    axisX->setTickInterval(std::max(round(((maxDelay/deltaT) - (minDelay/deltaT) +6)/8),1.0));
+    axisX->setLabelFormat("%.2d");
     axisX->setTitleText("Taps");
     QValueAxis *axisY = new QValueAxis();
     chartUSTDL->addAxis(axisY,Qt::AlignLeft);
     serieUSTDL->attachAxis(axisY);
-    axisY->setRange(0,max*1.1);
-    axisY->setTitleText("|h(t)|");
-    axisY->setLabelFormat("%.2e");
+    axisY->setRange(0,max*1.05);
+    axisY->setTitleText("|h(t)| 1e9");
+    axisY->setLabelFormat("%.2f");
     ui->USTDL->setChart(chartUSTDL);
     ui->USTDL->setRenderHint(QPainter::Antialiasing);
     ui->USTDL->show();

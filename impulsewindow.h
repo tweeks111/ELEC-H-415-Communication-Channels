@@ -19,7 +19,7 @@ public:
 
 private:
     Ui::ImpulseWindow *ui;
-    QList<QPair<qreal,std::complex<qreal>>> *rayData;
+    QList<QPair<qreal,std::complex<qreal>>> rayData;
     void makePhysical();
     void makeTDL();
     void makeUSTDL();

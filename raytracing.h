@@ -32,7 +32,7 @@ public:
 
     qreal SNR();
     void setSettings(QMap<QString, qreal>);
-    qreal BW = 200*1e6;
+    qreal BW = 100*1e6;
     qreal Ra;//check
     void updateMapSize(int, int);
 private:
