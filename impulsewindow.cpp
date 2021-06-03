@@ -57,7 +57,7 @@ void ImpulseWindow::makePhysical()
     seriePhy->attachAxis(axisY);
     axisY->setLabelFormat("%.2f");
     axisY->setRange(0,max*1.05);
-    axisY->setTitleText("|h(t)| 1e9");
+    axisY->setTitleText("|h(t)| 1e-9");
     ui->Physical->setChart(chartPhy);
     ui->Physical->setRenderHint(QPainter::Antialiasing);
     ui->Physical->show();
@@ -98,7 +98,7 @@ void ImpulseWindow::makeTDL()
     chartTDL->addAxis(axisY,Qt::AlignLeft);
     serieTDL->attachAxis(axisY);
     axisY->setRange(0,max*1.05);
-    axisY->setTitleText("|h(t)| 1e9");
+    axisY->setTitleText("|h(t)| 1e-9");
     axisY->setLabelFormat("%.2f");
     ui->TDL->setChart(chartTDL);
     ui->TDL->setRenderHint(QPainter::Antialiasing);
@@ -143,7 +143,7 @@ void ImpulseWindow::makeUSTDL()
     chartUSTDL->addAxis(axisY,Qt::AlignLeft);
     serieUSTDL->attachAxis(axisY);
     axisY->setRange(0,max*1.05);
-    axisY->setTitleText("|h(t)| 1e9");
+    axisY->setTitleText("|h(t)| 1e-9");
     axisY->setLabelFormat("%.2f");
     ui->USTDL->setChart(chartUSTDL);
     ui->USTDL->setRenderHint(QPainter::Antialiasing);

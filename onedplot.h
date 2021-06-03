@@ -4,6 +4,10 @@
 #include <QDialog>
 #include "receiverrect.h"
 #include "drawingscene.h"
+#include <algorithm>
+#include <iostream>
+#include <numeric>
+#include <vector>
 
 namespace Ui {
 class OneDPlot;
@@ -19,6 +23,7 @@ public:
 
 private:
     Ui::OneDPlot *ui;
+    QPair<qreal,qreal> linearReg(const QList<qreal>& x, const QList<qreal>& y);
 };
 
 #endif // ONEDPLOT_H

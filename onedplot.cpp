@@ -9,10 +9,15 @@ OneDPlot::OneDPlot(DrawingScene *drawingscene, QWidget *parent) :
     ui->setupUi(this);
     this->setWindowTitle("Main street 1-D plot");
     QLineSeries *seriePWR = new QLineSeries();
+    QLineSeries *seriePWRLine = new QLineSeries();
+    seriePWRLine->setColor(QColor(Qt::red));
     QLineSeries *serieSNR = new QLineSeries();
     QLineSeries *serieDelaySpread = new QLineSeries();
     QLineSeries *serieRiceFactor = new QLineSeries();
     qreal dist = 0;
+    qreal distMax = 0;
+    QList<qreal> x = QList<qreal>();
+    QList<qreal> y = QList<qreal>();
     for(ReceiverRect* rect:drawingscene->mainStreetList){
         if(drawingscene->MS_h){
             dist = abs(rect->x - drawingscene->tx_item->center.x())/drawingscene->px_per_m;
@@ -20,16 +25,25 @@ OneDPlot::OneDPlot(DrawingScene *drawingscene, QWidget *parent) :
         else{
             dist = abs(rect->y - drawingscene->tx_item->center.y())/drawingscene->px_per_m;
         }
+        if(dist > distMax){
+            distMax = dist;
+        }
+        x.append(log10(dist)-log10(10));
+        y.append(rect->power);
         seriePWR->append(log10(dist),rect->power);
         serieSNR->append(log10(dist),rect->SNR);
         serieDelaySpread->append(log10(dist),rect->delayspread);
         serieRiceFactor->append(log10(dist),rect->rice);
     }
+    QPair<qreal,qreal> reg = this->linearReg(x,y);
+    seriePWRLine->append(1,reg.second);
+    seriePWRLine->append(distMax,reg.first*distMax);
     QChart *chartPWR = new QChart();
     QChart *chartSNR = new QChart();
     QChart *chartDelaySpread = new QChart();
     QChart *chartRiceFactor = new QChart();
     chartPWR->addSeries(seriePWR);
+    chartPWR->addSeries(seriePWRLine);
     chartSNR->addSeries(serieSNR);
     chartDelaySpread->addSeries(serieDelaySpread);
     chartRiceFactor->addSeries(serieRiceFactor);
@@ -40,16 +54,18 @@ OneDPlot::OneDPlot(DrawingScene *drawingscene, QWidget *parent) :
     QValueAxis *axisXPWR = new QValueAxis();
     chartPWR->addAxis(axisXPWR,Qt::AlignBottom);
     seriePWR->attachAxis(axisXPWR);
-    axisXPWR->setTitleText("Log(d");
+    seriePWRLine->attachAxis(axisXPWR);
+    axisXPWR->setTitleText("Log(d)");
     QValueAxis *axisYPWR = new QValueAxis();
     chartPWR->addAxis(axisYPWR,Qt::AlignLeft);
     seriePWR->attachAxis(axisYPWR);
+    seriePWRLine->attachAxis(axisYPWR);
     axisYPWR->setTitleText("Power (dBm)");
     chartPWR->legend()->hide();
     QValueAxis *axisXSNR = new QValueAxis();
     chartSNR->addAxis(axisXSNR,Qt::AlignBottom);
     serieSNR->attachAxis(axisXSNR);
-    axisXSNR->setTitleText("Log(d");
+    axisXSNR->setTitleText("Log(d)");
     QValueAxis *axisYSNR = new QValueAxis();
     chartSNR->addAxis(axisYSNR,Qt::AlignLeft);
     serieSNR->attachAxis(axisYSNR);
@@ -73,7 +89,7 @@ OneDPlot::OneDPlot(DrawingScene *drawingscene, QWidget *parent) :
     serieRiceFactor->attachAxis(axisYRF);
     axisYRF->setTitleText("Rice factor (dB)");
     chartRiceFactor->legend()->hide();
-    chartPWR->setTitle("Power");
+    chartPWR->setTitle("Power (n = " + QString::number(abs(reg.first)/10) + ")");
     chartSNR->setTitle("SNR");
     chartDelaySpread->setTitle("Delay spread");
     chartRiceFactor->setTitle("Rice factor");
@@ -95,4 +111,16 @@ OneDPlot::~OneDPlot()
 {
     delete ui;
 }
+
+QPair<qreal,qreal> OneDPlot::linearReg(const QList<qreal>& x, const QList<qreal>& y) {
+    const auto n    = x.size();
+    const auto s_x  = std::accumulate(x.begin(), x.end(), 0.0);
+    const auto s_y  = std::accumulate(y.begin(), y.end(), 0.0);
+    const auto s_xx = std::inner_product(x.begin(), x.end(), x.begin(), 0.0);
+    const auto s_xy = std::inner_product(x.begin(), x.end(), y.begin(), 0.0);
+    const auto a    = (n * s_xy - s_x * s_y) / (n * s_xx - s_x * s_x);
+    const auto b    = (s_y - a * s_x) / n;
+    return QPair<qreal,qreal>(a,b);
+}
+
 

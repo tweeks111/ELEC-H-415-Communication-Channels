@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
+    this->setWindowTitle("Ray Tracing");
     this->settingWindow = new SettingWindow(this);
     // Create graphics scene
     this->drawing_scene = new DrawingScene(this);
