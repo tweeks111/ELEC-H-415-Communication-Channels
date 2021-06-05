@@ -21,39 +21,43 @@ RayTracing::RayTracing(int map_width, int map_height, int* px_per_m, int* grid_s
 
 
 qreal RayTracing::Gtx(qreal theta)
+//Compute the Gain of the antenna
 {
     return 16/(3*pi)*pow(sin(theta),3);
 }
 
 qreal RayTracing::he(qreal theta)
+//Compute the equivalent height of the antenna
 {
     return -(c/(frequency*pi)) * cos((pi/2)*cos(theta)) / pow(sin(theta),2);
 }
 
-qreal RayTracing::coefReflWall(qreal theta)//perpendicular coef
+qreal RayTracing::coefReflWall(qreal theta)
+//Compute the reflection coefficient for perpendicular polarization (i.e. wall reflection)
 {
     if(theta < 0){theta = - theta;}
-    if(theta < pi/2){theta = pi/2 - theta;}
+    if(theta <= pi/2){theta = pi/2 - theta;}
     else if(theta > pi/2){theta = theta - pi/2;}
     qreal temp = sqrt(1 - (1/relPermittivity)*pow(sin(theta),2))*sqrt(relPermittivity);
-    return abs((cos(theta)-temp)/(cos(theta)+temp));
+    return (cos(theta)-temp)/(cos(theta)+temp);
 }
 
-qreal RayTracing::coefReflGround(qreal theta)//parra
+qreal RayTracing::coefReflGround(qreal theta)
+//Compute the reflection coefficient for parallel polarization (i.e. ground reflection)
 {
     qreal temp = sqrt(1 - (1/relPermittivity)*pow(sin(theta),2))/sqrt(relPermittivity);
     return (cos(theta)-temp)/(cos(theta)+temp);
 }
 
 std::complex<qreal> RayTracing::coefDiff(qreal Dr)
+//Compute the diffraction coefficient
 {
     qreal nu = sqrt(2*beta*Dr/pi);
-    return std::polar(pow(10,(-6.9 -20*log10(sqrt(pow(nu - 0.1,2)+1)+nu-0.1))/10),-(pi/4)-(pi/2)*pow(nu,2));
+    return std::polar(pow(10,(-6.9 -20*log10(sqrt(pow(nu - 0.1,2)+1)+nu-0.1))/20),-(pi/4)-(pi/2)*pow(nu,2));
 }
 
-void RayTracing::drawRays(QPointF* tx, QPointF* rx, QList<Building*>* building_list)
+void RayTracing::drawRays(QList<Point*> *tx_list, QPointF* rx,  QList<Building*>* building_list)
 {
-    this->transmitter = tx;
     this->receiver = rx;
     this->building_list = building_list;
     this->raysList.clear();
@@ -67,44 +71,46 @@ void RayTracing::drawRays(QPointF* tx, QPointF* rx, QList<Building*>* building_l
     this->received_power = 0;
     this->received_power_dbm = 0;
     this->rice_factor = INFINITE;
-    if(checkTxRxValidity())
-    {
-        this->counterRefl = 0;
-        this->counterDiff = 0;
-        this->counterReflMax = 0;
-        this->counterDiffMax = 0;
-        makeDirectAndGroundReflection();
-        if(this->mainStreet->contains(*(this->receiver))){
-            makeWallReflection();
-            //qDebug() << "Main Street Computation";
-            //qDebug() << "Reflexions " << (this->counterRefl) << "/" << (this->counterReflMax);
+    for(Point* tx_point:*tx_list){//For each BS
+        this->transmitter = &tx_point->center;
+        if(sqrt(pow(receiver->x()-transmitter->x(),2)+pow(receiver->y()-transmitter->y(),2)) > 10){//Distance > 10m
+            this->findMainStreetQRectF(this->transmitter,building_list);
+            if(checkTxRxValidity())
+            {
+                makeDirectAndGroundReflection();
+                if(this->mainStreet->contains(*(this->receiver))){
+                    makeWallReflection();
+                }
+                else
+                {
+                    if(this->raysList.isEmpty()){
+                        makeDiffraction();
+                    }
+                }
+            }
         }
-        else
-        {
-            if(this->raysList.isEmpty()){
-                makeDiffraction();
-                //qDebug() << "Second Street Computation NLOS";
-                //qDebug() << "Diffraction " << (this->counterDiff) << "/" << (this->counterDiffMax);
-            }
-            else {
-            //qDebug() << "Second Street Computation LOS";
-            }
-        }     
     }
+
+    //Compute the rice factor (if LOS)
     if(this->los_tension_mod != 0){
         this->rice_factor = 10*log10(this->los_tension_mod / this->nlos_tension_mod);
     }
+
+    //Compute the delay spread (if at least 1 ray)
     if(this->delay_min != INFINITE && this->delay_max > 0){
         this->delay_spread = this->delay_max - this->delay_min;
     }
+
+    //Compute the power from the total induiced tension
     this->received_power = (1/(8*Ra)) * pow(abs(this->tension),2);
     this->received_power_dbm = 10*log10(this->received_power/0.01);
 }
 
 qreal RayTracing::SNR()
+//Compute the SNR
 {
     qreal power_dbw = this->received_power_dbm - 30;
-    qreal SNR = power_dbw - 10*log10(noise_figure) - 10*log10(boltzman*BW*temp);
+    qreal SNR = power_dbw - noise_figure - 10*log10(boltzman*BW*temp);
     return SNR;
 }
 
@@ -123,6 +129,7 @@ void RayTracing::updateMapSize(int width, int height)
 }
 
 void RayTracing::makeDirectAndGroundReflection()
+//Find and compute the direct and the ground reflected ray
 {
     QLineF directLine = QLineF(*(transmitter),*(receiver));
     if(!lineIsBlocked(&directLine)){
@@ -133,9 +140,9 @@ void RayTracing::makeDirectAndGroundReflection()
         qreal coef = coefReflGround(theta_ground);
         std::complex<qreal> E_ground = std::polar(coef*sqrt(60*Ptx*Gtx(pi - theta_ground))/(d_ground),-beta*(d_ground));
         std::complex<qreal> T_ground = E_ground * he(pi - theta_ground) * sin(pi - theta_ground);
-        this->tension = T_direct + T_ground;
-        this->los_tension_mod = norm(T_direct);
-        this->nlos_tension_mod = norm(T_ground);
+        this->tension += T_direct + T_ground;
+        this->los_tension_mod += norm(T_direct);
+        this->nlos_tension_mod += norm(T_ground);
         this->delayCheck(1e9 * directLine.length()/ *(this->px_per_m));
         this->delayCheck(1e9 * d_ground);
         this->rayData.append(QPair<qreal,std::complex<qreal>>(1e9 *directLine.length()/ *(this->px_per_m)/c,T_direct));
@@ -150,7 +157,9 @@ void RayTracing::makeDirectAndGroundReflection()
     }
 }
 
-void RayTracing::makeWallReflection(QList<QPointF> mirrorPoints,QList<QLineF*> walls, qint16 n_reflection){
+void RayTracing::makeWallReflection(QList<QPointF> mirrorPoints,QList<QLineF*> walls, qint16 n_reflection)
+//Recursive function to find and compute the rays reflected on building. Recursion depth = number of reflections
+{
     QPen rayPen;
     if(n_reflection == 1){
         rayPen = QPen(QColor(224, 221, 27));
@@ -166,9 +175,7 @@ void RayTracing::makeWallReflection(QList<QPointF> mirrorPoints,QList<QLineF*> w
         for(QLineF wall:*(building->getWalls())){
             if((walls.isEmpty() || wall!=*(walls.last())))
             {
-                this->counterReflMax ++;
-                if(wallIsValid(wall)){
-                    this->counterRefl ++;
+                if(wallIsValid(wall)){//Don't compute for wall at the edge of the map
                     //Compute the new mirror pt based on the last one (tx pos for the 1st reflection)
                     QList<QLineF*> tempWalls = walls;
                     tempWalls.push_back(&wall);
@@ -194,7 +201,7 @@ void RayTracing::makeWallReflection(QList<QPointF> mirrorPoints,QList<QLineF*> w
                             QLineF* currentWall = tempWalls.value(tempWalls.size()-(i+1));
                             QLineF lineLIPtoMP(lastIntersectionPoint,tempMirrorPoints.value(n_mirror-(i+1)));
                             QPointF intersectionPoint;
-                            if(currentWall->intersects(lineLIPtoMP,&intersectionPoint)==QLineF::BoundedIntersection && intersectionPoint != lastIntersectionPoint){//Is there a intersection on the wall ?
+                            if(currentWall->intersects(lineLIPtoMP,&intersectionPoint)==QLineF::BoundedIntersection && intersectionPoint != lastIntersectionPoint){//Is there an intersection on the wall ?
                                 lineLIPtoIP = QLineF(lastIntersectionPoint,intersectionPoint);
                                 if(!lineIsBlocked(&lineLIPtoIP)){//Is there no other wall blocking the ray ?
                                     Ray* ray = new Ray(lineLIPtoIP);
@@ -251,15 +258,14 @@ void RayTracing::makeWallReflection(QList<QPointF> mirrorPoints,QList<QLineF*> w
 
 
 void RayTracing::makeDiffraction()
+//Find and compute diffracted rays
 {
-    QPen rayPen(QColor(155, 0, 233)); //print the direct ray "- - -"
+    QPen rayPen(QColor(155, 0, 233));
     rayPen.setWidth(2);
     for(Building* building:*building_list){
         for(QPointF corner:*(building->getCorners())){
-            this->counterDiffMax ++;
-            if(cornerIsValid(corner))
+            if(cornerIsValid(corner))//Don't compute for corner at the edge of the map
             {
-                this->counterDiff ++;
                 QLineF lineTXtoEP(*(transmitter),corner);
                 QLineF lineEPtoRX(corner,*(receiver));
 
@@ -291,7 +297,7 @@ void RayTracing::makeDiffraction()
                     qreal Dr = (pow(h,2)/2) * ( 1/(lineTXtoEP.length()/ *(this->px_per_m)) + 1/(lineEPtoRX.length()/ *(this->px_per_m)) );
                     std::complex<qreal> F = coefDiff(Dr);
                     qreal total_length = (lineTXtoEP.length() + lineEPtoRX.length())/ *(this->px_per_m);
-                    std::complex<qreal> E_diff = std::polar(sqrt(abs(F))*sqrt(60* GtxMax * Ptx )/ total_length, (-this->beta*total_length) + arg(F));
+                    std::complex<qreal> E_diff = std::polar(abs(F)*sqrt(60* GtxMax * Ptx )/ total_length, (-this->beta*total_length) + arg(F));
                     std::complex<qreal> T_diff = E_diff * heMax;
                     this->tension += T_diff;
                     this->nlos_tension_mod += norm(T_diff);
@@ -308,7 +314,19 @@ void RayTracing::makeDiffraction()
     }
 }
 
-void RayTracing::delayCheck(qreal length){
+QPointF RayTracing::mirrorPointMaker(QLineF* wall, QPointF* initialPoint)
+//Find the mirror point
+{
+    float a = (wall->p2().y()-wall->p1().y())/wall->length();
+    float b = (wall->p1().x()-wall->p2().x())/wall->length();
+    float c = -a*wall->p1().x()-b*wall->p1().y();
+    float dist = a*initialPoint->x()+b*initialPoint->y()+c;
+    return QPointF(initialPoint->x()-2*a*dist,initialPoint->y()-2*b*dist);
+}
+
+void RayTracing::delayCheck(qreal length)
+//Compute the min and max delay
+{
     qreal delay = length / c;
     if(delay < this->delay_min){
         this->delay_min = delay;
@@ -320,6 +338,7 @@ void RayTracing::delayCheck(qreal length){
 }
 
 void RayTracing::findMainStreetQRectF(QPointF* tx, QList<Building*>* building_list)
+//Compute the main street
 {
     this->transmitter = tx;
     this->building_list = building_list;
@@ -394,15 +413,6 @@ void RayTracing::findMainStreetQRectF(QPointF* tx, QList<Building*>* building_li
 }
 
 
-QPointF RayTracing::mirrorPointMaker(QLineF* wall, QPointF* initialPoint)
-{
-    float a = (wall->p2().y()-wall->p1().y())/wall->length();
-    float b = (wall->p1().x()-wall->p2().x())/wall->length();
-    float c = -a*wall->p1().x()-b*wall->p1().y();
-    float dist = a*initialPoint->x()+b*initialPoint->y()+c;
-    return QPointF(initialPoint->x()-2*a*dist,initialPoint->y()-2*b*dist);
-}
-
 bool RayTracing::lineIsBlocked(QLineF* line)
 {
     for(Building* building:*this->building_list){if(building->isBlockingPath(line)){return true;}}
@@ -446,7 +456,4 @@ QPointF RayTracing::makeNormalPoint(QLineF line)
     }
     return point;
 }
-
-
- //TODO Fixed main street again (max heigth broken some times)
 

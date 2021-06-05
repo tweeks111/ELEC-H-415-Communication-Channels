@@ -18,11 +18,12 @@ class RayTracing
 public:
     RayTracing();
     RayTracing(int map_width, int map_height, int* px_per_m, int* grid_spacing_m);
-    void drawRays(QPointF* tx, QPointF* rx, QList<Building*>* building_list);
+    void drawRays(QList<Point*> *tx_list, QPointF* rx,  QList<Building*>* building_list);
     void findMainStreetQRectF(QPointF* tx, QList<Building*>* building_list);
     QList<Ray*> raysList;
     QRectF* mainStreet;
     qreal received_power_dbm;
+    qreal received_power;
     qreal rice_factor;
     qreal delay_spread;
     QList<QPair<qreal,std::complex<qreal>>> rayData;
@@ -45,11 +46,7 @@ private:
     QPointF* transmitter;
     QPointF* receiver;
 
-    int counterRefl;
-    int counterDiff;
-    int counterReflMax;
-    int counterDiffMax;
-    int maxReflection = 3;
+    int const maxReflection = 3;
 
     qreal const c = 299792458;
     const qreal boltzman = 1.379*1e-23;
@@ -72,7 +69,7 @@ private:
     qreal los_tension_mod;
     qreal nlos_tension_mod;
 
-    qreal received_power;
+
 
 
     qreal he(qreal theta);

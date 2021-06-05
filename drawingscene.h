@@ -35,7 +35,8 @@ public:
     void clearBuilding();
     QList<Building*> building_list;
     Point* rx_item;
-    Point* tx_item;
+    QList<Point*> tx_items;
+    Point* tx_item_temp;
     int map_width;
     int map_height;
     int px_per_m;

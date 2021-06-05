@@ -19,7 +19,8 @@ DrawingScene::DrawingScene(QObject *parent)
     this->temp_building = nullptr;
     this->temp_MS = nullptr;
     this->rx_item = nullptr;
-    this->tx_item = nullptr;
+    this->tx_items = QList<Point*>();
+    this->tx_item_temp = nullptr;
     this->main_street = nullptr;
 
     this->buildingsGroup = nullptr;
@@ -66,7 +67,10 @@ void DrawingScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     }
     else if(this->scene_state == SceneState::TX && pointIsAvailable(eventPoint)){
         this->scene_state = SceneState::Disabled;
-        this->tx_item->setCenter(snapToGrid(&eventPoint,2));
+        this->tx_item_temp->setCenter(snapToGrid(&eventPoint,2));
+        if(!this->tx_items.contains(this->tx_item_temp)){
+            this->tx_items.push_back(this->tx_item_temp);
+        }
     }
     else if(this->scene_state == SceneState::Simulation){
         ray=false;
@@ -123,7 +127,10 @@ void DrawingScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         this->rx_item->setCenter(snapToGrid(&eventPoint,2));
     }
     else if(this->scene_state == SceneState::TX && pointIsAvailable(eventPoint)){
-        this->tx_item->setCenter(snapToGrid(&eventPoint,2));
+        this->tx_item_temp->setCenter(snapToGrid(&eventPoint,2));
+        if(!this->tx_items.contains(this->tx_item_temp)){
+            this->tx_items.push_back(this->tx_item_temp);
+        }
     }
     else if(this->scene_state == SceneState::Disabled){
         ray = false;
@@ -140,10 +147,10 @@ void DrawingScene::draw(bool ray)
         //MainStreet
         if(this->main_street){this->removeItem(this->main_street);}
         this->main_street = nullptr;
-        if(this->tx_item && this->tx_item->isSet)
+        if(this->tx_items.size() == 1)
         {
             //qDebug() << this->tx_item->center;
-            this->rayTracing->findMainStreetQRectF(&(this->tx_item->center), &(this->building_list));
+            this->rayTracing->findMainStreetQRectF(&(this->tx_items.first()->center), &(this->building_list));
             if(this->rayTracing->mainStreet)
             {
                 this->main_street = new QGraphicsRectItem(this->rayTracing->mainStreet->toRect());
@@ -170,9 +177,9 @@ void DrawingScene::draw(bool ray)
         //Rays
         if(this->raysGroup){this->removeItem(this->raysGroup);}
         this->raysGroup = new QGraphicsItemGroup();
-        if(this->tx_item && this->tx_item->isSet && this->rx_item && this->rx_item->isSet)
+        if(this->rx_item && this->rx_item->isSet && !(this->tx_items.isEmpty()))
         {
-            rayTracing->drawRays(&(this->tx_item->center), &(this->rx_item->center), &(this->building_list));
+            rayTracing->drawRays(&(this->tx_items), &(this->rx_item->center), &(this->building_list));
             for(Ray* ray:this->rayTracing->raysList)
             {
                 this->raysGroup->addToGroup(ray);
@@ -183,7 +190,9 @@ void DrawingScene::draw(bool ray)
     }
 
     //BS
-    if(this->tx_item){this->removeItem(this->tx_item);this->addItem(this->tx_item);}
+    for(Point* tx_item :this->tx_items){
+        if(tx_item){this->removeItem(tx_item);this->addItem(tx_item);}
+    }
     if(this->rx_item){
         this->removeItem(this->rx_item);
         this->addItem(this->rx_item);
@@ -209,20 +218,7 @@ void DrawingScene::draw(bool ray)
 
 void DrawingScene::runSimulation()
 {
-    bool MS_horizontal = false;
-    if(this->main_street->rect().width() > this->main_street->rect().height()){
-        MS_horizontal = true;
-        ReceiverRect::dsMax = (3*this->main_street->rect().height() - 20)*(10/3);
-    } else {
-        ReceiverRect::dsMax = (3*this->main_street->rect().width() - 20)*(10/3);
-    }
-    bool after;
-    if(MS_horizontal){
-        after = this->tx_item->center.x()/this->px_per_m <= this->map_width/2;
-    } else {
-        after = this->tx_item->center.y()/this->px_per_m <= this->map_height/2;
-    }
-    this->MS_h = MS_horizontal;
+
     this->scene_state = SceneState::Simulation;
     this->rectList.clear();
     this->mainStreetList.clear();
@@ -232,8 +228,7 @@ void DrawingScene::runSimulation()
     int w  = this->map_width; //this->main_street->rect().width()/this->px_per_m;
     int h  = this->map_height; //this->main_street->rect().height()/this->px_per_m;
 
-    float x_tx = this->tx_item->center.x()/this->px_per_m;
-    float y_tx = this->tx_item->center.y()/this->px_per_m;
+
 
     int counter = 0;
     for(int i=x0; i<x0+w; i++){
@@ -242,25 +237,42 @@ void DrawingScene::runSimulation()
             float y_m = (float)(j+0.5);
             if(pointIsAvailable(QPointF(x_m*this->px_per_m, y_m*this->px_per_m))){
                 QPointF *RX = new QPointF(x_m*this->px_per_m, y_m*this->px_per_m);
-                if(sqrt(pow(x_m-x_tx,2)+pow(y_m-y_tx,2)) > 10){
-                    this->rayTracing->drawRays(&this->tx_item->center, RX, &this->building_list);
-                    qreal power = this->rayTracing->received_power_dbm;
-                    ReceiverRect *rect = new ReceiverRect(i*this->px_per_m, j*this->px_per_m, this->px_per_m, this->px_per_m);
-                    rect->power = power;
-                    rect->SNR = this->rayTracing->SNR();
-                    rect->rice = this->rayTracing->rice_factor;
-                    rect->delayspread = this->rayTracing->delay_spread;
-                    //qDebug() << this->rayTracing->delay_spread;
-                    rect->colorRect();
+                this->rayTracing->drawRays(&tx_items, RX, &this->building_list);
+                qreal power = this->rayTracing->received_power_dbm;
+                ReceiverRect *rect = new ReceiverRect(i*this->px_per_m, j*this->px_per_m, this->px_per_m, this->px_per_m);
 
+                if(this->tx_items.size() == 1){
+                    float x_tx = this->tx_items.first()->center.x()/this->px_per_m;
+                    float y_tx = this->tx_items.first()->center.y()/this->px_per_m;
+                    bool MS_horizontal = false;
+                    if(this->main_street->rect().width() > this->main_street->rect().height()){
+                        MS_horizontal = true;
+                        ReceiverRect::dsMax = (3*this->main_street->rect().height() - 20)*(10/3);
+                    } else {
+                        ReceiverRect::dsMax = (3*this->main_street->rect().width() - 20)*(10/3);
+                    }
+                    bool after;
+                    if(MS_horizontal){
+                        after = this->tx_items.first()->center.x()/this->px_per_m <= this->map_width/2;
+                    } else {
+                        after = this->tx_items.first()->center.y()/this->px_per_m <= this->map_height/2;
+                    }
+                    this->MS_h = MS_horizontal;
                     if((MS_horizontal && y_m == y_tx && ((after && x_m > x_tx) ||(!after && x_m < x_tx))) || (!MS_horizontal && x_m == x_tx && ((after && y_m > y_tx) ||(!after && y_m < y_tx)))){
                         this->mainStreetList.append(rect);
                     }
-
-                    this->rectList.append(rect);
-                    this->addItem(rect);
-                    update();
+                } else {
+                    ReceiverRect::dsMax = 500;
                 }
+
+                rect->power = power;
+                rect->SNR = this->rayTracing->SNR();
+                rect->rice = this->rayTracing->rice_factor;
+                rect->delayspread = this->rayTracing->delay_spread;
+                rect->colorRect();
+                this->rectList.append(rect);
+                this->addItem(rect);
+                update();
             }
             counter += 1;
             emit updateBar(counter);
@@ -279,7 +291,7 @@ void DrawingScene::updateMapSize(int width, int height)
 
     this->rayTracing->updateMapSize(width,height);
 
-    if(this->tx_item || this->rx_item) this->clearBS();
+    if(!this->tx_items.isEmpty() || this->rx_item) this->clearBS();
     if(this->buildingsGroup) this->clearBuilding();
 
     foreach(QGraphicsLineItem *line, this->grid){
@@ -353,7 +365,7 @@ void DrawingScene::clearSimulation()
 
 bool DrawingScene::checkTxRxAreSet()
 {
-    return (this->rx_item && this->tx_item && this->rx_item->isSet && this->tx_item->isSet);
+    return (this->rx_item && !this->tx_items.isEmpty() && this->rx_item->isSet);
 }
 
 QPointF DrawingScene::snapToGrid(QPointF *event,int precision)
@@ -398,18 +410,24 @@ void DrawingScene::createRX()
 
 void DrawingScene::addBS()
 {
-    if(this->tx_item){this->removeItem(this->tx_item);}
-    this->tx_item = new Point("TX");
-    this->addItem(this->tx_item);
+    this->tx_item_temp = new Point("TX");
+    this->addItem(this->tx_item_temp);
     draw();
 }
 
 void DrawingScene::clearBS()
 {
     if(this->rx_item){this->removeItem(this->rx_item);}
-    if(this->tx_item){this->removeItem(this->tx_item);}
-    this->tx_item = nullptr;
+    if(this->tx_item_temp){this->removeItem(this->tx_item_temp);}
+    if(!this->tx_items.isEmpty()){
+        for(Point* tx:this->tx_items){
+            this->removeItem(tx);
+        }
+        this->tx_items.clear();
+    }
+    this->tx_item_temp = nullptr;
     this->rx_item = nullptr;
+
     draw();
 }
 
@@ -421,7 +439,7 @@ void DrawingScene::clearBuilding()
 
 Point DrawingScene::getSceneTX()
 {
-    return this->tx_item;
+    return this->tx_items.first();
 }
 
 Point DrawingScene::getSceneRX()

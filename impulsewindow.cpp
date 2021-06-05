@@ -30,13 +30,17 @@ void ImpulseWindow::makePhysical()
 {
     QScatterSeries *seriePhy = new QScatterSeries();
     seriePhy->setMarkerSize(7);
-    qreal max = 0;
+    qreal max = -1000;
+    qreal min = 1000;
     for(QPair<qreal,std::complex<qreal>> data :this->rayData){
         qreal taps = data.first/this->deltaT;
-        qreal pwr = (1/(8*Ra)) * pow(abs(data.second),2)*1e9;
+        qreal pwr = 10*log10((1/(8*Ra)) * pow(abs(data.second),2)/0.01);
         seriePhy->append(QPointF(taps,pwr));
         if(pwr > max){
             max = pwr;
+        }
+        if(pwr < min){
+            min = pwr;
         }
     }
     QChart *chartPhy = new QChart();
@@ -56,8 +60,8 @@ void ImpulseWindow::makePhysical()
     chartPhy->addAxis(axisY,Qt::AlignLeft);
     seriePhy->attachAxis(axisY);
     axisY->setLabelFormat("%.2f");
-    axisY->setRange(0,max*1.05);
-    axisY->setTitleText("|h(t)| 1e-9");
+    axisY->setRange(min,max +5);
+    axisY->setTitleText("|h(t)| (dBm)");
     ui->Physical->setChart(chartPhy);
     ui->Physical->setRenderHint(QPainter::Antialiasing);
     ui->Physical->show();
@@ -68,16 +72,20 @@ void ImpulseWindow::makeTDL()
 {
     QScatterSeries *serieTDL = new QScatterSeries();
     serieTDL->setMarkerSize(7);
-    qreal max = 0;
+    qreal max = -1000;
+    qreal min = 1000;
     for(int i= round(minDelay/this->deltaT)-3;i<round(maxDelay/this->deltaT)+2;i++){
         qreal taps = i+0.5;
         std::complex<qreal> hl = 0;
         for(QPair<qreal,std::complex<qreal>> data :this->rayData){
             hl += (data.second*this->sinc(2*this->BW*(data.first - (i+0.5)*this->deltaT)));
         }
-        qreal pwr = (1/(8*Ra)) * pow(abs(hl),2)*1e9;
+        qreal pwr = 10*log10((1/(8*Ra)) * pow(abs(hl),2)/0.01);
         if(pwr > max){
             max = pwr;
+        }
+        if(pwr < min){
+            min = pwr;
         }
         serieTDL->append(QPointF(taps,pwr));
     }
@@ -97,8 +105,8 @@ void ImpulseWindow::makeTDL()
     QValueAxis *axisY = new QValueAxis();
     chartTDL->addAxis(axisY,Qt::AlignLeft);
     serieTDL->attachAxis(axisY);
-    axisY->setRange(0,max*1.05);
-    axisY->setTitleText("|h(t)| 1e-9");
+    axisY->setRange(min,max +5);
+    axisY->setTitleText("|h(t)| (dBm)");
     axisY->setLabelFormat("%.2f");
     ui->TDL->setChart(chartTDL);
     ui->TDL->setRenderHint(QPainter::Antialiasing);
@@ -108,20 +116,25 @@ void ImpulseWindow::makeTDL()
 void ImpulseWindow::makeUSTDL()
 {
     QScatterSeries *serieUSTDL = new QScatterSeries();
-    qreal max = 0;
+    qreal max = -1000;
+    qreal min = 1000;
     serieUSTDL->setMarkerSize(7);
     for(int i= round(minDelay/this->deltaT)-3;i<round(maxDelay/this->deltaT)+2;i++){
         std::complex<qreal> hl = 0;
         qreal taps = i+0.5;
+        qreal pwr = 0;
         for(QPair<qreal,std::complex<qreal>> data :this->rayData){//TODO copy list and remove elem
             if(data.first >= (taps-0.5)*this->deltaT && data.first < (taps+0.5)*this->deltaT){
                 hl += data.second;
             }
         }
-        qreal pwr = (1/(8*Ra)) * pow(abs(hl),2)*1e9;
-        if(pwr != 0){
+        if(abs(hl) != 0){
+            pwr = 10*log10((1/(8*Ra)) * pow(abs(hl),2)/0.01);
             if(pwr > max){
                 max = pwr;
+            }
+            if(pwr < min){
+                min = pwr;
             }
             serieUSTDL->append(QPointF(taps,pwr));
         }
@@ -142,8 +155,8 @@ void ImpulseWindow::makeUSTDL()
     QValueAxis *axisY = new QValueAxis();
     chartUSTDL->addAxis(axisY,Qt::AlignLeft);
     serieUSTDL->attachAxis(axisY);
-    axisY->setRange(0,max*1.05);
-    axisY->setTitleText("|h(t)| 1e-9");
+    axisY->setRange(min,max +5);
+    axisY->setTitleText("|h(t)| (dBm)");
     axisY->setLabelFormat("%.2f");
     ui->USTDL->setChart(chartUSTDL);
     ui->USTDL->setRenderHint(QPainter::Antialiasing);
